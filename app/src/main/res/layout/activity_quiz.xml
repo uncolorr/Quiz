@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".QuizActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutBar"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/colorMain"
+        android:layout_height="48dp">
+
+        <TextView
+            android:id="@+id/textViewRoundNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Раунд 1"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+    <com.sap.uncolor.quiz.NonSwipeViewPager
+        android:id="@+id/viewPagerQuiz"
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </com.sap.uncolor.quiz.NonSwipeViewPager>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progressBarTimer"
+            android:background="@android:color/white"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:paddingStart="16dp"
+            android:max="9"
+            android:paddingEnd="16dp"
+            android:layout_height="40dp" />
+
+
+    </FrameLayout>
+
+
+
+
+
+</LinearLayout>
