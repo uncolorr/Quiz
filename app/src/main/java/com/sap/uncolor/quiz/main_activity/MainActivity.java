@@ -1,8 +1,12 @@
-package com.sap.uncolor.quiz;
+package com.sap.uncolor.quiz.main_activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
+
+import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
+import com.sap.uncolor.quiz.R;
+import com.sap.uncolor.quiz.models.Quiz;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

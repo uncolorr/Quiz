@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".QuizActivity">
+    tools:context=".quiz_activity.QuizActivity">
 
     <LinearLayout
         android:id="@+id/linearLayoutBar"
@@ -31,14 +31,14 @@
     </LinearLayout>
 
 
-    <com.sap.uncolor.quiz.NonSwipeViewPager
+    <com.sap.uncolor.quiz.widgets.NonSwipeViewPager
         android:id="@+id/viewPagerQuiz"
         android:layout_width="match_parent"
         android:background="@android:color/white"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-    </com.sap.uncolor.quiz.NonSwipeViewPager>
+    </com.sap.uncolor.quiz.widgets.NonSwipeViewPager>
 
 
     <FrameLayout

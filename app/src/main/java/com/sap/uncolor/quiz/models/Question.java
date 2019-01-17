@@ -1,14 +1,27 @@
-package com.sap.uncolor.quiz;
+package com.sap.uncolor.quiz.models;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 public class Question implements Serializable{
 
+    @SerializedName("question")
     private String question;
+
+    @SerializedName("variant1")
     private String variant1;
+
+    @SerializedName("variant2")
     private String variant2;
+
+    @SerializedName("variant3")
     private String variant3;
+
+    @SerializedName("variant4")
     private String variant4;
+
+    @SerializedName("variantRight")
     private int variantRight;
 
     public Question() {

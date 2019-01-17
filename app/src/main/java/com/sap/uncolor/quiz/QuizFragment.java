@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.sap.uncolor.quiz.models.Quiz;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -79,9 +81,17 @@ public class QuizFragment extends Fragment {
 
     private void answer(int variant){
         if(answerListener != null){
-            checkAnswer(variant, round);
-            answerListener.onQuestionAnswered(variant, round);
+            disableInterface();
+            boolean isAnswerRight = checkAnswer(variant, round);
+            answerListener.onQuestionAnswered(isAnswerRight, round);
         }
+    }
+
+    private void disableInterface(){
+        textViewVariant1.setEnabled(false);
+        textViewVariant2.setEnabled(false);
+        textViewVariant3.setEnabled(false);
+        textViewVariant4.setEnabled(false);
     }
 
     @OnClick(R.id.textViewVariant1)
@@ -108,7 +118,7 @@ public class QuizFragment extends Fragment {
         this.answerListener = listener;
     }
 
-    private void checkAnswer(int variant, int round){
+    private boolean checkAnswer(int variant, int round){
         if(getContext() != null) {
             switch (variant) {
                 case Quiz.VARIANT_ONE:
@@ -116,49 +126,55 @@ public class QuizFragment extends Fragment {
                         textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_right));
                         textViewVariant1.setTextColor(Color.WHITE);
+                        return true;
                     } else {
                         textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_wrong));
                         textViewVariant1.setTextColor(Color.WHITE);
+                        return false;
                     }
-                    break;
 
                 case Quiz.VARIANT_TWO:
                     if (variant == quiz.getQuestion(round).getVariantRight()) {
                         textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_right));
                         textViewVariant2.setTextColor(Color.WHITE);
+                        return true;
                     } else {
                         textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_wrong));
                         textViewVariant2.setTextColor(Color.WHITE);
+                        return false;
                     }
-                    break;
+
 
                 case Quiz.VARIANT_THREE:
                     if (variant == quiz.getQuestion(round).getVariantRight()) {
                         textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_right));
                         textViewVariant3.setTextColor(Color.WHITE);
+                        return true;
                     } else {
                         textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_wrong));
                         textViewVariant3.setTextColor(Color.WHITE);
+                        return false;
                     }
-                    break;
 
                 case Quiz.VARIANT_FOUR:
                     if (variant == quiz.getQuestion(round).getVariantRight()) {
                         textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_right));
                         textViewVariant4.setTextColor(Color.WHITE);
+                        return true;
                     } else {
                         textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
                                 R.drawable.button_answer_wrong));
                         textViewVariant4.setTextColor(Color.WHITE);
+                        return false;
                     }
-                    break;
             }
         }
+        return false;
     }
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".main_activity.MainActivity">
 
 
     <LinearLayout
@@ -60,14 +60,6 @@
             android:orientation="horizontal">
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageViewAvatar"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            app:civ_border_width="4dp"
-            android:src="@android:color/white"
-            app:civ_border_color="@color/colorMain"/>
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,9 +68,11 @@
 
                 <TextView
                     android:id="@+id/textViewName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="4dp"
                     android:text="Uncolor"/>
                 
@@ -86,6 +80,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:layout_gravity="center">
 
 
@@ -94,7 +89,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_gravity="center"
                         android:layout_marginEnd="4dp"
                         android:text="4345"/>
                     

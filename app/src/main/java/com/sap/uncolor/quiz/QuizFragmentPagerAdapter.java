@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.sap.uncolor.quiz.models.Quiz;
+
 public class QuizFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private QuizFragment quizFragmentOne;
@@ -11,7 +13,6 @@ public class QuizFragmentPagerAdapter extends FragmentPagerAdapter {
     private QuizFragment quizFragmentThree;
 
     private AnswerListener answerListener;
-    private TimerListener timerListener;
 
     public QuizFragmentPagerAdapter(FragmentManager fm, Quiz model) {
         super(fm);
@@ -40,14 +41,6 @@ public class QuizFragmentPagerAdapter extends FragmentPagerAdapter {
         quizFragmentTwo.setAnswerListener(this.answerListener);
         quizFragmentThree.setAnswerListener(this.answerListener);
     }
-
-    public void setTickListener(TimerListener timerListener){
-        this.timerListener = timerListener;
-        quizFragmentOne.setTimerListener(this.timerListener);
-        quizFragmentTwo.setTimerListener(this.timerListener);
-        quizFragmentThree.setTimerListener(this.timerListener);
-    }
-
 
     @Override
     public int getCount() {

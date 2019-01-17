@@ -1,4 +1,4 @@
-package com.sap.uncolor.quiz;
+package com.sap.uncolor.quiz.quiz_activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,15 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.sap.uncolor.quiz.AnswerListener;
+import com.sap.uncolor.quiz.QuizFragmentPagerAdapter;
+import com.sap.uncolor.quiz.R;
+import com.sap.uncolor.quiz.models.Quiz;
+import com.sap.uncolor.quiz.results_activity.ResultsActivity;
+import com.sap.uncolor.quiz.widgets.NonSwipeViewPager;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +38,8 @@ public class QuizActivity extends AppCompatActivity {
     private Quiz quiz;
 
     private CountDownTimer countDownTimer;
+
+    private ArrayList<Integer> answers = new ArrayList<>();
 
     public static Intent getInstance(Context context, Quiz quiz){
         Intent intent = new Intent(context, QuizActivity.class);
@@ -60,6 +71,7 @@ public class QuizActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
+                answers.add(0);
                 swipeQuestion();
             }
 
@@ -70,7 +82,13 @@ public class QuizActivity extends AppCompatActivity {
     private AnswerListener getAnswerListener() {
         return new AnswerListener() {
             @Override
-            public void onQuestionAnswered(int variant, int round) {
+            public void onQuestionAnswered(boolean isAnswerRight, int round) {
+                if(isAnswerRight) {
+                    answers.add(1);
+                }
+                else {
+                    answers.add(0);
+                }
                 if(countDownTimer != null){
                     countDownTimer.cancel();
                 }
@@ -103,7 +121,7 @@ public class QuizActivity extends AppCompatActivity {
         }
         if(currentPosition == 2){
             finish();
-            startActivity(ResultsActivity.getInstance(QuizActivity.this));
+            startActivity(ResultsActivity.getInstanceForSingleGame(QuizActivity.this, answers));
         }
     }
 }

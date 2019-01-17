@@ -1,4 +1,4 @@
-package com.sap.uncolor.quiz;
+package com.sap.uncolor.quiz.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,8 +12,6 @@ public class Quiz implements Serializable{
     public static final int VARIANT_FOUR = 4;
 
     private List<Question> questions = new ArrayList<>();
-
-    private List<Boolean> answers = new ArrayList<>();
 
     public Quiz() {
         questions.add(new Question());
