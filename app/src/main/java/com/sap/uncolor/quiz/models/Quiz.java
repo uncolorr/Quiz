@@ -14,13 +14,14 @@ public class Quiz implements Serializable{
     private List<Question> questions = new ArrayList<>();
 
     public Quiz() {
-        questions.add(new Question());
-        questions.add(new Question());
-        questions.add(new Question());
     }
 
     public Question getQuestion(int round) {
         return questions.get(round - 1);
+    }
+
+    public void add(Question question){
+        questions.add(question);
     }
 
 }

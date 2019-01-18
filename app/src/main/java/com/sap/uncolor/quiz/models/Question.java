@@ -22,15 +22,34 @@ public class Question implements Serializable{
     private String variant4;
 
     @SerializedName("variantRight")
-    private int variantRight;
+    private Double variantRight;
 
     public Question() {
-        question = "Вопрос 1";
-        variant1 = "Вариант 1";
-        variant2 = "Вариант 2";
-        variant3 = "Вариант 3";
-        variant4 = "Вариант 4";
-        variantRight = 2;
+
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public void setVariant1(String variant1) {
+        this.variant1 = variant1;
+    }
+
+    public void setVariant2(String variant2) {
+        this.variant2 = variant2;
+    }
+
+    public void setVariant3(String variant3) {
+        this.variant3 = variant3;
+    }
+
+    public void setVariant4(String variant4) {
+        this.variant4 = variant4;
+    }
+
+    public void setVariantRight(Double variantRight) {
+        this.variantRight = variantRight;
     }
 
     public String getQuestion() {
@@ -53,7 +72,7 @@ public class Question implements Serializable{
         return variant4;
     }
 
-    public int getVariantRight() {
+    public Double getVariantRight() {
         return variantRight;
     }
 

@@ -12,7 +12,7 @@ public class Api {
     private static Api api;
     private static ApiSource apiSource;
     private Retrofit retrofit;
-    private static final String BASE_URL = "https://example.com/";
+    private static final String BASE_URL = "http://92.53.67.78:8080/";
 
     private Api() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
