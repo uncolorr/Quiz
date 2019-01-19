@@ -16,6 +16,7 @@ import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.widgets.NonSwipeViewPager;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,6 +79,16 @@ public class QuizActivity extends AppCompatActivity {
         }.start();
     }
 
+    private ArrayList<Integer> generateComputerAnswers(){
+        ArrayList<Integer> computerAnswers = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Random random = new Random();
+            int value = random.nextInt(2);
+            computerAnswers.add(value);
+        }
+        return computerAnswers;
+    }
+
 
     private AnswerListener getAnswerListener() {
         return new AnswerListener() {
@@ -121,7 +132,8 @@ public class QuizActivity extends AppCompatActivity {
         }
         if(currentPosition == 2){
             finish();
-            startActivity(ResultsActivity.getInstanceForSingleGame(QuizActivity.this, answers));
+            ArrayList<Integer> enemyAnswers = generateComputerAnswers();
+            startActivity(ResultsActivity.getInstanceForSingleGame(QuizActivity.this, answers, enemyAnswers));
         }
     }
 }

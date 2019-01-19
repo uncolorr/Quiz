@@ -21,7 +21,6 @@ public class ResultsViewRenderer extends ViewRenderer<Results, ResultsViewHolder
         holder.bind(model);
     }
 
-
     @NonNull
     @Override
     public ResultsViewHolder createViewHolder(@Nullable ViewGroup parent) {

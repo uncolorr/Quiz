@@ -8,5 +8,5 @@ import retrofit2.http.GET;
 public interface ApiSource {
 
     @GET("getQuestions")
-    Call<QuestionsResponse> getMusic();
+    Call<QuestionsResponse> getQuestions();
 }

@@ -13,10 +13,10 @@ import java.util.List;
 
 public class UniversalAdapter extends RecyclerView.Adapter {
 
-    private List<ItemModel> items = new ArrayList<>();
+    protected List<ItemModel> items = new ArrayList<>();
 
     @NonNull
-    private final SparseArray<ViewRenderer> renderers = new SparseArray<>();
+    protected final SparseArray<ViewRenderer> renderers = new SparseArray<>();
 
     @Override
     public
@@ -68,6 +68,8 @@ public class UniversalAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         return items.get(position).getType();
     }
+
+
 
     @Override
     public int getItemCount() {
