@@ -30,7 +30,6 @@
 
     </LinearLayout>
 
-
     <com.sap.uncolor.quiz.widgets.NonSwipeViewPager
         android:id="@+id/viewPagerQuiz"
         android:layout_width="match_parent"
@@ -40,12 +39,11 @@
 
     </com.sap.uncolor.quiz.widgets.NonSwipeViewPager>
 
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ProgressBar
+        <com.sap.uncolor.quiz.widgets.AnimatingProgressBar
             android:id="@+id/progressBarTimer"
             android:background="@android:color/white"
             style="?android:attr/progressBarStyleHorizontal"
@@ -55,11 +53,6 @@
             android:paddingEnd="16dp"
             android:layout_height="40dp" />
 
-
     </FrameLayout>
-
-
-
-
 
 </LinearLayout>

@@ -5,14 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sap.uncolor.quiz.AnswerListener;
 import com.sap.uncolor.quiz.QuizFragmentPagerAdapter;
 import com.sap.uncolor.quiz.R;
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
+import com.sap.uncolor.quiz.widgets.AnimatingProgressBar;
 import com.sap.uncolor.quiz.widgets.NonSwipeViewPager;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class QuizActivity extends AppCompatActivity {
 
     private static final String ARG_QUIZ = "quiz";
 
+    private static final int TIME_INTERVAL = 1000;
+    private static final int TIME_FOR_ANSWER = 10000;
+
     @BindView(R.id.viewPagerQuiz)
     NonSwipeViewPager viewPager;
 
@@ -32,7 +36,7 @@ public class QuizActivity extends AppCompatActivity {
     TextView textViewRoundNumber;
 
     @BindView(R.id.progressBarTimer)
-    ProgressBar progressBarTimer;
+    AnimatingProgressBar progressBarTimer;
 
     private QuizFragmentPagerAdapter fragmentPagerAdapter;
 
@@ -65,13 +69,16 @@ public class QuizActivity extends AppCompatActivity {
 
     private void startTimer() {
         progressBarTimer.setProgress(10);
-        countDownTimer = new CountDownTimer(10000, 1000) {
+        countDownTimer = new CountDownTimer(TIME_FOR_ANSWER, TIME_INTERVAL) {
 
             public void onTick(long millisUntilFinished) {
-                progressBarTimer.setProgress((int) millisUntilFinished / 1000);
+                int value = (int) millisUntilFinished / TIME_INTERVAL;
+                App.Log("value: " + value);
+                progressBarTimer.setProgress(value);
             }
 
             public void onFinish() {
+                progressBarTimer.setProgress(0);
                 answers.add(0);
                 swipeQuestion();
             }
@@ -103,7 +110,7 @@ public class QuizActivity extends AppCompatActivity {
                 if(countDownTimer != null){
                     countDownTimer.cancel();
                 }
-                new CountDownTimer(1500, 1500) {
+                new CountDownTimer(1000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
 

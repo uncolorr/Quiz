@@ -1,11 +1,13 @@
 package com.sap.uncolor.quiz.main_activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
@@ -30,6 +32,12 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @BindView(R.id.buttonSingleGame)
     Button buttonSingleGame;
 
+    @BindView(R.id.textViewName)
+    TextView textViewName;
+
+    @BindView(R.id.textViewPoints)
+    TextView textViewPoints;
+
     private AlertDialog loadingDialog;
 
 
@@ -37,11 +45,14 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new Intent(context, MainActivity.class);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        textViewName.setText(App.getUserName());
+        textViewPoints.setText(Integer.toString(App.getUserPoints()));
     }
 
 

@@ -59,7 +59,7 @@ public class UniversalAdapter extends RecyclerView.Adapter {
         notifyItemInserted(items.size() - 1);
     }
 
-    public void addAll(List<ItemModel> models){
+    public void addAll(ArrayList<ItemModel> models){
         items.addAll(models);
         notifyDataSetChanged();
     }

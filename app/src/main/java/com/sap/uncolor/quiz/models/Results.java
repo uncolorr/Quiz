@@ -12,17 +12,19 @@ public class Results implements ItemModel {
 
     private ArrayList<Integer> enemyAnswers;
 
+    public static final int STATE_COMPLETED = 1;
+    public static final int STATE_NEXT_GAME = 2;
+    private int state;
+
     @Override
     public int getType() {
         return TYPE;
     }
 
-    public Results(){
-
-    }
-
-    public Results(ArrayList<Integer> answers){
-        this.myAnswers = answers;
+    public Results(int state){
+        this.state = state;
+        myAnswers = new ArrayList<>();
+        enemyAnswers = new ArrayList<>();
     }
 
 
@@ -60,5 +62,9 @@ public class Results implements ItemModel {
 
     public void setEnemyAnswers(ArrayList<Integer> enemyAnswers) {
         this.enemyAnswers = enemyAnswers;
+    }
+
+    public int getState() {
+        return state;
     }
 }

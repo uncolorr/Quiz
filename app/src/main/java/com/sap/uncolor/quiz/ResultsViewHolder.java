@@ -5,15 +5,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.models.Results;
+import com.sap.uncolor.quiz.results_activity.ResultActivityPresenter;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class ResultsViewHolder extends RecyclerView.ViewHolder {
+public class ResultsViewHolder extends RecyclerView.ViewHolder implements ApiResponse.ApiFailureListener {
 
     @BindView(R.id.viewMyRound1)
     View viewMyRound1;
@@ -36,14 +40,38 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.buttonPlay)
     Button buttonPlay;
 
-    public ResultsViewHolder(@NonNull View itemView) {
+    @BindView(R.id.textViewRoundNumber)
+    TextView textViewRoundNumber;
+
+    private ResultActivityPresenter presenter;
+
+    public ResultsViewHolder(@NonNull View itemView, ResultActivityPresenter presenter) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        this.presenter = presenter;
     }
 
     public void bind(Results results){
-        drawMyResults(results.getMyAnswers());
-        drawEnemyResults(results.getEnemyAnswers());
+        if(results.getState() == Results.STATE_NEXT_GAME){
+            viewMyRound1.setVisibility(View.INVISIBLE);
+            viewMyRound2.setVisibility(View.INVISIBLE);
+            viewMyRound3.setVisibility(View.INVISIBLE);
+            viewEnemyRound1.setVisibility(View.INVISIBLE);
+            viewEnemyRound2.setVisibility(View.INVISIBLE);
+            viewEnemyRound3.setVisibility(View.INVISIBLE);
+            buttonPlay.setVisibility(View.VISIBLE);
+
+        }
+        else if (results.getState() == Results.STATE_COMPLETED) {
+            drawMyResults(results.getMyAnswers());
+            drawEnemyResults(results.getEnemyAnswers());
+            textViewRoundNumber.setText((getAdapterPosition() + 1) + " Раунд");
+        }
+    }
+
+    @OnClick(R.id.buttonPlay)
+    void onButtonPlayClick(){
+        presenter.onStartGame();
     }
 
     private void drawMyResults(List<Integer> answers){
@@ -96,5 +124,10 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder {
             viewEnemyRound3.setBackground(ContextCompat.getDrawable(itemView.getContext(),
                     R.drawable.result_wrong));
         }
+    }
+
+    @Override
+    public void onFailure(int code, String message) {
+
     }
 }
