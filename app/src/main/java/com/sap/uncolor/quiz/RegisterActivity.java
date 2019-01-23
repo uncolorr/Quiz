@@ -78,10 +78,10 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
 
          String sex = "";
          if(radioButtonMale.isChecked()){
-             sex = "м";
+             sex = User.SEX_TYPE_MALE;
          }
          else if (radioButtonFemale.isChecked()){
-             sex = "ж";
+             sex = User.SEX_TYPE_FEMALE;
          }
         Api.getSource().register(login, password, sex)
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(),this));

@@ -76,6 +76,18 @@ public class DBManager {
         db.delete(DBHelper.TABLE_NAME, null, null);
     }
 
+    public int getCompletedRoundsCount(){
+        Cursor cursor = db.query(DBHelper.TABLE_NAME, null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        int count = cursor.getCount();
+        return count;
+    }
+
     public void close(){
         if(dbHelper != null) {
             dbHelper.close();

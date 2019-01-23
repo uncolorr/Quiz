@@ -2,11 +2,16 @@ package com.sap.uncolor.quiz.apis;
 
 import com.sap.uncolor.quiz.models.AuthResponse;
 import com.sap.uncolor.quiz.models.QuestionsResponse;
+import com.sap.uncolor.quiz.models.User;
+import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
+import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface ApiSource {
@@ -14,6 +19,14 @@ public interface ApiSource {
     @GET("getQuestions")
     Call<QuestionsResponse> getQuestions();
 
+
+    @Headers("Content-Type: application/json")
+    @POST("user/register")
+    Call<ResponseModel<User>> register(@Body SignUpRequestData signUpRequestData);
+
+    @Headers("Content-Type: application/json")
+    @POST("user/login")
+    Call<ResponseModel<User>> login(@Body SignInRequestData signInRequestData);
 
     @FormUrlEncoded
     @POST("login")
@@ -25,5 +38,9 @@ public interface ApiSource {
     Call<AuthResponse> register(@Field("login") String login,
                                 @Field("password") String password,
                                 @Field("sex") String sex);
+
+    @FormUrlEncoded
+    @POST("updatePoints")
+    Call<AuthResponse> updatePoints(@Field("token") String token, @Field("points") int points);
 
 }

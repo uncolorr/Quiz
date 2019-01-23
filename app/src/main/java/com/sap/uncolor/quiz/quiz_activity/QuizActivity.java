@@ -46,6 +46,10 @@ public class QuizActivity extends AppCompatActivity {
 
     private ArrayList<Integer> answers = new ArrayList<>();
 
+    private int points = 0;
+
+    private int timeLeft = 0;
+
     public static Intent getInstance(Context context, Quiz quiz){
         Intent intent = new Intent(context, QuizActivity.class);
         intent.putExtra(ARG_QUIZ, quiz);
@@ -73,17 +77,42 @@ public class QuizActivity extends AppCompatActivity {
 
             public void onTick(long millisUntilFinished) {
                 int value = (int) millisUntilFinished / TIME_INTERVAL;
+                timeLeft = value;
                 App.Log("value: " + value);
                 progressBarTimer.setProgress(value);
             }
 
             public void onFinish() {
+                timeLeft = 0;
                 progressBarTimer.setProgress(0);
                 answers.add(0);
                 swipeQuestion();
             }
 
         }.start();
+    }
+
+    private void addPoints(){
+        int point = 0;
+        if(timeLeft <= 10){
+            point = 8;
+        }
+
+        if(timeLeft < 8){
+            point = 6;
+        }
+
+        if(timeLeft < 6){
+            point = 4;
+        }
+
+        if(timeLeft < 4) {
+            point = 2;
+        }
+
+        points += point;
+        App.Log("point: " + point);
+        App.Log("points: " + points);
     }
 
     private ArrayList<Integer> generateComputerAnswers(){
@@ -103,6 +132,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onQuestionAnswered(boolean isAnswerRight, int round) {
                 if(isAnswerRight) {
                     answers.add(1);
+                    addPoints();
                 }
                 else {
                     answers.add(0);

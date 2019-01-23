@@ -18,6 +18,7 @@ import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.QuestionsResponse;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
+import com.sap.uncolor.quiz.results_activity.DBManager;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 import com.sap.uncolor.quiz.utils.QuizParser;
 
@@ -58,6 +59,11 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @OnClick(R.id.buttonSingleGame)
     void onButtonSingleGameClick(){
+        DBManager dbManager = new DBManager(this);
+        if(dbManager.getCompletedRoundsCount() >= 5){
+            dbManager.clearDatabase();
+            dbManager.close();
+        }
         loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         loadingDialog.show();
         Api.getSource().getQuestions()

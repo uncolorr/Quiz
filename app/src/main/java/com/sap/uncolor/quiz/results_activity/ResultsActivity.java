@@ -85,7 +85,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             for (int i = 0; i < results.size(); i++) {
                 adapter.add(results.get(i));
             }
-            if(adapter.getItemCount() < 5){
+            if(dbManager.getCompletedRoundsCount() < 5){
                 adapter.add(new Results(Results.STATE_NEXT_GAME));
             }
             textViewResultScores.setText(adapter.getMyResultsCounter() + " - " + adapter.getEnemyResultsCounter());
@@ -104,7 +104,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(adapter.getItemCount() > 5){
+        if(dbManager.getCompletedRoundsCount() >= 5){
             dbManager.clearDatabase();
         }
         dbManager.close();
@@ -131,6 +131,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     @Override
     public void startGame(Quiz quiz) {
         startActivity(QuizActivity.getInstance(this, quiz));
+        finish();
     }
 
     @Override

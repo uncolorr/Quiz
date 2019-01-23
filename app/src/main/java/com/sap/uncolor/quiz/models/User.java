@@ -9,6 +9,9 @@ public class User implements ItemModel{
 
     public static final int TYPE = 2;
 
+    public static final String SEX_TYPE_MALE = "м";
+    public static final String SEX_TYPE_FEMALE = "ж";
+
     @Nullable
     @SerializedName("id")
     private int id;

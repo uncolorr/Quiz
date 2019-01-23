@@ -60,13 +60,12 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder implements ApiRes
             viewEnemyRound2.setVisibility(View.INVISIBLE);
             viewEnemyRound3.setVisibility(View.INVISIBLE);
             buttonPlay.setVisibility(View.VISIBLE);
-
         }
         else if (results.getState() == Results.STATE_COMPLETED) {
             drawMyResults(results.getMyAnswers());
             drawEnemyResults(results.getEnemyAnswers());
-            textViewRoundNumber.setText((getAdapterPosition() + 1) + " Раунд");
         }
+        textViewRoundNumber.setText((getAdapterPosition() + 1) + " Раунд");
     }
 
     @OnClick(R.id.buttonPlay)
