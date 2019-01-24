@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 public class Question implements Serializable{
 
+    @SerializedName("id")
+    private int id;
+
     @SerializedName("question")
     private String question;
 
@@ -21,8 +24,6 @@ public class Question implements Serializable{
     @SerializedName("variant4")
     private String variant4;
 
-    @SerializedName("variantRight")
-    private Double variantRight;
 
     public Question() {
 
@@ -48,10 +49,6 @@ public class Question implements Serializable{
         this.variant4 = variant4;
     }
 
-    public void setVariantRight(Double variantRight) {
-        this.variantRight = variantRight;
-    }
-
     public String getQuestion() {
         return question;
     }
@@ -72,8 +69,7 @@ public class Question implements Serializable{
         return variant4;
     }
 
-    public Double getVariantRight() {
-        return variantRight;
+    public int getId() {
+        return id;
     }
-
 }

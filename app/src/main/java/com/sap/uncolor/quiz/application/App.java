@@ -36,6 +36,11 @@ public class App extends Application {
         return user.getPoints();
     }
 
+    public static String getToken(){
+        User user = Hawk.get(KEY_USER);
+        return user.getToken();
+    }
+
     public static void clearUserData(){
         Hawk.delete(KEY_USER);
     }

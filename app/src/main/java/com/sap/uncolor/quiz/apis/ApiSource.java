@@ -1,34 +1,37 @@
 package com.sap.uncolor.quiz.apis;
 
-import com.sap.uncolor.quiz.models.AuthResponse;
-import com.sap.uncolor.quiz.models.QuestionsResponse;
+import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.User;
+import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface ApiSource {
 
-    @GET("getQuestions")
-    Call<QuestionsResponse> getQuestions();
-
-
     @Headers("Content-Type: application/json")
-    @POST("user/register")
+    @POST("register")
     Call<ResponseModel<User>> register(@Body SignUpRequestData signUpRequestData);
 
     @Headers("Content-Type: application/json")
-    @POST("user/login")
+    @POST("login")
     Call<ResponseModel<User>> login(@Body SignInRequestData signInRequestData);
 
-    @FormUrlEncoded
+    @Headers("Content-Type: application/json")
+    @POST("getQuestions")
+    Call<ResponseModel<List<Question>>> getQuestions(@Body GetQuestionsRequestData getQuestionsRequestData);
+
+    @Headers("Content-Type: application/json")
+    @POST("checkAnswer")
+    Call<ResponseModel<List<Question>>> checkAnswer(@Body GetQuestionsRequestData getQuestionsRequestData);
+
+    /*@FormUrlEncoded
     @POST("login")
     Call<AuthResponse> login(@Field("login")String login,
                              @Field("password")String password);
@@ -41,6 +44,8 @@ public interface ApiSource {
 
     @FormUrlEncoded
     @POST("updatePoints")
-    Call<AuthResponse> updatePoints(@Field("token") String token, @Field("points") int points);
+    Call<AuthResponse> updatePoints(@Field("token") String token, @Field("points") int points);*/
+
+
 
 }
