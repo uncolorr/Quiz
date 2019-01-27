@@ -1,5 +1,6 @@
 package com.sap.uncolor.quiz;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -51,6 +52,7 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder implements ApiRes
         this.presenter = presenter;
     }
 
+    @SuppressLint("SetTextI18n")
     public void bind(Results results){
         if(results.getState() == Results.STATE_NEXT_GAME){
             viewMyRound1.setVisibility(View.INVISIBLE);

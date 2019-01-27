@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.ResultsViewRenderer;
+import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Results;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
@@ -80,8 +81,8 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         if(gameType == GAME_TYPE_SINGLE){
             ArrayList<Integer> answers = getIntent().getIntegerArrayListExtra(ARG_ANSWERS);
             ArrayList<Integer> enemyAnswers = getIntent().getIntegerArrayListExtra(ARG_ENEMY_ANSWERS);
-            dbManager.addResultToDatabase(answers, enemyAnswers);
-            ArrayList<Results> results = dbManager.getResultsFromDatabase();
+            dbManager.addSingleGameResultsToDatabase(answers, enemyAnswers);
+            ArrayList<Results> results = dbManager.getSingleGameResultsFromDatabase();
             for (int i = 0; i < results.size(); i++) {
                 adapter.add(results.get(i));
             }

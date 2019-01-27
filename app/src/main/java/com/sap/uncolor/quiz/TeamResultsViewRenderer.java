@@ -9,22 +9,22 @@ import android.view.ViewGroup;
 import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.universal_adapter.ViewRenderer;
 
-class TeamViewRenderer extends ViewRenderer<Team, TeamViewHolder> {
+public class TeamResultsViewRenderer extends ViewRenderer<Team, TeamResultsViewHolder> {
 
-    public TeamViewRenderer(int type, Context context) {
+    public TeamResultsViewRenderer(int type, Context context) {
         super(type, context);
     }
 
     @Override
-    public void bindView(@NonNull Team model, @NonNull TeamViewHolder holder) {
+    public void bindView(@NonNull Team model, @NonNull TeamResultsViewHolder holder) {
         holder.bind(model);
     }
 
     @NonNull
     @Override
-    public TeamViewHolder createViewHolder(@Nullable ViewGroup parent) {
-        return new TeamViewHolder(LayoutInflater.from(context).inflate(R.layout.team_item, parent,
+    public TeamResultsViewHolder createViewHolder(@Nullable ViewGroup parent) {
+        return new TeamResultsViewHolder(LayoutInflater.from(context)
+                .inflate(R.layout.private_game_results_item, parent,
                 false));
     }
 }
-

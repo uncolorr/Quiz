@@ -21,7 +21,7 @@ import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
-import com.sap.uncolor.quiz.results_activity.DBManager;
+import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
 import java.util.List;

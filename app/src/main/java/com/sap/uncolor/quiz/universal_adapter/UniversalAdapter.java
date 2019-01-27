@@ -59,17 +59,24 @@ public class UniversalAdapter extends RecyclerView.Adapter {
         notifyItemInserted(items.size() - 1);
     }
 
+    public void addFirst(ItemModel model){
+        items.add(model);
+        notifyItemInserted(0);
+    }
+
     public void addAll(ArrayList<ItemModel> models){
         items.addAll(models);
         notifyDataSetChanged();
+    }
+
+    public ArrayList<ItemModel> getItems(){
+        return (ArrayList<ItemModel>) items;
     }
 
     @Override
     public int getItemViewType(int position) {
         return items.get(position).getType();
     }
-
-
 
     @Override
     public int getItemCount() {

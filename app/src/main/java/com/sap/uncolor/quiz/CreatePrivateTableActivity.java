@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 
-import com.sap.uncolor.quiz.models.Player;
+import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 import com.sap.uncolor.quiz.utils.AddPlayersDialog;
@@ -43,6 +44,9 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
         ButterKnife.bind(this);
         adapter = new UniversalAdapter();
         adapter.registerRenderer(new TeamViewRenderer(Team.TYPE, this));
+        recyclerViewTeams.setAdapter(adapter);
+        recyclerViewTeams.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false));
     }
 
     @OnClick(R.id.buttonCreatePrivateTable)
@@ -52,16 +56,19 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
 
     @OnClick(R.id.imageButtonAddTeam)
     void onButtonAddTeamClick(){
+        if(editTextTeamName.getText().toString().isEmpty()){
+            return;
+        }
         addPlayersDialog = new AddPlayersDialog();
         addPlayersDialog.setOnCreateTeamListener(this);
         AlertDialog dialog = addPlayersDialog.create(this);
         dialog.show();
     }
 
-
     @Override
-    public void onCreateTeam(ArrayList<Player> players) {
-        Team team = new Team(editTextTeamName.getText().toString(), players);
+    public void onCreateTeam(ArrayList<PrivateGamePlayer> privateGamePlayers) {
+        Team team = new Team(editTextTeamName.getText().toString(), privateGamePlayers);
         adapter.add(team);
+        editTextTeamName.getText().clear();
     }
 }

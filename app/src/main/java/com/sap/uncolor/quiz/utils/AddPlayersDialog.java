@@ -10,16 +10,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.sap.uncolor.quiz.ItemModel;
 import com.sap.uncolor.quiz.PlayerViewRenderer;
 import com.sap.uncolor.quiz.R;
-import com.sap.uncolor.quiz.models.Player;
+import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 
 import java.util.ArrayList;
 
 public class AddPlayersDialog {
-
-    private ArrayList<Player> players = new ArrayList<>();
 
     private AlertDialog.Builder builder;
 
@@ -43,12 +42,23 @@ public class AddPlayersDialog {
         recyclerViewPlayers = view.findViewById(R.id.recyclerViewPlayers);
         initRecyclerView();
         builder.setView(view);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("СОЗДАТЬ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(createTeamListener != null){
-                    createTeamListener.onCreateTeam(players);
+                    ArrayList<ItemModel> items = adapter.getItems();
+                    ArrayList<PrivateGamePlayer> result = new ArrayList<>();
+                    for (int i = 0; i < items.size(); i++) {
+                        result.add((PrivateGamePlayer) items.get(i));
+                    }
+                    createTeamListener.onCreateTeam(result);
                 }
+            }
+        });
+        builder.setNegativeButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
             }
         });
         return builder.create();
@@ -61,23 +71,19 @@ public class AddPlayersDialog {
                 if(editTextPlayerName.getText().toString().isEmpty()) {
                     return;
                 }
-                Player player = new Player(editTextPlayerName.getText().toString());
-                //players.add(player);
-                adapter.add(player);
-
+                PrivateGamePlayer privateGamePlayer = new PrivateGamePlayer(editTextPlayerName.getText().toString());
+                adapter.add(privateGamePlayer);
+                editTextPlayerName.getText().clear();
             }
         };
     }
 
     private void initRecyclerView(){
         adapter = new UniversalAdapter();
-        adapter.registerRenderer(new PlayerViewRenderer(Player.TYPE, context));
+        adapter.registerRenderer(new PlayerViewRenderer(PrivateGamePlayer.TYPE, context));
         recyclerViewPlayers.setAdapter(adapter);
         recyclerViewPlayers.setLayoutManager(new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false));
-    }
-    public ArrayList<Player> getPlayers() {
-        return players;
     }
 
     public void setOnCreateTeamListener(CreateTeamListener createTeamListener){

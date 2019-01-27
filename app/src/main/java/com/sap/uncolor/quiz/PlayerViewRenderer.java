@@ -6,17 +6,17 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.sap.uncolor.quiz.models.Player;
+import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.universal_adapter.ViewRenderer;
 
-public class PlayerViewRenderer extends ViewRenderer<Player, PlayerViewHolder> {
+public class PlayerViewRenderer extends ViewRenderer<PrivateGamePlayer, PlayerViewHolder> {
 
     public PlayerViewRenderer(int type, Context context) {
         super(type, context);
     }
 
     @Override
-    public void bindView(@NonNull Player model, @NonNull PlayerViewHolder holder) {
+    public void bindView(@NonNull PrivateGamePlayer model, @NonNull PlayerViewHolder holder) {
         holder.bind(model);
     }
 

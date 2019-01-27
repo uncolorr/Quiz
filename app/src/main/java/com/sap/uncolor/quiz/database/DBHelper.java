@@ -1,4 +1,4 @@
-package com.sap.uncolor.quiz.results_activity;
+package com.sap.uncolor.quiz.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,9 +14,18 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String FIELD_ENEMY_ROUND_ONE = "enemy_round_one";
     public static final String FIELD_ENEMY_ROUND_TWO = "enemy_round_two";
     public static final String FIELD_ENEMY_ROUND_THREE = "enemy_round_three";
-    public static final String DATABASE_NAME = "single_game";
-    public static final String TABLE_NAME = "quiz_results";
+    public static final String DATABASE_NAME = "offline_games";
+    public static final String TABLE_SINGLE_GAME = "single_game";
 
+
+    public static final String TABLE_PRIVATE_GAME_PLAYERS = "private_game_players";
+    public static final String TABLE_PRIVATE_GAME_TEAMS = "private_game_players";
+
+    public static final String FIELD_PLAYER_NAME = "player_name";
+    public static final String FIELD_PLAYER_POINTS_RIGHT = "player_points_right";
+    public static final String FIELD_PLAYER_POINTS_WRONG = "player_points_wrong";
+
+    public static final String FIELD_TEAM_NAME = "team_name";
 
     public DBHelper(Context context) {
         // конструктор суперкласса
@@ -26,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         App.Log("--- onCreate database ---");
-        db.execSQL("create table " + TABLE_NAME +"("
+        db.execSQL("create table " + TABLE_SINGLE_GAME +"("
                 + "id integer primary key autoincrement,"
                 + FIELD_MY_ROUND_ONE + " integer,"
                 + FIELD_MY_ROUND_TWO + " integer,"
@@ -34,12 +43,22 @@ public class DBHelper extends SQLiteOpenHelper {
                 + FIELD_ENEMY_ROUND_ONE + " integer,"
                 + FIELD_ENEMY_ROUND_TWO + " integer,"
                 + FIELD_ENEMY_ROUND_THREE + " integer"+ ");");
+
+        db.execSQL("create table " + TABLE_PRIVATE_GAME_TEAMS +"("
+                + "id integer primary key autoincrement,"
+                + FIELD_TEAM_NAME + " text" + ");");
+
+        db.execSQL("create table " + TABLE_PRIVATE_GAME_PLAYERS +"("
+                + "id integer primary key autoincrement,"
+                + FIELD_PLAYER_NAME + " integer,"
+                + FIELD_PLAYER_POINTS_RIGHT + " integer,"
+                + FIELD_PLAYER_POINTS_WRONG + " integer" + ");");
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
-
 
 }
