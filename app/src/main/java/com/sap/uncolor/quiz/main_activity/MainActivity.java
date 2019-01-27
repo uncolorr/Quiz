@@ -9,20 +9,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.sap.uncolor.quiz.CreatePrivateTableActivity;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.TopActivity;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
+import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.application.App;
-import com.sap.uncolor.quiz.models.QuestionsResponse;
+import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
+import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.results_activity.DBManager;
 import com.sap.uncolor.quiz.utils.MessageReporter;
-import com.sap.uncolor.quiz.utils.QuizParser;
 
-import java.io.IOException;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         }
         loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         loadingDialog.show();
-        Api.getSource().getQuestions()
+        Api.getSource().getQuestions(new GetQuestionsRequestData())
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(), this));
     }
 
@@ -85,10 +87,15 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     }
 
-    private ApiResponse.ApiResponseListener<QuestionsResponse> getApiResponseListener() {
-        return new ApiResponse.ApiResponseListener<QuestionsResponse>() {
+    @OnClick(R.id.buttonPrivateGame)
+    void onButtonPrivateGameClick(){
+        startActivity(CreatePrivateTableActivity.getInstance(this));
+    }
+
+    private ApiResponse.ApiResponseListener<ResponseModel<List<Question>>> getApiResponseListener() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<List<Question>>>() {
             @Override
-            public void onResponse(QuestionsResponse result) throws IOException {
+            public void onResponse(ResponseModel<List<Question>> result) {
                 cancelLoadingDialog();
                 if(result == null){
                     MessageReporter.showMessage(MainActivity.this,
@@ -96,8 +103,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                             "Ошибка создания игры");
                 }
                 else {
-                     Quiz quiz = QuizParser.toQuizModel(result.getResponse());
-                     startActivity(QuizActivity.getInstance(MainActivity.this, quiz));
+                    Quiz quiz = new Quiz();
+                    quiz.setQuestions(result.getResult());
+                    startActivity(QuizActivity.getInstance(MainActivity.this, quiz));
                 }
             }
         };

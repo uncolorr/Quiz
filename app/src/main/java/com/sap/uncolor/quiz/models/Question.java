@@ -12,16 +12,16 @@ public class Question implements Serializable{
     @SerializedName("question")
     private String question;
 
-    @SerializedName("variant1")
+    @SerializedName("var1")
     private String variant1;
 
-    @SerializedName("variant2")
+    @SerializedName("var2")
     private String variant2;
 
-    @SerializedName("variant3")
+    @SerializedName("var3")
     private String variant3;
 
-    @SerializedName("variant4")
+    @SerializedName("var4")
     private String variant4;
 
 

@@ -11,13 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.sap.uncolor.quiz.apis.Api;
+import com.sap.uncolor.quiz.apis.ApiResponse;
+import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.models.Quiz;
+import com.sap.uncolor.quiz.models.request_datas.CheckAnswerRequestData;
+import com.sap.uncolor.quiz.utils.MessageReporter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class QuizFragment extends Fragment {
+public class QuizFragment extends Fragment implements ApiResponse.ApiFailureListener{
 
     private static final String ARG_MODEL = "quiz";
     private static final String ARG_ROUND = "round";
@@ -82,8 +87,7 @@ public class QuizFragment extends Fragment {
     private void answer(int variant){
         if(answerListener != null){
             disableInterface();
-            boolean isAnswerRight = checkAnswer(variant, round);
-            answerListener.onQuestionAnswered(isAnswerRight, round);
+            checkAnswer(variant, round);
         }
     }
 
@@ -122,59 +126,130 @@ public class QuizFragment extends Fragment {
         if(getContext() != null) {
             switch (variant) {
                 case Quiz.VARIANT_ONE:
-                    if (variant == quiz.getQuestion(round).getVariantRight()) {
-                        textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_right));
-                        textViewVariant1.setTextColor(Color.WHITE);
-                        return true;
-                    } else {
-                        textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_wrong));
-                        textViewVariant1.setTextColor(Color.WHITE);
-                        return false;
-                    }
+                    Api.getSource().
+                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "1"))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant1.setTextColor(Color.WHITE);
+                    break;
 
                 case Quiz.VARIANT_TWO:
-                    if (variant == quiz.getQuestion(round).getVariantRight()) {
-                        textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_right));
-                        textViewVariant2.setTextColor(Color.WHITE);
-                        return true;
-                    } else {
-                        textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_wrong));
-                        textViewVariant2.setTextColor(Color.WHITE);
-                        return false;
-                    }
+                    Api.getSource().
+                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "2"))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant2.setTextColor(Color.WHITE);
+                    break;
 
 
                 case Quiz.VARIANT_THREE:
-                    if (variant == quiz.getQuestion(round).getVariantRight()) {
-                        textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_right));
-                        textViewVariant3.setTextColor(Color.WHITE);
-                        return true;
-                    } else {
-                        textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_wrong));
-                        textViewVariant3.setTextColor(Color.WHITE);
-                        return false;
-                    }
+                    Api.getSource().
+                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "3"))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant3.setTextColor(Color.WHITE);
+                    break;
 
                 case Quiz.VARIANT_FOUR:
-                    if (variant == quiz.getQuestion(round).getVariantRight()) {
-                        textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_right));
-                        textViewVariant4.setTextColor(Color.WHITE);
-                        return true;
-                    } else {
-                        textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
-                                R.drawable.button_answer_wrong));
-                        textViewVariant4.setTextColor(Color.WHITE);
-                        return false;
-                    }
+                    Api.getSource().
+                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "4"))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant4.setTextColor(Color.WHITE);
+                    break;
             }
         }
         return false;
+    }
+
+    private ApiResponse.ApiResponseListener<ResponseModel<Boolean>> getApiResponseListener(final int variant) {
+        return new ApiResponse.ApiResponseListener<ResponseModel<Boolean>>() {
+            @Override
+            public void onResponse(ResponseModel<Boolean> result) {
+                if (getContext() != null) {
+
+                    if (result == null) {
+                        MessageReporter.showMessage(getContext(),
+                                "Ошибка",
+                                "Ошибка создания игры");
+                    } else {
+                        switch (variant) {
+                            case Quiz.VARIANT_ONE:
+                                if (result.getResult()) {
+                                    textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_right));
+                                    textViewVariant1.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(true, round);
+
+                                } else {
+                                    textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_wrong));
+                                    textViewVariant1.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(false, round);
+                                }
+                                break;
+
+
+                            case Quiz.VARIANT_TWO:
+                                if (result.getResult()) {
+                                    textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_right));
+                                    textViewVariant2.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(true, round);
+
+                                } else {
+                                    textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_wrong));
+                                    textViewVariant2.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(false, round);
+                                }
+                                break;
+
+
+                            case Quiz.VARIANT_THREE:
+                                if (result.getResult()) {
+                                    textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_right));
+                                    textViewVariant3.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(true, round);
+
+                                } else {
+                                    textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_wrong));
+                                    textViewVariant3.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(false, round);
+                                }
+                                break;
+
+                            case Quiz.VARIANT_FOUR:
+                                if (result.getResult()) {
+                                    textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_right));
+                                    textViewVariant4.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(true, round);
+
+                                } else {
+                                    textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
+                                            R.drawable.button_answer_wrong));
+                                    textViewVariant4.setTextColor(Color.WHITE);
+                                    answerListener.onQuestionAnswered(false, round);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onFailure(int code, String message) {
+        MessageReporter.showMessage(getContext(),
+                "Ошибка",
+                "Ошибка создания игры");
     }
 }

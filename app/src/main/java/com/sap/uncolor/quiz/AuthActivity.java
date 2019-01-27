@@ -7,10 +7,11 @@ import android.widget.EditText;
 
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
+import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.main_activity.MainActivity;
-import com.sap.uncolor.quiz.models.AuthResponse;
 import com.sap.uncolor.quiz.models.User;
+import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
 import butterknife.BindView;
@@ -48,15 +49,17 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @OnClick(R.id.buttonLogin)
     void onLoginButtonClick(){
         loadingDialog.show();
-        Api.getSource().login(editTextLogin.getText().toString(),
-                editTextPassword.getText().toString())
+        String login = editTextLogin.getText().toString();
+        String password = editTextPassword.getText().toString();
+
+        Api.getSource().login(new SignInRequestData(login, password))
                 .enqueue(ApiResponse.getCallback(getLoginResponseListener(), this));
     }
 
-    private ApiResponse.ApiResponseListener<AuthResponse> getLoginResponseListener() {
-        return new ApiResponse.ApiResponseListener<AuthResponse>() {
+    private ApiResponse.ApiResponseListener<ResponseModel<User>> getLoginResponseListener() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<User>>() {
             @Override
-            public void onResponse(AuthResponse result) {
+            public void onResponse(ResponseModel<User> result) {
                 cancelLoadingDialog();
                 if(result == null){
                     MessageReporter.showMessage(AuthActivity.this,
@@ -65,16 +68,14 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
                     return;
                 }
 
-
-
-                if(result.getResponse().getError() != null){
+                if(result.getResult().getError() != null){
                     App.Log("error");
                     MessageReporter.showMessage(AuthActivity.this,
                                 "Ошибка",
                                 "Нет логина или пароля");
                     return;
                 }
-                    User user = result.getResponse();
+                    User user = result.getResult();
                     App.putUserData(user);
                     startActivity(MainActivity.getInstance(AuthActivity.this));
                     finish();

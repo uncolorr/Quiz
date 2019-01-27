@@ -13,12 +13,19 @@ public class Quiz implements Serializable{
 
     private List<Question> questions = new ArrayList<>();
 
+
     public Quiz() {
+
     }
 
     public Question getQuestion(int round) {
         return questions.get(round - 1);
     }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+
 
     public void add(Question question){
         questions.add(question);

@@ -10,10 +10,11 @@ import android.widget.RadioButton;
 
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
+import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.main_activity.MainActivity;
-import com.sap.uncolor.quiz.models.AuthResponse;
 import com.sap.uncolor.quiz.models.User;
+import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
 import java.io.IOException;
@@ -83,15 +84,15 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
          else if (radioButtonFemale.isChecked()){
              sex = User.SEX_TYPE_FEMALE;
          }
-        Api.getSource().register(login, password, sex)
+        Api.getSource().register(new SignUpRequestData(login, password, sex))
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(),this));
 
     }
 
-    private ApiResponse.ApiResponseListener<AuthResponse> getApiResponseListener() {
-        return new ApiResponse.ApiResponseListener<AuthResponse>() {
+    private ApiResponse.ApiResponseListener<ResponseModel<User>> getApiResponseListener() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<User>>() {
             @Override
-            public void onResponse(AuthResponse result) throws IOException {
+            public void onResponse(ResponseModel<User> result) throws IOException {
                 cancelLoadingDialog();
                 if(result == null){
                     MessageReporter.showMessage(RegisterActivity.this,
@@ -100,14 +101,14 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
                     return;
                 }
 
-                if(result.getResponse().getError() != null){
+                if(result.getResult().getError() != null){
                     App.Log("error");
                     MessageReporter.showMessage(RegisterActivity.this,
                             "Ошибка",
                             "Ошибка при регистрации");
                     return;
                 }
-                User user = result.getResponse();
+                User user = result.getResult();
                 App.putUserData(user);
                 startActivity(MainActivity.getInstance(RegisterActivity.this));
                 finish();

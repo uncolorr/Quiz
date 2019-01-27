@@ -2,6 +2,7 @@ package com.sap.uncolor.quiz.apis;
 
 import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.User;
+import com.sap.uncolor.quiz.models.request_datas.CheckAnswerRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
@@ -29,7 +30,7 @@ public interface ApiSource {
 
     @Headers("Content-Type: application/json")
     @POST("checkAnswer")
-    Call<ResponseModel<List<Question>>> checkAnswer(@Body GetQuestionsRequestData getQuestionsRequestData);
+    Call<ResponseModel<Boolean>> checkAnswer(@Body CheckAnswerRequestData checkAnswerRequestData);
 
     /*@FormUrlEncoded
     @POST("login")

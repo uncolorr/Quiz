@@ -4,11 +4,12 @@ import android.content.Context;
 
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
-import com.sap.uncolor.quiz.models.QuestionsResponse;
+import com.sap.uncolor.quiz.apis.ResponseModel;
+import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
-import com.sap.uncolor.quiz.utils.QuizParser;
+import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 
-import java.io.IOException;
+import java.util.List;
 
 public class ResultActivityPresenter implements ResultActivityContract.Presenter,
         ApiResponse.ApiFailureListener {
@@ -24,20 +25,21 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
     @Override
     public void onStartGame() {
         view.showProcessingDialog();
-        Api.getSource().getQuestions()
+        Api.getSource().getQuestions(new GetQuestionsRequestData())
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(), this));
     }
 
-    private ApiResponse.ApiResponseListener<QuestionsResponse> getApiResponseListener() {
-        return new ApiResponse.ApiResponseListener<QuestionsResponse>() {
+    private ApiResponse.ApiResponseListener<ResponseModel<List<Question>>> getApiResponseListener() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<List<Question>>>() {
             @Override
-            public void onResponse(QuestionsResponse result) throws IOException {
+            public void onResponse(ResponseModel<List<Question>> result) {
                 view.hideProcessingDialog();
                 if(result == null){
                     view.showErrorMessage();
                 }
                 else {
-                    Quiz quiz = QuizParser.toQuizModel(result.getResponse());
+                    Quiz quiz = new Quiz();
+                    quiz.setQuestions(result.getResult());
                     view.startGame(quiz);
                 }
             }

@@ -4,11 +4,11 @@ import com.sap.uncolor.quiz.models.Quiz;
 
 public interface ResultActivityContract {
 
-    interface Presenter{
+    interface Presenter {
         void onStartGame();
     }
 
-    interface View{
+    interface View {
         void showProcessingDialog();
         void hideProcessingDialog();
         void startGame(Quiz quiz);
