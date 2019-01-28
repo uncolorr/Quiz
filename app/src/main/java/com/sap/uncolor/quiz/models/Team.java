@@ -56,4 +56,8 @@ public class Team implements ItemModel {
     public void setPrivateGamePlayers(ArrayList<PrivateGamePlayer> privateGamePlayers) {
         this.privateGamePlayers = privateGamePlayers;
     }
+
+    public int getId() {
+        return id;
+    }
 }

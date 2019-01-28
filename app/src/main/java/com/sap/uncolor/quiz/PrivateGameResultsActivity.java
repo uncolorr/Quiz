@@ -1,11 +1,14 @@
 package com.sap.uncolor.quiz;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
@@ -26,6 +29,10 @@ public class PrivateGameResultsActivity extends AppCompatActivity {
 
     private UniversalAdapter adapter;
 
+    public static Intent getInstance(Context context){
+        return new Intent(context, PrivateGameResultsActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +46,7 @@ public class PrivateGameResultsActivity extends AppCompatActivity {
         textViewNextPlayer.setText("Отвечает Антон, Команда А");
         DBManager dbManager = new DBManager(this);
         ArrayList<Team> teams = dbManager.getPrivateGameTeamsFromDatabase();
+        App.Log("teams count: " + teams.size());
         for (int i = 0; i < teams.size(); i++) {
             adapter.add(teams.get(i));
         }

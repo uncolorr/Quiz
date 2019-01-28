@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 
+import com.sap.uncolor.quiz.application.App;
+import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
@@ -51,8 +53,20 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
 
     @OnClick(R.id.buttonCreatePrivateTable)
     void onButtonCreateTableClick(){
+        ArrayList<Team> teams = new ArrayList<>();
+        for (int i = 0; i < adapter.getItems().size(); i++) {
+            Team team = (Team) adapter.getItems().get(i);
+            team.setId(i + 1);
+            teams.add(team);
+        }
+        App.Log("teams count before create table: " + teams.size());
+        DBManager dbManager = new DBManager(this);
+        dbManager.addPrivateGameTeamsFromDatabase(teams);
+        dbManager.close();
 
+        startActivity(PrivateGameResultsActivity.getInstance(this));
     }
+
 
     @OnClick(R.id.imageButtonAddTeam)
     void onButtonAddTeamClick(){

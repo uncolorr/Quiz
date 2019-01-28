@@ -34,7 +34,6 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     private static final int GAME_TYPE_SINGLE = 1;
     private static final int GAME_TYPE_ONLINE = 2;
-    private static final int GAME_TYPE_PRIVATE = 3;
 
     @BindView(R.id.recyclerViewResults)
     RecyclerView recyclerViewResults;
@@ -106,7 +105,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     protected void onDestroy() {
         super.onDestroy();
         if(dbManager.getCompletedRoundsCount() >= 5){
-            dbManager.clearDatabase();
+            dbManager.clearSingleGameResults();
         }
         dbManager.close();
     }

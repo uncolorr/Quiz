@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     void onButtonSingleGameClick(){
         DBManager dbManager = new DBManager(this);
         if(dbManager.getCompletedRoundsCount() >= 5){
-            dbManager.clearDatabase();
+            dbManager.clearSingleGameResults();
             dbManager.close();
         }
         loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);

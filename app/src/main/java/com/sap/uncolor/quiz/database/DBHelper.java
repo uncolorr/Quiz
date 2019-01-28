@@ -19,16 +19,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     public static final String TABLE_PRIVATE_GAME_PLAYERS = "private_game_players";
-    public static final String TABLE_PRIVATE_GAME_TEAMS = "private_game_players";
+    public static final String TABLE_PRIVATE_GAME_TEAMS = "private_game_teams";
 
     public static final String FIELD_PLAYER_NAME = "player_name";
     public static final String FIELD_PLAYER_POINTS_RIGHT = "player_points_right";
     public static final String FIELD_PLAYER_POINTS_WRONG = "player_points_wrong";
+    public static final String FIELD_PLAYER_TEAM_ID = "player_team_id";
 
     public static final String FIELD_TEAM_NAME = "team_name";
+    public static final String FIELD_TEAM_ID = "id";
 
     public DBHelper(Context context) {
-        // конструктор суперкласса
         super(context, DATABASE_NAME, null, 1);
     }
 
@@ -36,7 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         App.Log("--- onCreate database ---");
         db.execSQL("create table " + TABLE_SINGLE_GAME +"("
-                + "id integer primary key autoincrement,"
+                + FIELD_TEAM_ID + " integer primary key autoincrement,"
                 + FIELD_MY_ROUND_ONE + " integer,"
                 + FIELD_MY_ROUND_TWO + " integer,"
                 + FIELD_MY_ROUND_THREE + " integer,"
@@ -50,9 +51,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table " + TABLE_PRIVATE_GAME_PLAYERS +"("
                 + "id integer primary key autoincrement,"
-                + FIELD_PLAYER_NAME + " integer,"
+                + FIELD_PLAYER_NAME + " text,"
+                + FIELD_PLAYER_TEAM_ID + " integer,"
                 + FIELD_PLAYER_POINTS_RIGHT + " integer,"
-                + FIELD_PLAYER_POINTS_WRONG + " integer" + ");");
+                + FIELD_PLAYER_POINTS_WRONG + " integer,"
+                + "foreign key ("+ FIELD_PLAYER_TEAM_ID + ")"+" REFERENCES " + TABLE_PRIVATE_GAME_TEAMS + "(id)"
+                + ");");
 
     }
 

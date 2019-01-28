@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.models.Results;
 import com.sap.uncolor.quiz.models.Team;
@@ -51,8 +52,8 @@ public class DBManager {
                 team.setId(teamCursor.getInt(idIndex));
                 team.setName(teamCursor.getString(teamNameIndex));
 
-                Cursor playersCursor = db.query(DBHelper.TABLE_PRIVATE_GAME_PLAYERS, null,
-                        null,
+                /*Cursor playersCursor = db.query(DBHelper.TABLE_PRIVATE_GAME_PLAYERS, null,
+                        DBHelper.FIELD_PLAYER_TEAM_ID + " = " + Integer.toString(team.getId()),
                         null,
                         null,
                         null,
@@ -66,11 +67,40 @@ public class DBManager {
                         players.add(privateGamePlayer);
 
                     } while (teamCursor.moveToNext());
+                    App.Log("players count in team: " + players.size());
                     team.setPrivateGamePlayers(players);
-                }
+                }*/
+
+                teams.add(team);
+                App.Log("team added");
 
             } while (teamCursor.moveToNext());
+            teamCursor.close();
         }
+
+        for (int i = 0; i < teams.size(); i++) {
+            Team team = teams.get(i);
+            Cursor playersCursor = db.query(DBHelper.TABLE_PRIVATE_GAME_PLAYERS, null,
+                    DBHelper.FIELD_PLAYER_TEAM_ID + " = " + Integer.toString(team.getId()),
+                    null,
+                    null,
+                    null,
+                    null);
+
+            if (playersCursor.moveToFirst()) {
+                ArrayList<PrivateGamePlayer> players = new ArrayList<>();
+                int playerNameIndex = playersCursor.getColumnIndex(DBHelper.FIELD_PLAYER_NAME);
+                do {
+                    PrivateGamePlayer privateGamePlayer = new PrivateGamePlayer(playersCursor.getString(playerNameIndex));
+                    players.add(privateGamePlayer);
+
+                } while (teamCursor.moveToNext());
+                App.Log("players count in team: " + players.size());
+                team.setPrivateGamePlayers(players);
+            }
+            playersCursor.close();
+        }
+
         return teams;
     }
 
@@ -115,8 +145,13 @@ public class DBManager {
     }
 
 
-    public void clearDatabase(){
+    public void clearSingleGameResults(){
         db.delete(DBHelper.TABLE_SINGLE_GAME, null, null);
+    }
+
+    public void clearPrivateGameResults(){
+        db.delete(DBHelper.TABLE_PRIVATE_GAME_PLAYERS, null, null);
+        db.delete(DBHelper.TABLE_PRIVATE_GAME_TEAMS, null, null);
     }
 
     public int getCompletedRoundsCount(){
@@ -126,8 +161,28 @@ public class DBManager {
                 null,
                 null,
                 null);
-
         return cursor.getCount();
+    }
+
+    public void addPrivateGameTeamsFromDatabase(ArrayList<Team> teams){
+        clearPrivateGameResults();
+        App.Log("team size in manager:" + teams.size());
+        for (int i = 0; i < teams.size(); i++) {
+            Team team = teams.get(i);
+            ContentValues cvForTeam = new ContentValues();
+            cvForTeam.put(DBHelper.FIELD_TEAM_ID, team.getId());
+            cvForTeam.put(DBHelper.FIELD_TEAM_NAME, team.getName());
+            db.insert(DBHelper.TABLE_PRIVATE_GAME_TEAMS, null, cvForTeam);
+            for (int j = 0; j < team.getPrivateGamePlayers().size(); j++) {
+                PrivateGamePlayer player = team.getPrivateGamePlayers().get(j);
+                ContentValues cvForPlayer = new ContentValues();
+                cvForPlayer.put(DBHelper.FIELD_PLAYER_NAME, player.getName());
+                cvForPlayer.put(DBHelper.FIELD_PLAYER_POINTS_RIGHT, player.getPointsRight());
+                cvForPlayer.put(DBHelper.FIELD_PLAYER_POINTS_WRONG, player.getPointsWrong());
+                cvForPlayer.put(DBHelper.FIELD_PLAYER_TEAM_ID, team.getId());
+                db.insert(DBHelper.TABLE_PRIVATE_GAME_PLAYERS, null, cvForPlayer);
+            }
+        }
     }
 
     public void close(){

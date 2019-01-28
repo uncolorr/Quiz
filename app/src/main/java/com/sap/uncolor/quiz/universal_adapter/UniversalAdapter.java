@@ -6,7 +6,6 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.sap.uncolor.quiz.ItemModel;
-import com.sap.uncolor.quiz.application.App;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +30,9 @@ public class UniversalAdapter extends RecyclerView.Adapter {
 
     public void registerRenderer(@NonNull final ViewRenderer renderer) {
         final int type = renderer.getType();
-        App.Log("type added: " + type);
 
         if (renderers.get(type) == null) {
             renderers.put(type, renderer);
-            App.Log("renderers size: " + renderers.size());
         } else {
             throw new RuntimeException("ViewRenderer already exist with this type: " + type);
         }
