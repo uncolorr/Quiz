@@ -41,6 +41,8 @@ public class App extends Application {
         return user.getToken();
     }
 
+
+
     public static void clearUserData(){
         Hawk.delete(KEY_USER);
     }

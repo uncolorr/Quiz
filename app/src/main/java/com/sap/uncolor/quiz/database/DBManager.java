@@ -51,26 +51,6 @@ public class DBManager {
                 Team team = new Team();
                 team.setId(teamCursor.getInt(idIndex));
                 team.setName(teamCursor.getString(teamNameIndex));
-
-                /*Cursor playersCursor = db.query(DBHelper.TABLE_PRIVATE_GAME_PLAYERS, null,
-                        DBHelper.FIELD_PLAYER_TEAM_ID + " = " + Integer.toString(team.getId()),
-                        null,
-                        null,
-                        null,
-                        null);
-
-                if (playersCursor.moveToFirst()) {
-                    ArrayList<PrivateGamePlayer> players = new ArrayList<>();
-                    int playerNameIndex = playersCursor.getColumnIndex(DBHelper.FIELD_PLAYER_NAME);
-                    do {
-                        PrivateGamePlayer privateGamePlayer = new PrivateGamePlayer(playersCursor.getString(playerNameIndex));
-                        players.add(privateGamePlayer);
-
-                    } while (teamCursor.moveToNext());
-                    App.Log("players count in team: " + players.size());
-                    team.setPrivateGamePlayers(players);
-                }*/
-
                 teams.add(team);
                 App.Log("team added");
 
@@ -87,14 +67,15 @@ public class DBManager {
                     null,
                     null);
 
+            ArrayList<PrivateGamePlayer> players = new ArrayList<>();
             if (playersCursor.moveToFirst()) {
-                ArrayList<PrivateGamePlayer> players = new ArrayList<>();
                 int playerNameIndex = playersCursor.getColumnIndex(DBHelper.FIELD_PLAYER_NAME);
                 do {
                     PrivateGamePlayer privateGamePlayer = new PrivateGamePlayer(playersCursor.getString(playerNameIndex));
                     players.add(privateGamePlayer);
+                    App.Log("player added");
 
-                } while (teamCursor.moveToNext());
+                } while (playersCursor.moveToNext());
                 App.Log("players count in team: " + players.size());
                 team.setPrivateGamePlayers(players);
             }

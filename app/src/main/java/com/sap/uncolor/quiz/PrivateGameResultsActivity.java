@@ -1,5 +1,6 @@
 package com.sap.uncolor.quiz;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
+import com.sap.uncolor.quiz.models.PrivateGame;
 import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 
@@ -33,6 +34,7 @@ public class PrivateGameResultsActivity extends AppCompatActivity {
         return new Intent(context, PrivateGameResultsActivity.class);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,13 +45,13 @@ public class PrivateGameResultsActivity extends AppCompatActivity {
         recyclerViewResults.setAdapter(adapter);
         recyclerViewResults.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
-        textViewNextPlayer.setText("Отвечает Антон, Команда А");
         DBManager dbManager = new DBManager(this);
         ArrayList<Team> teams = dbManager.getPrivateGameTeamsFromDatabase();
-        App.Log("teams count: " + teams.size());
         for (int i = 0; i < teams.size(); i++) {
             adapter.add(teams.get(i));
         }
+        PrivateGame privateGame = new PrivateGame(teams);
+        textViewNextPlayer.setText("Отвечает " + privateGame.getCurrentPlayer() + ", " + privateGame.getCurrentTeam());
     }
 
     @OnClick(R.id.linearLayoutStartGame)

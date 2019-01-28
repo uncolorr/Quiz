@@ -11,13 +11,16 @@ public class Team implements ItemModel {
     private int id;
     private String name;
     private ArrayList<PrivateGamePlayer> privateGamePlayers = new ArrayList<>();
+    private int currentPlayer;
 
     public Team() {
-
+        currentPlayer = 0;
     }
+
     public Team(String name, ArrayList<PrivateGamePlayer> privateGamePlayers) {
         this.name = name;
         this.privateGamePlayers = privateGamePlayers;
+        this.currentPlayer = 0;
     }
 
     @Override
@@ -59,5 +62,22 @@ public class Team implements ItemModel {
 
     public int getId() {
         return id;
+    }
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void nextPlayer(){
+        int teamsCount = privateGamePlayers.size();
+        if(teamsCount == 0){
+            return;
+        }
+        if(currentPlayer >= teamsCount - 1){
+            currentPlayer = 0;
+        }
+        else {
+            currentPlayer++;
+        }
     }
 }
