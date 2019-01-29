@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
 
-import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.models.Team;
@@ -59,12 +58,12 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
             team.setId(i + 1);
             teams.add(team);
         }
-        App.Log("teams count before create table: " + teams.size());
         DBManager dbManager = new DBManager(this);
         dbManager.addPrivateGameTeamsFromDatabase(teams);
         dbManager.close();
 
-        startActivity(PrivateGameResultsActivity.getInstance(this));
+        startActivity(PrivateGameResultsActivity
+                .getInstanceForInitGame(this));
     }
 
 

@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.sap.uncolor.quiz.AnswerListener;
+import com.sap.uncolor.quiz.PrivateGameResultsActivity;
 import com.sap.uncolor.quiz.QuizFragmentPagerAdapter;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.application.App;
+import com.sap.uncolor.quiz.models.PrivateGame;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.widgets.AnimatingProgressBar;
@@ -25,6 +27,13 @@ import butterknife.ButterKnife;
 public class QuizActivity extends AppCompatActivity {
 
     private static final String ARG_QUIZ = "quiz";
+    private static final String ARG_PRIVATE_GAME = "private_game";
+    private static final String ARG_MODE = "mode";
+
+    public static final int MODE_SINGLE_GAME = 1;
+    public static final int MODE_PRIVATE_GAME = 2;
+    public static final int MODE_ONLINE_GAME = 3;
+
 
     private static final int TIME_INTERVAL = 1000;
     private static final int TIME_FOR_ANSWER = 10000;
@@ -42,6 +51,8 @@ public class QuizActivity extends AppCompatActivity {
 
     private Quiz quiz;
 
+    private PrivateGame privateGame;
+
     private CountDownTimer countDownTimer;
 
     private ArrayList<Integer> answers = new ArrayList<>();
@@ -50,9 +61,20 @@ public class QuizActivity extends AppCompatActivity {
 
     private int timeLeft = 0;
 
-    public static Intent getInstance(Context context, Quiz quiz){
+    private int mode;
+
+    public static Intent getInstanceForSingleGame(Context context, Quiz quiz){
         Intent intent = new Intent(context, QuizActivity.class);
         intent.putExtra(ARG_QUIZ, quiz);
+        intent.putExtra(ARG_MODE, MODE_SINGLE_GAME);
+        return intent;
+    }
+
+    public static Intent getInstanceForPrivateGame(Context context, Quiz quiz, PrivateGame privateGame){
+        Intent intent = new Intent(context, QuizActivity.class);
+        intent.putExtra(ARG_PRIVATE_GAME, privateGame);
+        intent.putExtra(ARG_QUIZ, quiz);
+        intent.putExtra(ARG_MODE, MODE_PRIVATE_GAME);
         return intent;
     }
 
@@ -61,7 +83,9 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         ButterKnife.bind(this);
+        mode = getIntent().getIntExtra(ARG_MODE, 0);
         quiz = (Quiz) getIntent().getSerializableExtra(ARG_QUIZ);
+        privateGame = (PrivateGame) getIntent().getSerializableExtra(ARG_PRIVATE_GAME);
         fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz);
         fragmentPagerAdapter.setAnswerListener(getAnswerListener());
         viewPager.setPagingEnabled(false);
@@ -167,10 +191,23 @@ public class QuizActivity extends AppCompatActivity {
             textViewRoundNumber.setText("Раунд 3");
             startTimer();
         }
-        if(currentPosition == 2){
-            finish();
-            ArrayList<Integer> enemyAnswers = generateComputerAnswers();
-            startActivity(ResultsActivity.getInstanceForSingleGame(QuizActivity.this, answers, enemyAnswers));
+        if(currentPosition == 2) {
+            switch (mode) {
+                case MODE_SINGLE_GAME:
+                    finish();
+                    ArrayList<Integer> enemyAnswers = generateComputerAnswers();
+                    startActivity(ResultsActivity.getInstanceForSingleGame(QuizActivity.this, answers, enemyAnswers));
+                    break;
+
+            case MODE_PRIVATE_GAME:
+                privateGame.addResultsToCurrentPlayer(answers);
+                privateGame.nextPlayer();
+                privateGame.nextTeam();
+                finish();
+                startActivity(PrivateGameResultsActivity.getInstanceForShowResults(QuizActivity.this, privateGame));
+                break;
+        }
+
         }
     }
 }

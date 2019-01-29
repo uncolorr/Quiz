@@ -16,18 +16,24 @@
 
         <TextView
             android:id="@+id/textViewRoundNumber"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Раунд 1"
             android:textColor="@android:color/white"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"/>
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
 
+        <TextView
+            android:id="@+id/textViewCurrentPrivatePlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:textColor="@android:color/white"
+            android:textAlignment="textEnd"
+            android:singleLine="true"
+            tools:text="Отвечает Антон, Команда А"/>
     </LinearLayout>
 
     <com.sap.uncolor.quiz.widgets.NonSwipeViewPager

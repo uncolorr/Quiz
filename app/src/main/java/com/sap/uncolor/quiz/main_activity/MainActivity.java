@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                 else {
                     Quiz quiz = new Quiz();
                     quiz.setQuestions(result.getResult());
-                    startActivity(QuizActivity.getInstance(MainActivity.this, quiz));
+                    startActivity(QuizActivity.getInstanceForSingleGame(MainActivity.this, quiz));
                 }
             }
         };

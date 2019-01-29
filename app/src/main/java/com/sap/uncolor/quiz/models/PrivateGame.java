@@ -1,23 +1,14 @@
 package com.sap.uncolor.quiz.models;
 
-import com.orhanobut.hawk.Hawk;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PrivateGame {
-
-    public static final String KEY_PRIVATE_GAME = "private_game";
+public class PrivateGame implements Serializable{
 
     private ArrayList<Team> teams;
     private int currentTeam;
 
-    private static PrivateGame privateGame;
-
-
-    private PrivateGame(ArrayList<Team> teams) {
-        if(privateGame == null){
-            privateGame = new PrivateGame(teams);
-        }
+    public PrivateGame(ArrayList<Team> teams) {
         this.teams = teams;
         this.currentTeam = 0;
     }
@@ -55,9 +46,14 @@ public class PrivateGame {
         return teams.get(currentTeam);
     }
 
-    public void save(){
-        Hawk.put(KEY_PRIVATE_GAME, this);
+    public void addResultsToCurrentPlayer(ArrayList<Integer> answers) {
+        for (int i = 0; i < answers.size(); i++) {
+            if(answers.get(i) == 1){
+                getCurrentPlayer().addPointsRight();
+            }
+            else {
+                getCurrentPlayer().addPointsWrong();
+            }
+        }
     }
-
-
 }

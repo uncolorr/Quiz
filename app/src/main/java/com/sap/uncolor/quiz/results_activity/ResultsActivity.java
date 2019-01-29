@@ -130,7 +130,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     @Override
     public void startGame(Quiz quiz) {
-        startActivity(QuizActivity.getInstance(this, quiz));
+        startActivity(QuizActivity.getInstanceForSingleGame(this, quiz));
         finish();
     }
 

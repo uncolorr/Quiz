@@ -2,9 +2,10 @@ package com.sap.uncolor.quiz.models;
 
 import com.sap.uncolor.quiz.ItemModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Team implements ItemModel {
+public class Team implements ItemModel, Serializable {
 
     public static final int TYPE = 4;
 
