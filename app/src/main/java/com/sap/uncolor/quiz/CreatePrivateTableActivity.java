@@ -58,12 +58,14 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
             team.setId(i + 1);
             teams.add(team);
         }
+
         DBManager dbManager = new DBManager(this);
         dbManager.addPrivateGameTeamsFromDatabase(teams);
         dbManager.close();
 
         startActivity(PrivateGameResultsActivity
                 .getInstanceForInitGame(this));
+        finish();
     }
 
 

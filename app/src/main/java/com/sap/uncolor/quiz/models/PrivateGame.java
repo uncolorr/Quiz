@@ -26,6 +26,10 @@ public class PrivateGame implements Serializable{
         }
     }
 
+    public ArrayList<Team> getTeams() {
+        return teams;
+    }
+
     public int getCurrentTeamIndex() {
         return currentTeam;
     }

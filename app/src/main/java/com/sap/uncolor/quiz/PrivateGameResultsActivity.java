@@ -50,6 +50,7 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
 
     private PrivateGame privateGame;
 
+    private int mode;
 
     public static Intent getInstanceForInitGame(Context context){
         Intent intent = new Intent(context, PrivateGameResultsActivity.class);
@@ -76,14 +77,27 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
         recyclerViewResults.setAdapter(adapter);
         recyclerViewResults.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
-        DBManager dbManager = new DBManager(this);
-        ArrayList<Team> teams = dbManager.getPrivateGameTeamsFromDatabase();
-        for (int i = 0; i < teams.size(); i++) {
-            adapter.add(teams.get(i));
+        mode = getIntent().getIntExtra(ARG_MODE, 0);
+        if(mode == MODE_INIT){
+            DBManager dbManager = new DBManager(this);
+            ArrayList<Team> teams = dbManager.getPrivateGameTeamsFromDatabase();
+            for (int i = 0; i < teams.size(); i++) {
+                adapter.add(teams.get(i));
+            }
+            dbManager.close();
+            privateGame = new PrivateGame(teams);
         }
-        dbManager.close();
-        PrivateGame privateGame = new PrivateGame(teams);
-        textViewNextPlayer.setText("Отвечает " + privateGame.getCurrentPlayer() + ", " + privateGame.getCurrentTeam());
+
+        if(mode == MODE_SHOW_RESULTS){
+            privateGame = (PrivateGame) getIntent().getSerializableExtra(ARG_PRIVATE_GAME);
+            ArrayList<Team> teams = privateGame.getTeams();
+            for (int i = 0; i < teams.size(); i++) {
+                adapter.add(teams.get(i));
+            }
+        }
+
+        textViewNextPlayer.setText("Отвечает " + privateGame.getCurrentPlayer().getName() +
+                ", " + privateGame.getCurrentTeam().getName());
     }
 
     public void cancelLoadingDialog(){
@@ -114,6 +128,7 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
                     quiz.setQuestions(result.getResult());
                     startActivity(QuizActivity.
                             getInstanceForPrivateGame(PrivateGameResultsActivity.this, quiz, privateGame));
+                    finish();
                 }
             }
         };

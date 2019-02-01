@@ -11,6 +11,8 @@ public class Quiz implements Serializable{
     public static final int VARIANT_THREE = 3;
     public static final int VARIANT_FOUR = 4;
 
+
+
     private List<Question> questions = new ArrayList<>();
 
 

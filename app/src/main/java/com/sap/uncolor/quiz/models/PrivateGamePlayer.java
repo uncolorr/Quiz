@@ -2,7 +2,9 @@ package com.sap.uncolor.quiz.models;
 
 import com.sap.uncolor.quiz.ItemModel;
 
-public class PrivateGamePlayer implements ItemModel {
+import java.io.Serializable;
+
+public class PrivateGamePlayer implements ItemModel, Serializable {
 
     public static final int TYPE = 3;
 

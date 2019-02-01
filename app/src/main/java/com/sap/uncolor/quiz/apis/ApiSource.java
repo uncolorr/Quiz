@@ -1,9 +1,11 @@
 package com.sap.uncolor.quiz.apis;
 
 import com.sap.uncolor.quiz.models.Question;
+import com.sap.uncolor.quiz.models.TopsModel;
 import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.models.request_datas.CheckAnswerRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GetTopRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 
@@ -32,21 +34,8 @@ public interface ApiSource {
     @POST("checkAnswer")
     Call<ResponseModel<Boolean>> checkAnswer(@Body CheckAnswerRequestData checkAnswerRequestData);
 
-    /*@FormUrlEncoded
-    @POST("login")
-    Call<AuthResponse> login(@Field("login")String login,
-                             @Field("password")String password);
-
-    @FormUrlEncoded
-    @POST("register")
-    Call<AuthResponse> register(@Field("login") String login,
-                                @Field("password") String password,
-                                @Field("sex") String sex);
-
-    @FormUrlEncoded
-    @POST("updatePoints")
-    Call<AuthResponse> updatePoints(@Field("token") String token, @Field("points") int points);*/
-
-
+    @Headers("Content-Type: application/json")
+    @POST("top")
+    Call<ResponseModel<TopsModel>> getTop(@Body GetTopRequestData getTopRequestData);
 
 }

@@ -135,8 +135,6 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         points += point;
-        App.Log("point: " + point);
-        App.Log("points: " + points);
     }
 
     private ArrayList<Integer> generateComputerAnswers(){
