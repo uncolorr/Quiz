@@ -21,7 +21,8 @@
             android:text="Раунд 1"
             android:textColor="@android:color/white"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/noteworthy_bold"/>
 
 
         <TextView
@@ -33,7 +34,8 @@
             android:textColor="@android:color/white"
             android:textAlignment="textEnd"
             android:singleLine="true"
-            tools:text="Отвечает Антон, Команда А"/>
+            tools:text="Отвечает Антон, Команда А"
+            android:fontFamily="@font/noteworthy_bold"/>
     </LinearLayout>
 
     <com.sap.uncolor.quiz.widgets.NonSwipeViewPager

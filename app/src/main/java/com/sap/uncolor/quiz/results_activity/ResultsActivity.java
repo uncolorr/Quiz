@@ -16,6 +16,7 @@ import com.sap.uncolor.quiz.ResultsViewRenderer;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Results;
+import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.universal_adapter.ResultsAdapter;
 import com.sap.uncolor.quiz.utils.MessageReporter;
@@ -31,6 +32,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     private static final String ARG_GAME_TYPE = "game_type";
     private static final String ARG_ANSWERS = "answers";
     private static final String ARG_ENEMY_ANSWERS = "enemy_answers";
+    private static final String ARG_ROOM = "room";
 
     private static final int GAME_TYPE_SINGLE = 1;
     private static final int GAME_TYPE_ONLINE = 2;
@@ -41,6 +43,12 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     @BindView(R.id.textViewResultScores)
     TextView textViewResultScores;
 
+    @BindView(R.id.textViewMyUsername)
+    TextView textViewMyUsername;
+
+    @BindView(R.id.textViewEnemyUsername)
+    TextView textViewEnemyUsername;
+
     private ResultsAdapter adapter;
 
     private DBManager dbManager;
@@ -49,6 +57,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     private AlertDialog loadingDialog;
 
+    private Room room;
 
     public static Intent getInstanceForSingleGame(Context context,
                                                   ArrayList<Integer> answers,
@@ -60,9 +69,10 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         return intent;
     }
 
-    public static Intent getInstanceForOnlineGame(Context context){
+    public static Intent getInstanceForOnlineGame(Context context, Room room){
         Intent intent = new Intent(context, ResultsActivity.class);
         intent.putExtra(ARG_GAME_TYPE, GAME_TYPE_ONLINE);
+        intent.putExtra(ARG_ROOM, room);
         return intent;
     }
 
@@ -92,7 +102,12 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         }
 
         if(gameType == GAME_TYPE_ONLINE){
-
+            room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
+            textViewMyUsername.setText(room.getCreator().getLogin());
+            if(room.getCompetitor() == null){
+                textViewEnemyUsername.setText("N/A");
+            }
+            //getrounds info
         }
     }
 

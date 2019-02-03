@@ -20,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:fontFamily="@font/noteworthy_bold"
         android:text="Команда А"/>
 
 
@@ -28,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:fontFamily="@font/noteworthy_bold"
         android:text="Участников: 3"/>
 
     </LinearLayout>

@@ -26,7 +26,8 @@
             android:layout_height="wrap_content"
             android:text="Результаты"
             android:textColor="@android:color/white"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginStart="16dp"
+            style="@style/TextViewBoldStyle"/>
 
         <Space
             android:layout_width="0dp"
@@ -34,9 +35,11 @@
             android:layout_weight="1"/>
 
         <ImageButton
+            android:id="@+id/imageButtonUpdate"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_update"/>
 
     </LinearLayout>
 
@@ -48,11 +51,14 @@
                 android:id="@+id/imageViewMyAvatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@color/colorMain"
+                android:src="@android:color/white"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorMain"
                 android:layout_marginStart="12dp"
                 android:layout_gravity="center"/>
 
             <TextView
+                android:id="@+id/textViewMyUsername"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -66,10 +72,13 @@
                 android:layout_marginBottom="8dp"
                 android:lines="2"
                 android:maxLines="2"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                style="@style/TextViewBoldStyle"/>
+
 
 
             <TextView
+                android:id="@+id/textViewEnemyUsername"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -83,7 +92,8 @@
                 android:layout_marginBottom="8dp"
                 android:lines="2"
                 android:maxLines="2"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                style="@style/TextViewBoldStyle"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imageViewEnemyAvatar"
@@ -91,7 +101,9 @@
                 android:layout_height="48dp"
                 android:layout_marginEnd="12dp"
                 android:layout_gravity="center"
-                android:src="@color/colorMain"/>
+                android:src="@android:color/white"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorMain"/>
 
         </LinearLayout>
 
@@ -107,6 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ИТОГ"
+            style="@style/TextViewBoldStyle"
             android:layout_margin="16dp"
             android:textColor="@color/colorMain"
             android:layout_gravity="center"/>
@@ -124,11 +137,12 @@
             android:id="@+id/textViewResultScores"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4 - 5"
+            android:text="0 - 0"
             android:layout_margin="16dp"
             android:textSize="48sp"
             android:textColor="@color/colorMain"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            style="@style/TextViewBoldStyle"/>
 
         <Button
             android:id="@+id/buttonBack"
@@ -139,6 +153,7 @@
             android:layout_marginBottom="24dp"
             android:textColor="@color/colorMain"
             android:background="@drawable/button_menu"
+            android:fontFamily="@font/noteworthy_bold"
             android:text="Назад"/>
 
     </LinearLayout>

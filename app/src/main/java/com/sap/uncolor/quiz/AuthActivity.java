@@ -1,5 +1,7 @@
 package com.sap.uncolor.quiz;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,10 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
     EditText editTextPassword;
 
     private AlertDialog loadingDialog;
+
+    public static Intent getInstance(Context context){
+        return new Intent(context, AuthActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,15 +73,8 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
                             "Ошибка авторизации");
                     return;
                 }
-
-                if(result.getResult().getError() != null){
-                    App.Log("error");
-                    MessageReporter.showMessage(AuthActivity.this,
-                                "Ошибка",
-                                "Нет логина или пароля");
-                    return;
-                }
                     User user = result.getResult();
+                    App.Log("user name: " + user.getLogin());
                     App.putUserData(user);
                     startActivity(MainActivity.getInstance(AuthActivity.this));
                     finish();

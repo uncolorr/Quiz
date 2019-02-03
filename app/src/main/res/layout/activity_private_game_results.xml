@@ -25,7 +25,8 @@
                 android:layout_height="wrap_content"
                 android:text="Результаты"
                 android:textColor="@android:color/white"
-                android:layout_marginStart="16dp"/>
+                android:fontFamily="@font/noteworthy_bold"
+                android:layout_marginStart="16dp" />
 
             <Space
                 android:layout_width="0dp"
@@ -62,6 +63,7 @@
             android:layout_marginBottom="8dp"
             android:textColor="@color/colorMain"
             android:textSize="22sp"
+            android:fontFamily="@font/noteworthy_bold"
             android:text="Играть"/>
 
         <TextView
@@ -69,6 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorMain"
+            android:fontFamily="@font/noteworthy_light"
             tools:text="Ходит Антон, Команда А"/>
 
     </LinearLayout>

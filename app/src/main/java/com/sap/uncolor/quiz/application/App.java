@@ -43,7 +43,7 @@ public class App extends Application {
 
 
 
-    public static void clearUserData(){
+    public static void logout(){
         Hawk.delete(KEY_USER);
     }
 

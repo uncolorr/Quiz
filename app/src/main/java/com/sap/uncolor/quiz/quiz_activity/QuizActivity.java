@@ -116,6 +116,11 @@ public class QuizActivity extends AppCompatActivity {
         }.start();
     }
 
+    @Override
+    public void onBackPressed() {
+        //show confirm for exit
+    }
+
     private void addPoints(){
         int point = 0;
         if(timeLeft <= 10){

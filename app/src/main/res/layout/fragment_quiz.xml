@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="Сколько планет в Солнечной системе?"
+        android:fontFamily="@font/noteworthy_bold"
         android:layout_weight="2"
         android:padding="8dp"
         android:layout_gravity="center"
@@ -40,6 +41,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:background="@drawable/button_menu"
+            android:fontFamily="@font/noteworthy_bold"
             style="@style/TextViewBorderStyle"/>
 
         <TextView
@@ -52,6 +54,7 @@
             android:layout_gravity="center"
             android:padding="8dp"
             android:textAlignment="center"
+            android:fontFamily="@font/noteworthy_bold"
             android:gravity="center"
             android:background="@drawable/button_menu"
             style="@style/TextViewBorderStyle"/>
@@ -82,6 +85,7 @@
             android:textAlignment="center"
             android:gravity="center"
             android:padding="8dp"
+            android:fontFamily="@font/noteworthy_bold"
             android:background="@drawable/button_menu"
             style="@style/TextViewBorderStyle"/>
 
@@ -95,6 +99,7 @@
             android:layout_gravity="center"
             android:padding="8dp"
             android:textAlignment="center"
+            android:fontFamily="@font/noteworthy_bold"
             android:gravity="center"
             android:background="@drawable/button_menu"
             style="@style/TextViewBorderStyle"/>

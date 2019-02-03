@@ -1,10 +1,13 @@
 package com.sap.uncolor.quiz.apis;
 
 import com.sap.uncolor.quiz.models.Question;
+import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.TopsModel;
 import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.models.request_datas.CheckAnswerRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GetRoomRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GetRoomsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetTopRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
@@ -37,5 +40,13 @@ public interface ApiSource {
     @Headers("Content-Type: application/json")
     @POST("top")
     Call<ResponseModel<TopsModel>> getTop(@Body GetTopRequestData getTopRequestData);
+
+    @Headers("Content-Type: application/json")
+    @POST("getRooms")
+    Call<ResponseModel<List<Room>>> getRooms(@Body GetRoomsRequestData getRoomsRequestData);
+
+    @Headers("Content-Type: application/json")
+    @POST("getRoom")
+    Call<ResponseModel<Room>> getRoom(@Body GetRoomRequestData getRoomRequestData);
 
 }

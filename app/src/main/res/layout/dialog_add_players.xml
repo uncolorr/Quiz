@@ -19,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_add_players"
+            android:fontFamily="@font/noteworthy_bold"
             android:textColor="@android:color/white"
             android:layout_marginStart="16dp"/>
 
@@ -41,6 +42,7 @@
             android:layout_margin="12dp"
             android:layout_weight="1"
             android:hint="Введите имя"
+            android:fontFamily="@font/noteworthy_bold"
             style="@style/EditTextStyle"/>
 
         <ImageButton

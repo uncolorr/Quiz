@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -47,6 +48,8 @@ public class TopActivity extends AppCompatActivity implements ApiResponse.ApiFai
         adapter = new UniversalAdapter();
         adapter.registerRenderer(new TopViewRenderer(User.TYPE, this));
         recyclerViewTop.setAdapter(adapter);
+        recyclerViewTop.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL));
     }
 
     @Override
@@ -73,14 +76,6 @@ public class TopActivity extends AppCompatActivity implements ApiResponse.ApiFai
                 List<User> users = result.getResult().getUsers();
                 for (int i = 0; i <users.size() ; i++) {
                     adapter.add(users.get(i));
-                }
-
-                if(place > 100){
-                    //add individual holder for show user's rating
-                }
-
-                else {
-                    // select user's holder in top list
                 }
             }
         };

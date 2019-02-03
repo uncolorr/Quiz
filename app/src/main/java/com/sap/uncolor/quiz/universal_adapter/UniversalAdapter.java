@@ -79,4 +79,9 @@ public class UniversalAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         return items.size();
     }
+
+    public void clear() {
+        items.clear();
+        notifyDataSetChanged();
+    }
 }

@@ -17,7 +17,6 @@ import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -92,7 +91,7 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
     private ApiResponse.ApiResponseListener<ResponseModel<User>> getApiResponseListener() {
         return new ApiResponse.ApiResponseListener<ResponseModel<User>>() {
             @Override
-            public void onResponse(ResponseModel<User> result) throws IOException {
+            public void onResponse(ResponseModel<User> result) {
                 cancelLoadingDialog();
                 if(result == null){
                     MessageReporter.showMessage(RegisterActivity.this,
@@ -101,13 +100,13 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
                     return;
                 }
 
-                if(result.getResult().getError() != null){
+                /*if(result.getResult() != null){
                     App.Log("error");
                     MessageReporter.showMessage(RegisterActivity.this,
                             "Ошибка",
                             "Ошибка при регистрации");
                     return;
-                }
+                }*/
                 User user = result.getResult();
                 App.putUserData(user);
                 startActivity(MainActivity.getInstance(RegisterActivity.this));

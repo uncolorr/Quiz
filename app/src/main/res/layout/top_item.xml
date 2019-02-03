@@ -7,33 +7,29 @@
     android:gravity="center_vertical">
 
     <TextView
-        android:id="@+id/textViewSex"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="♀"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:textSize="24sp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"/>
-
-    <TextView
         android:id="@+id/textViewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/colorMain"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:fontFamily="@font/noteworthy_bold"
         tools:text="Uncolor"/>
 
     <Space
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
 
     <TextView
-        android:id="@+id/textViewScores"
+        android:id="@+id/textViewPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:fontFamily="@font/noteworthy_bold"
+        android:textColor="@color/colorMain"
         tools:text="3452"/>
 
 </LinearLayout>

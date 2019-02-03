@@ -5,7 +5,9 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 import com.sap.uncolor.quiz.ItemModel;
 
-public class User implements ItemModel{
+import java.io.Serializable;
+
+public class User implements ItemModel, Serializable{
 
     public static final int TYPE = 2;
 
@@ -33,10 +35,6 @@ public class User implements ItemModel{
     private int points;
 
     @Nullable
-    @SerializedName("error")
-    private String error;
-
-    @Nullable
     public int getId() {
         return id;
     }
@@ -54,11 +52,6 @@ public class User implements ItemModel{
     @Nullable
     public String getToken() {
         return token;
-    }
-
-    @Nullable
-    public String getError() {
-        return error;
     }
 
     @Nullable

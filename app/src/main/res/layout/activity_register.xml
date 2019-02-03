@@ -20,11 +20,13 @@
             android:text="Регистрация"
             android:textColor="@android:color/white"
             android:layout_marginStart="16dp"
+            android:fontFamily="@font/noteworthy_bold"
             android:layout_marginEnd="16dp"/>
 
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+
             android:layout_weight="1"/>
 
     </LinearLayout>
@@ -55,6 +57,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:hint="Логин"
+                android:fontFamily="@font/noteworthy_bold"
                 android:layout_marginBottom="16dp"/>
 
             <EditText
@@ -65,6 +68,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:inputType="textPassword"
+                android:fontFamily="@font/noteworthy_bold"
                 android:hint="Пароль"/>
 
             <EditText
@@ -75,6 +79,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:inputType="textPassword"
+                android:fontFamily="@font/noteworthy_bold"
                 android:hint="Повторите пароль"/>
 
             <info.hoang8f.android.segmented.SegmentedGroup
@@ -123,6 +128,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="Зарегистрироваться"
+                android:fontFamily="@font/noteworthy_bold"
                 android:textAllCaps="false"
                 android:layout_marginBottom="16dp"/>
 
