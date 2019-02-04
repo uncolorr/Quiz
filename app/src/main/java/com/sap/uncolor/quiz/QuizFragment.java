@@ -15,7 +15,9 @@ import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.models.Quiz;
-import com.sap.uncolor.quiz.models.request_datas.CheckAnswerRequestData;
+import com.sap.uncolor.quiz.models.Room;
+import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
+import com.sap.uncolor.quiz.models.request_datas.CheckAnswerForOfflineRequestData;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
 import butterknife.BindView;
@@ -24,8 +26,13 @@ import butterknife.OnClick;
 
 public class QuizFragment extends Fragment implements ApiResponse.ApiFailureListener{
 
-    private static final String ARG_MODEL = "quiz";
+    private static final String ARG_QUIZ = "quiz";
     private static final String ARG_ROUND = "round";
+    private static final String ARG_MODE = "mode";
+
+    private static final int MODE_ONLINE = 1;
+    private static final int MODE_OFFLINE = 2;
+
 
 
     @BindView(R.id.textViewQuestion)
@@ -47,13 +54,25 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
 
     private Quiz quiz;
     private int round;
+    private int mode;
+    private Room room;
 
-    public static QuizFragment newInstance(Quiz model, int round) {
-
+    public static QuizFragment newInstanceForOffline(Quiz quiz, int round) {
         Bundle args = new Bundle();
         QuizFragment fragment = new QuizFragment();
-        args.putSerializable(ARG_MODEL, model);
+        args.putSerializable(ARG_QUIZ, quiz);
         args.putInt(ARG_ROUND, round);
+        args.putInt(ARG_MODE, MODE_OFFLINE);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static QuizFragment newInstanceForOnline(Quiz quiz, int round, Room room) {
+        Bundle args = new Bundle();
+        QuizFragment fragment = new QuizFragment();
+        args.putSerializable(ARG_QUIZ, quiz);
+        args.putInt(ARG_ROUND, round);
+        args.putInt(ARG_MODE, MODE_ONLINE);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,8 +84,9 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
         View view = inflater.inflate(R.layout.fragment_quiz, container, false);
         ButterKnife.bind(this, view);
         if(getArguments() != null) {
-            quiz = (Quiz) getArguments().getSerializable(ARG_MODEL);
+            quiz = (Quiz) getArguments().getSerializable(ARG_QUIZ);
             round = getArguments().getInt(ARG_ROUND);
+            mode = getArguments().getInt(ARG_MODE);
         }
         if(quiz != null){
             textViewQuestion.setText(quiz.getQuestion(round).getQuestion());
@@ -75,7 +95,6 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
             textViewVariant3.setText(quiz.getQuestion(round).getVariant3());
             textViewVariant4.setText(quiz.getQuestion(round).getVariant4());
         }
-
         return view;
     }
 
@@ -86,8 +105,65 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
 
     private void answer(int variant){
         if(answerListener != null){
+            switch (mode){
+                case MODE_ONLINE:
+                    checkAnswerForOnlineGames(variant, round);
+                    break;
+                case MODE_OFFLINE:
+                    checkAnswerForOfflineGames(variant, round);
+                    break;
+            }
             disableInterface();
-            checkAnswer(variant, round);
+
+        }
+    }
+
+    private void checkAnswerForOnlineGames(int variant, int round) {
+        if(getContext() != null) {
+            switch (variant) {
+                case Quiz.VARIANT_ONE:
+                    Api.getSource().
+                            answerOnQuestionInRoom(
+                                    new AnswerOnQuestionInRoomRequestData
+                                            (quiz.getQuestion(round).getId(), "1", round, room.getUuid()))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant1.setTextColor(Color.WHITE);
+                    break;
+
+                case Quiz.VARIANT_TWO:
+                    Api.getSource().
+                            answerOnQuestionInRoom(
+                                    new AnswerOnQuestionInRoomRequestData
+                                            (quiz.getQuestion(round).getId(), "2", round, room.getUuid()))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant2.setTextColor(Color.WHITE);
+                    break;
+
+
+                case Quiz.VARIANT_THREE:
+                    Api.getSource().answerOnQuestionInRoom(
+                                    new AnswerOnQuestionInRoomRequestData
+                                            (quiz.getQuestion(round).getId(), "3", round, room.getUuid()))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant3.setTextColor(Color.WHITE);
+                    break;
+
+                case Quiz.VARIANT_FOUR:
+                    Api.getSource().answerOnQuestionInRoom(
+                                    new AnswerOnQuestionInRoomRequestData
+                                            (quiz.getQuestion(round).getId(), "4", round, room.getUuid()))
+                            .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
+                    textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
+                            R.drawable.button_answer_current));
+                    textViewVariant4.setTextColor(Color.WHITE);
+                    break;
+            }
         }
     }
 
@@ -122,12 +198,12 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
         this.answerListener = listener;
     }
 
-    private boolean checkAnswer(int variant, int round){
+    private boolean checkAnswerForOfflineGames(int variant, int round){
         if(getContext() != null) {
             switch (variant) {
                 case Quiz.VARIANT_ONE:
                     Api.getSource().
-                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "1"))
+                            checkAnswer(new CheckAnswerForOfflineRequestData(quiz.getQuestion(round).getId(), "1"))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -136,7 +212,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
 
                 case Quiz.VARIANT_TWO:
                     Api.getSource().
-                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "2"))
+                            checkAnswer(new CheckAnswerForOfflineRequestData(quiz.getQuestion(round).getId(), "2"))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -146,7 +222,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
 
                 case Quiz.VARIANT_THREE:
                     Api.getSource().
-                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "3"))
+                            checkAnswer(new CheckAnswerForOfflineRequestData(quiz.getQuestion(round).getId(), "3"))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -155,7 +231,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
 
                 case Quiz.VARIANT_FOUR:
                     Api.getSource().
-                            checkAnswer(new CheckAnswerRequestData(quiz.getQuestion(round).getId(), "4"))
+                            checkAnswer(new CheckAnswerForOfflineRequestData(quiz.getQuestion(round).getId(), "4"))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -171,7 +247,6 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
             @Override
             public void onResponse(ResponseModel<Boolean> result) {
                 if (getContext() != null) {
-
                     if (result == null) {
                         MessageReporter.showMessage(getContext(),
                                 "Ошибка",

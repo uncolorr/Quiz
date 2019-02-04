@@ -16,9 +16,9 @@ public class QuizFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public QuizFragmentPagerAdapter(FragmentManager fm, Quiz model) {
         super(fm);
-        quizFragmentOne = QuizFragment.newInstance(model, 1);
-        quizFragmentTwo = QuizFragment.newInstance(model, 2);
-        quizFragmentThree = QuizFragment.newInstance(model, 3);
+        quizFragmentOne = QuizFragment.newInstanceForOffline(model, 1);
+        quizFragmentTwo = QuizFragment.newInstanceForOffline(model, 2);
+        quizFragmentThree = QuizFragment.newInstanceForOffline(model, 3);
     }
 
     @Override

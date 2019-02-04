@@ -16,6 +16,13 @@ public class Room implements ItemModel, Serializable {
         return TYPE;
     }
 
+
+
+
+
+    @SerializedName("uuid")
+    private String uuid;
+
     @SerializedName("creator")
     private User creator;
 
@@ -27,7 +34,6 @@ public class Room implements ItemModel, Serializable {
     @Nullable
     @SerializedName("rounds")
     private String rounds;
-
 
     @SerializedName("is_booked")
     private boolean isBooked;
@@ -47,5 +53,9 @@ public class Room implements ItemModel, Serializable {
 
     public boolean isBooked() {
         return isBooked;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 }

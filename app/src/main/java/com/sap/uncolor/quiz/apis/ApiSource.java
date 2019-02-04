@@ -4,7 +4,8 @@ import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.TopsModel;
 import com.sap.uncolor.quiz.models.User;
-import com.sap.uncolor.quiz.models.request_datas.CheckAnswerRequestData;
+import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
+import com.sap.uncolor.quiz.models.request_datas.CheckAnswerForOfflineRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomsRequestData;
@@ -35,7 +36,7 @@ public interface ApiSource {
 
     @Headers("Content-Type: application/json")
     @POST("checkAnswer")
-    Call<ResponseModel<Boolean>> checkAnswer(@Body CheckAnswerRequestData checkAnswerRequestData);
+    Call<ResponseModel<Boolean>> checkAnswer(@Body CheckAnswerForOfflineRequestData checkAnswerForOfflineRequestData);
 
     @Headers("Content-Type: application/json")
     @POST("top")
@@ -48,5 +49,10 @@ public interface ApiSource {
     @Headers("Content-Type: application/json")
     @POST("getRoom")
     Call<ResponseModel<Room>> getRoom(@Body GetRoomRequestData getRoomRequestData);
+
+    @Headers("Content-Type: application/json")
+    @POST("answerOnQuestionInRoom")
+    Call<ResponseModel<Boolean>> answerOnQuestionInRoom(@Body AnswerOnQuestionInRoomRequestData answerOnQuestionInRoomRequestData);
+
 
 }

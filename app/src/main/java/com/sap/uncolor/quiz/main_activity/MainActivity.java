@@ -29,6 +29,7 @@ import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomsRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
+import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         textViewName.setText(App.getUserName());
         textViewPoints.setText(Integer.toString(App.getUserPoints()));
         adapter = new UniversalAdapter();
@@ -83,8 +85,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             dbManager.clearSingleGameResults();
             dbManager.close();
         }
-        loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
-        loadingDialog.show();
+        showLoadingDialog();
         Api.getSource().getQuestions(new GetQuestionsRequestData())
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(), this));
     }
@@ -94,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         super.onResume();
         Api.getSource().getRooms(new GetRoomsRequestData())
                 .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), this));
-
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<List<Room>>> getRoomsResponseListener() {
@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             }
         };
     }
-
 
     @OnClick(R.id.imageButtonSettings)
     void onSettingsButtonClick(){
@@ -143,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @OnClick(R.id.buttonOnlineGame)
     void onButtonOnlineGameClick(){
+        showLoadingDialog();
         Api.getSource().getRoom(new GetRoomRequestData())
                 .enqueue(ApiResponse.getCallback(getFindRoomResponseListener(), this));
     }
@@ -151,7 +151,17 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new ApiResponse.ApiResponseListener<ResponseModel<Room>>() {
             @Override
             public void onResponse(ResponseModel<Room> result) {
-
+                cancelLoadingDialog();
+                if(result == null){
+                    MessageReporter.showMessage(MainActivity.this,
+                            "Ошибка",
+                            "Ошибка создания игры");
+                }
+                else {
+                    Room room = result.getResult();
+                    startActivity(ResultsActivity
+                            .getInstanceForOnlineGame(MainActivity.this, room));
+                }
             }
         };
     }
@@ -174,6 +184,12 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                 }
             }
         };
+    }
+
+    public void showLoadingDialog(){
+        if(loadingDialog != null){
+            loadingDialog.show();
+        }
     }
 
     public void cancelLoadingDialog(){
