@@ -72,7 +72,7 @@ public class ResultsViewHolder extends RecyclerView.ViewHolder implements ApiRes
 
     @OnClick(R.id.buttonPlay)
     void onButtonPlayClick(){
-        presenter.onStartGame();
+        presenter.onStartSingleGame();
     }
 
     private void drawMyResults(List<Integer> answers){

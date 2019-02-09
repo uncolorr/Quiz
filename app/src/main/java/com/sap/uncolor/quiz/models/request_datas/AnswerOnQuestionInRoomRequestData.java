@@ -3,6 +3,7 @@ package com.sap.uncolor.quiz.models.request_datas;
 import com.sap.uncolor.quiz.application.App;
 
 public class AnswerOnQuestionInRoomRequestData {
+
     private String token;
     private int question_index;
     private String answer;

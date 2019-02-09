@@ -24,6 +24,10 @@ public class Quiz implements Serializable{
         return questions.get(round - 1);
     }
 
+    public Question getQuestionForOnline(int index) {
+        return questions.get(index);
+    }
+
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }

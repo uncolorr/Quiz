@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.sap.uncolor.quiz.models.Quiz;
+import com.sap.uncolor.quiz.models.Room;
 
 public class QuizFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -14,11 +15,21 @@ public class QuizFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private AnswerListener answerListener;
 
-    public QuizFragmentPagerAdapter(FragmentManager fm, Quiz model) {
+    /*Offline game*/
+    public QuizFragmentPagerAdapter(FragmentManager fm, Quiz quiz) {
         super(fm);
-        quizFragmentOne = QuizFragment.newInstanceForOffline(model, 1);
-        quizFragmentTwo = QuizFragment.newInstanceForOffline(model, 2);
-        quizFragmentThree = QuizFragment.newInstanceForOffline(model, 3);
+        quizFragmentOne = QuizFragment.newInstanceForOffline(quiz, 1);
+        quizFragmentTwo = QuizFragment.newInstanceForOffline(quiz, 2);
+        quizFragmentThree = QuizFragment.newInstanceForOffline(quiz, 3);
+
+    }
+
+    /*Online game*/
+    public QuizFragmentPagerAdapter(FragmentManager fm, Quiz quiz, Room room, int round) {
+        super(fm);
+        quizFragmentOne = QuizFragment.newInstanceForOnline(quiz, round, room, 0);
+        quizFragmentTwo = QuizFragment.newInstanceForOnline(quiz, round, room, 1);
+        quizFragmentThree = QuizFragment.newInstanceForOnline(quiz, round, room, 2);
     }
 
     @Override

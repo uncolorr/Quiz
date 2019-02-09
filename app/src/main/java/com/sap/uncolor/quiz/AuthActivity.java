@@ -40,6 +40,7 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
         setContentView(R.layout.activity_auth);
         if(App.isAuth()){
             startActivity(MainActivity.getInstance(this));
+            finish();
             return;
         }
         ButterKnife.bind(this);
@@ -67,7 +68,7 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
             @Override
             public void onResponse(ResponseModel<User> result) {
                 cancelLoadingDialog();
-                if(result == null){
+                if(result == null || result.getResult() == null){
                     MessageReporter.showMessage(AuthActivity.this,
                             "Ошибка",
                             "Ошибка авторизации");

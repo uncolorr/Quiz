@@ -7,7 +7,7 @@ import com.sap.uncolor.quiz.ItemModel;
 
 import java.io.Serializable;
 
-public class User implements ItemModel, Serializable{
+public class User implements ItemModel, Serializable {
 
     public static final int TYPE = 2;
 

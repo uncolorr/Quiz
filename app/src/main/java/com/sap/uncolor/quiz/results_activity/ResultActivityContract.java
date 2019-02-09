@@ -5,13 +5,15 @@ import com.sap.uncolor.quiz.models.Quiz;
 public interface ResultActivityContract {
 
     interface Presenter {
-        void onStartGame();
+        void onStartSingleGame();
+        void onStartOnlineGame();
     }
 
     interface View {
         void showProcessingDialog();
         void hideProcessingDialog();
-        void startGame(Quiz quiz);
+        void startSingleGame(Quiz quiz);
+        void startOnlineGame();
         void showErrorMessage();
     }
 

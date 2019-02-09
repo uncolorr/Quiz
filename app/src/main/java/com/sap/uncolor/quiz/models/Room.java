@@ -1,11 +1,10 @@
 package com.sap.uncolor.quiz.models;
 
-import android.support.annotation.Nullable;
-
 import com.google.gson.annotations.SerializedName;
 import com.sap.uncolor.quiz.ItemModel;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Room implements ItemModel, Serializable {
 
@@ -15,10 +14,6 @@ public class Room implements ItemModel, Serializable {
     public int getType() {
         return TYPE;
     }
-
-
-
-
 
     @SerializedName("uuid")
     private String uuid;
@@ -30,10 +25,8 @@ public class Room implements ItemModel, Serializable {
     @SerializedName("competitor")
     private User competitor;
 
-    //might be null
-    @Nullable
     @SerializedName("rounds")
-    private String rounds;
+    private List<Round> rounds;
 
     @SerializedName("is_booked")
     private boolean isBooked;
@@ -46,8 +39,7 @@ public class Room implements ItemModel, Serializable {
         return competitor;
     }
 
-    @Nullable
-    public String getRounds() {
+    public List<Round> getRounds() {
         return rounds;
     }
 
@@ -57,5 +49,19 @@ public class Room implements ItemModel, Serializable {
 
     public String getUuid() {
         return uuid;
+    }
+
+    public List<Question> getLastNotAnsweredQuestions(){
+        if(rounds == null){
+            return null;
+        }
+        if(rounds.size() == 0){
+            return null;
+        }
+        Round round = rounds.get(rounds.size() - 1);
+        if(round.getCreatorLastQuestion() != 0){
+            return null;
+        }
+        return round.getQuestions();
     }
 }

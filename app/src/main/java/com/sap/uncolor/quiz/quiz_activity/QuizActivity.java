@@ -1,6 +1,7 @@
 package com.sap.uncolor.quiz.quiz_activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -14,7 +15,9 @@ import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.PrivateGame;
 import com.sap.uncolor.quiz.models.Quiz;
+import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
+import com.sap.uncolor.quiz.utils.MessageReporter;
 import com.sap.uncolor.quiz.widgets.AnimatingProgressBar;
 import com.sap.uncolor.quiz.widgets.NonSwipeViewPager;
 
@@ -29,6 +32,8 @@ public class QuizActivity extends AppCompatActivity {
     private static final String ARG_QUIZ = "quiz";
     private static final String ARG_PRIVATE_GAME = "private_game";
     private static final String ARG_MODE = "mode";
+    private static final String ARG_ROOM = "room";
+
 
     public static final int MODE_SINGLE_GAME = 1;
     public static final int MODE_PRIVATE_GAME = 2;
@@ -52,6 +57,8 @@ public class QuizActivity extends AppCompatActivity {
     private Quiz quiz;
 
     private PrivateGame privateGame;
+
+    private Room room;
 
     private CountDownTimer countDownTimer;
 
@@ -78,6 +85,13 @@ public class QuizActivity extends AppCompatActivity {
         return intent;
     }
 
+    public static Intent getInstanceForOnlineGame(Context context, Room room){
+        Intent intent = new Intent(context, QuizActivity.class);
+        intent.putExtra(ARG_MODE, MODE_ONLINE_GAME);
+        intent.putExtra(ARG_ROOM, room);
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +100,17 @@ public class QuizActivity extends AppCompatActivity {
         mode = getIntent().getIntExtra(ARG_MODE, 0);
         quiz = (Quiz) getIntent().getSerializableExtra(ARG_QUIZ);
         privateGame = (PrivateGame) getIntent().getSerializableExtra(ARG_PRIVATE_GAME);
-        fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz);
+        room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
+        if(mode == MODE_ONLINE_GAME){
+            quiz = new Quiz();
+            if(room.getLastNotAnsweredQuestions() != null) {
+                quiz.setQuestions(room.getLastNotAnsweredQuestions());
+            }
+            fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz, room, room.getRounds().size() - 1);
+        }
+        if(mode == MODE_SINGLE_GAME || mode == MODE_PRIVATE_GAME){
+            fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz);
+        }
         fragmentPagerAdapter.setAnswerListener(getAnswerListener());
         viewPager.setPagingEnabled(false);
         viewPager.setOffscreenPageLimit(3);
@@ -118,7 +142,17 @@ public class QuizActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //show confirm for exit
+        MessageReporter.showConfirmForExitFromGame(this, getExitClickListener());
+    }
+
+    private DialogInterface.OnClickListener getExitClickListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                countDownTimer.cancel();
+                finish();
+            }
+        };
     }
 
     private void addPoints(){
@@ -202,13 +236,18 @@ public class QuizActivity extends AppCompatActivity {
                     startActivity(ResultsActivity.getInstanceForSingleGame(QuizActivity.this, answers, enemyAnswers));
                     break;
 
-            case MODE_PRIVATE_GAME:
-                privateGame.addResultsToCurrentPlayer(answers);
-                privateGame.nextPlayer();
-                privateGame.nextTeam();
-                finish();
-                startActivity(PrivateGameResultsActivity.getInstanceForShowResults(QuizActivity.this, privateGame));
-                break;
+                case MODE_PRIVATE_GAME:
+                    privateGame.addResultsToCurrentPlayer(answers);
+                    privateGame.nextPlayer();
+                    privateGame.nextTeam();
+                    finish();
+                    startActivity(PrivateGameResultsActivity.getInstanceForShowResults(QuizActivity.this, privateGame));
+                    break;
+
+                case MODE_ONLINE_GAME:
+                    finish();
+                    startActivity(ResultsActivity.getInstanceForOnlineGame(QuizActivity.this, room));
+                    break;
         }
 
         }

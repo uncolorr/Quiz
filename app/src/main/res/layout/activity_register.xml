@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".quiz_activity.QuizActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
 
     <LinearLayout
         android:id="@+id/linearLayoutBar"
@@ -26,7 +38,6 @@
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
             android:layout_weight="1"/>
 
     </LinearLayout>
@@ -57,6 +68,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:hint="Логин"
+                android:background="@drawable/edit_text_auth"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/colorMain"
                 android:fontFamily="@font/noteworthy_bold"
                 android:layout_marginBottom="16dp"/>
 
@@ -64,9 +79,13 @@
                 android:id="@+id/editTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:background="@drawable/edit_text_auth"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/colorMain"
                 android:inputType="textPassword"
                 android:fontFamily="@font/noteworthy_bold"
                 android:hint="Пароль"/>
@@ -78,6 +97,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:background="@drawable/edit_text_auth"
+                android:textColor="@color/colorMain"
                 android:inputType="textPassword"
                 android:fontFamily="@font/noteworthy_bold"
                 android:hint="Повторите пароль"/>
@@ -128,14 +151,16 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="Зарегистрироваться"
+                android:textColor="@android:color/white"
+                android:background="@drawable/button_info"
                 android:fontFamily="@font/noteworthy_bold"
                 android:textAllCaps="false"
                 android:layout_marginBottom="16dp"/>
-
-
 
         </LinearLayout>
 
     </ScrollView>
 
-</LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

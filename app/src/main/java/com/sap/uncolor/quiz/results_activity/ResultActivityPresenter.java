@@ -23,10 +23,15 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
     }
 
     @Override
-    public void onStartGame() {
+    public void onStartSingleGame() {
         view.showProcessingDialog();
         Api.getSource().getQuestions(new GetQuestionsRequestData())
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(), this));
+    }
+
+    @Override
+    public void onStartOnlineGame() {
+        view.startOnlineGame();
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<List<Question>>> getApiResponseListener() {
@@ -40,7 +45,7 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
                 else {
                     Quiz quiz = new Quiz();
                     quiz.setQuestions(result.getResult());
-                    view.startGame(quiz);
+                    view.startSingleGame(quiz);
                 }
             }
         };

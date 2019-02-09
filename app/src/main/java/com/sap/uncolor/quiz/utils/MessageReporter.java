@@ -19,4 +19,19 @@ public class MessageReporter {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+
+    public static void showConfirmForExitFromGame(Context context, DialogInterface.OnClickListener exitListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Подверждение выхода из игры");
+        builder.setMessage("Вы действительно хотите выйти из игры?");
+        builder.setNegativeButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("ОК", exitListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }

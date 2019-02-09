@@ -1,66 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".quiz_activity.QuizActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutBar"
+    <ImageView
         android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@color/colorMain"
-        android:layout_height="48dp">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background" />
 
-        <TextView
-            android:id="@+id/textViewRoundNumber"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Раунд 1"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/noteworthy_bold"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
-        <TextView
-            android:id="@+id/textViewCurrentPrivatePlayer"
+        <LinearLayout
+            android:id="@+id/linearLayoutBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:textColor="@android:color/white"
-            android:textAlignment="textEnd"
-            android:singleLine="true"
-            tools:text="Отвечает Антон, Команда А"
-            android:fontFamily="@font/noteworthy_bold"/>
+            android:layout_height="48dp"
+            android:background="@color/colorMain"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textViewRoundNumber"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/noteworthy_bold"
+                android:text="Раунд 1"
+                android:textColor="@android:color/white" />
+
+
+            <TextView
+                android:id="@+id/textViewCurrentPrivatePlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/noteworthy_bold"
+                android:singleLine="true"
+                android:textAlignment="textEnd"
+                android:textColor="@android:color/white"
+                tools:text="Отвечает Антон, Команда А" />
+        </LinearLayout>
+
+        <com.sap.uncolor.quiz.widgets.NonSwipeViewPager
+            android:id="@+id/viewPagerQuiz"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </com.sap.uncolor.quiz.widgets.NonSwipeViewPager>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.sap.uncolor.quiz.widgets.AnimatingProgressBar
+                android:id="@+id/progressBarTimer"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:max="9"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp" />
+
+        </FrameLayout>
+
     </LinearLayout>
 
-    <com.sap.uncolor.quiz.widgets.NonSwipeViewPager
-        android:id="@+id/viewPagerQuiz"
-        android:layout_width="match_parent"
-        android:background="@android:color/white"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-    </com.sap.uncolor.quiz.widgets.NonSwipeViewPager>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.sap.uncolor.quiz.widgets.AnimatingProgressBar
-            android:id="@+id/progressBarTimer"
-            android:background="@android:color/white"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:paddingStart="16dp"
-            android:max="9"
-            android:paddingEnd="16dp"
-            android:layout_height="40dp" />
-
-    </FrameLayout>
-
-</LinearLayout>
+</FrameLayout>

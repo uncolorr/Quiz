@@ -41,6 +41,8 @@
             android:layout_height="48dp"
             android:layout_margin="12dp"
             android:layout_weight="1"
+            android:background="@drawable/edit_text_auth"
+            android:textColor="@color/colorMain"
             android:hint="Введите имя"
             android:fontFamily="@font/noteworthy_bold"
             style="@style/EditTextStyle"/>

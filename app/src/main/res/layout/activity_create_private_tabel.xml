@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".CreatePrivateTableActivity">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
 
     <LinearLayout
         android:id="@+id/linearLayoutBar"
@@ -19,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_create_private_table"
+            android:fontFamily="@font/noteworthy_bold"
             android:textColor="@android:color/white"
             android:layout_marginStart="16dp"/>
 
@@ -28,6 +43,7 @@
             android:layout_weight="1"/>
 
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,6 +56,9 @@
             android:layout_height="48dp"
             android:layout_margin="12dp"
             android:layout_weight="1"
+            android:textColor="@color/colorMain"
+            android:background="@drawable/edit_text_auth"
+            android:fontFamily="@font/noteworthy_bold"
             android:hint="Название команды"
             style="@style/EditTextStyle"/>
 
@@ -66,10 +85,13 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_margin="16dp"
+        android:fontFamily="@font/noteworthy_bold"
         android:textColor="@color/colorMain"
         android:background="@drawable/button_menu"
         android:text="@string/label_create_table"
         android:textAllCaps="true"
         style="@style/ButtonStyle"/>
 
-</LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

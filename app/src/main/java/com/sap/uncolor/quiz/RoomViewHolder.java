@@ -1,5 +1,6 @@
 package com.sap.uncolor.quiz;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -33,6 +34,7 @@ public class RoomViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         ButterKnife.bind(this, itemView);
     }
 
+    @SuppressLint("SetTextI18n")
     public void bind(Room room){
         this.room = room;
         itemView.setOnClickListener(this);
@@ -41,8 +43,8 @@ public class RoomViewHolder extends RecyclerView.ViewHolder implements View.OnCl
             textViewEnemyPoints.setText("N/A");
         }
         else {
-            textViewEnemyName.setText(room.getCompetitor().getPoints());
-            textViewEnemyPoints.setText(room.getCompetitor().getPoints());
+            textViewEnemyName.setText(room.getCompetitor().getLogin());
+            textViewEnemyPoints.setText(Integer.toString(room.getCompetitor().getPoints()));
         }
 
         if(room.getRounds() == null){

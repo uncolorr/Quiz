@@ -13,10 +13,12 @@ import android.widget.TextView;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.ResultsViewRenderer;
+import com.sap.uncolor.quiz.RoundViewRenderer;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Results;
 import com.sap.uncolor.quiz.models.Room;
+import com.sap.uncolor.quiz.models.Round;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.universal_adapter.ResultsAdapter;
 import com.sap.uncolor.quiz.utils.MessageReporter;
@@ -107,7 +109,22 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             if(room.getCompetitor() == null){
                 textViewEnemyUsername.setText("N/A");
             }
-            //getrounds info
+            else {
+                textViewEnemyUsername.setText(room.getCompetitor().getLogin());
+            }
+            if(room.getRounds() == null){
+                return;
+            }
+
+            for (int i = 0; i < room.getRounds().size(); i++) {
+                if(room.getRounds().get(i).getCreatorLastQuestion() != 3){
+                    room.getRounds().get(i).setState(Round.STATE_NEXT_GAME);
+                    adapter.add(room.getRounds().get(i));
+                }
+                else {
+                    room.getRounds().get(i).setState(Round.STATE_COMPLETED);
+                }
+            }
         }
     }
 
@@ -128,6 +145,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     private void initResultsTable(){
         adapter = new ResultsAdapter();
         adapter.registerRenderer(new ResultsViewRenderer(Results.TYPE, this, presenter));
+        adapter.registerRenderer(new RoundViewRenderer(Round.TYPE, this, presenter));
         recyclerViewResults.setAdapter(adapter);
         recyclerViewResults.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false));
@@ -144,8 +162,17 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     }
 
     @Override
-    public void startGame(Quiz quiz) {
+    public void startSingleGame(Quiz quiz) {
         startActivity(QuizActivity.getInstanceForSingleGame(this, quiz));
+        finish();
+    }
+
+    @Override
+    public void startOnlineGame() {
+        if(room == null){
+            return;
+        }
+        startActivity(QuizActivity.getInstanceForOnlineGame(this, room));
         finish();
     }
 
