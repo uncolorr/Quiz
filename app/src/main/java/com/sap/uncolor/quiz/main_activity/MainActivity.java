@@ -25,9 +25,11 @@ import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
+import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomsRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GetUserByIdRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
@@ -95,14 +97,36 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         super.onResume();
         Api.getSource().getRooms(new GetRoomsRequestData())
                 .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), this));
+        Api.getSource().getUserById(new GetUserByIdRequestData())
+                .enqueue(ApiResponse.getCallback(getUserByIdResponseListener(), this));
     }
+
+    private ApiResponse.ApiResponseListener<ResponseModel<User>> getUserByIdResponseListener() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<User>>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onResponse(ResponseModel<User> result) {
+                if(result == null || result.getResult() == null){
+                    MessageReporter.showMessage(MainActivity.this,
+                            "Ошибка",
+                            "Ошибка получения информации о пользователе");
+                }
+                else {
+                    User user = result.getResult();
+                    textViewName.setText(user.getLogin());
+                    textViewPoints.setText(Integer.toString(user.getPoints()));
+                }
+            }
+        };
+    }
+
 
     private ApiResponse.ApiResponseListener<ResponseModel<List<Room>>> getRoomsResponseListener() {
         return new ApiResponse.ApiResponseListener<ResponseModel<List<Room>>>() {
             @Override
             public void onResponse(ResponseModel<List<Room>> result) {
                 cancelLoadingDialog();
-                if(result == null){
+                if(result == null || result.getResult() == null){
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка получения списка текущих поединков");

@@ -38,18 +38,25 @@ public class RoomViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     public void bind(Room room){
         this.room = room;
         itemView.setOnClickListener(this);
-        if(room.getCompetitor() == null){
-            textViewEnemyName.setText("N/A");
-            textViewEnemyPoints.setText("N/A");
-        }
-        else {
-            textViewEnemyName.setText(room.getCompetitor().getLogin());
-            textViewEnemyPoints.setText(Integer.toString(room.getCompetitor().getPoints()));
-        }
-
         if(room.getRounds() == null){
             textViewCurrentRound.setText("");
         }
+
+        if(room.getCompetitor() == null){
+            textViewEnemyName.setText("N/A");
+            textViewEnemyPoints.setText("N/A");
+            return;
+        }
+
+        if(room.isMine()){
+            textViewEnemyName.setText(room.getCompetitor().getLogin());
+            textViewEnemyPoints.setText(Integer.toString(room.getCompetitor().getPoints()));
+        }
+        else {
+            textViewEnemyName.setText(room.getCreator().getLogin());
+            textViewEnemyPoints.setText(Integer.toString(room.getCreator().getPoints()));
+        }
+
         //add Glide loader for avatar
     }
 

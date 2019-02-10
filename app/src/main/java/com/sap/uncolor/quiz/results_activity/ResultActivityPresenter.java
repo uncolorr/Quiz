@@ -7,7 +7,9 @@ import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
+import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GetRoomByIdRequestData;
 
 import java.util.List;
 
@@ -32,6 +34,27 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
     @Override
     public void onStartOnlineGame() {
         view.startOnlineGame();
+    }
+
+    @Override
+    public void onUpdateInfoAboutOnlineGame(Room room) {
+        Api.getSource().getRoomByUUID(new GetRoomByIdRequestData(room.getUuid()))
+                .enqueue(ApiResponse.getCallback(getInfoAboutOnlineGame(), this));
+    }
+
+    private ApiResponse.ApiResponseListener<ResponseModel<Room>> getInfoAboutOnlineGame() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<Room>>() {
+            @Override
+            public void onResponse(ResponseModel<Room> result) {
+                if(result == null || result.getResult() == null){
+                    view.showErrorMessage();
+                }
+                else {
+                    Room room = result.getResult();
+                    view.updateInfoAboutOnlineGame(room);
+                }
+            }
+        };
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<List<Question>>> getApiResponseListener() {

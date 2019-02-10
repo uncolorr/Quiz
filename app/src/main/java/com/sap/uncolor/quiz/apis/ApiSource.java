@@ -7,9 +7,11 @@ import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.CheckAnswerForOfflineRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GetRoomByIdRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetTopRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GetUserByIdRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 
@@ -49,6 +51,14 @@ public interface ApiSource {
     @Headers("Content-Type: application/json")
     @POST("getRoom")
     Call<ResponseModel<Room>> getRoom(@Body GetRoomRequestData getRoomRequestData);
+
+    @Headers("Content-Type: application/json")
+    @POST("getUserByID")
+    Call<ResponseModel<User>> getUserById(@Body GetUserByIdRequestData getUserByIdRequestData);
+
+    @Headers("Content-Type: application/json")
+    @POST("getRoomByUUID")
+    Call<ResponseModel<Room>> getRoomByUUID(@Body GetRoomByIdRequestData getRoomByIdRequestData);
 
     @Headers("Content-Type: application/json")
     @POST("answerOnQuestionInRoom")

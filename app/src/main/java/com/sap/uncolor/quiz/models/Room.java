@@ -2,6 +2,7 @@ package com.sap.uncolor.quiz.models;
 
 import com.google.gson.annotations.SerializedName;
 import com.sap.uncolor.quiz.ItemModel;
+import com.sap.uncolor.quiz.application.App;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,7 +22,6 @@ public class Room implements ItemModel, Serializable {
     @SerializedName("creator")
     private User creator;
 
-    // might be null
     @SerializedName("competitor")
     private User competitor;
 
@@ -63,5 +63,18 @@ public class Room implements ItemModel, Serializable {
             return null;
         }
         return round.getQuestions();
+    }
+
+    public boolean isMine() {
+        if(getCompetitor() == null){
+            return true;
+        }
+        if(getCreator().getId() == App.getUser().getId()){
+            return true;
+        }
+        if(getCompetitor().getId() == App.getUser().getId()){
+            return false;
+        }
+        return false;
     }
 }

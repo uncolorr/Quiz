@@ -36,6 +36,10 @@ public class App extends Application {
         return user.getPoints();
     }
 
+    public static User getUser(){
+        return Hawk.get(KEY_USER);
+    }
+
     public static String getToken(){
         User user = Hawk.get(KEY_USER);
         return user.getToken();

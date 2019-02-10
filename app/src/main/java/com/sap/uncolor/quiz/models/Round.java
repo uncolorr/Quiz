@@ -29,14 +29,16 @@ public class Round implements ItemModel, Serializable {
     private int competitorMask;
 
     @Nullable
-    @SerializedName("creatorLastQuestion")
+    @SerializedName("creator_last_question")
     private int creatorLastQuestion;
 
     @Nullable
-    @SerializedName("competitorLastQuestion")
+    @SerializedName("competitor_last_question")
     private int competitorLastQuestion;
 
     private int state;
+
+    private boolean isMine;
 
     public int getId() {
         return id;
@@ -73,6 +75,14 @@ public class Round implements ItemModel, Serializable {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public boolean isMine() {
+        return isMine;
+    }
+
+    public void setMine(boolean mine) {
+        isMine = mine;
     }
 }
 

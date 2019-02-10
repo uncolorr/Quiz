@@ -34,11 +34,9 @@ public class QuizActivity extends AppCompatActivity {
     private static final String ARG_MODE = "mode";
     private static final String ARG_ROOM = "room";
 
-
     public static final int MODE_SINGLE_GAME = 1;
     public static final int MODE_PRIVATE_GAME = 2;
     public static final int MODE_ONLINE_GAME = 3;
-
 
     private static final int TIME_INTERVAL = 1000;
     private static final int TIME_FOR_ANSWER = 10000;
@@ -106,7 +104,8 @@ public class QuizActivity extends AppCompatActivity {
             if(room.getLastNotAnsweredQuestions() != null) {
                 quiz.setQuestions(room.getLastNotAnsweredQuestions());
             }
-            fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz, room, room.getRounds().size() - 1);
+            fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(),
+                    quiz, room, room.getRounds().size() - 1);
         }
         if(mode == MODE_SINGLE_GAME || mode == MODE_PRIVATE_GAME){
             fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz);

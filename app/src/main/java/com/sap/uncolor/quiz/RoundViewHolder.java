@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.Round;
 import com.sap.uncolor.quiz.results_activity.ResultActivityPresenter;
 
@@ -52,22 +53,53 @@ public class RoundViewHolder extends RecyclerView.ViewHolder{
 
     public void bind(Round round){
         this.round = round;
-        if(round.getState() == Round.STATE_NEXT_GAME){
-            viewMyRound1.setVisibility(View.INVISIBLE);
-            viewMyRound2.setVisibility(View.INVISIBLE);
-            viewMyRound3.setVisibility(View.INVISIBLE);
-            buttonPlay.setVisibility(View.VISIBLE);
+        App.Log("creator last question: " + round.getCreatorLastQuestion());
+        buttonPlay.setVisibility(View.INVISIBLE);
+
+        int mask;
+        int creatorLastQuestion;
+        if(round.isMine()) {
+            mask = round.getCreatorMask();
+            creatorLastQuestion = round.getCreatorLastQuestion();
         }
-        else if (round.getState() == Round.STATE_COMPLETED) {
-            buttonPlay.setVisibility(View.INVISIBLE);
+        else {
+            mask = round.getCompetitorMask();
+            creatorLastQuestion = round.getCompetitorLastQuestion();
         }
+
+
+        if(round.isMine()) {
+            if (creatorLastQuestion == 3) {
+                buttonPlay.setVisibility(View.INVISIBLE);
+                viewMyRound1.setVisibility(View.VISIBLE);
+                viewMyRound2.setVisibility(View.VISIBLE);
+                viewMyRound3.setVisibility(View.VISIBLE);
+            } else {
+                buttonPlay.setVisibility(View.VISIBLE);
+                viewMyRound1.setVisibility(View.INVISIBLE);
+                viewMyRound2.setVisibility(View.INVISIBLE);
+                viewMyRound3.setVisibility(View.INVISIBLE);
+            }
+
+        }
+
         drawMyResults();
         drawEnemyResults();
         textViewRoundNumber.setText((getAdapterPosition() + 1) + " Раунд");
     }
 
     private void drawEnemyResults() {
-        if(round.getCompetitorLastQuestion() == 0){
+
+        int mask;
+        if(round.isMine()) {
+            mask = round.getCreatorMask();
+        }
+        else {
+            mask = round.getCompetitorMask();
+        }
+
+
+        if(mask == 0){
             viewEnemyRound1.setBackground(ContextCompat
                     .getDrawable(itemView.getContext(), R.drawable.result_none));
             viewEnemyRound2.setBackground(ContextCompat
@@ -77,7 +109,7 @@ public class RoundViewHolder extends RecyclerView.ViewHolder{
             return;
         }
 
-        String competitorMask = String.format("%3s", Integer.toBinaryString(round.getCompetitorMask()))
+        String competitorMask = String.format("%3s", Integer.toBinaryString(mask))
                 .replace(' ', '0');
         byte[] competitorMaskBytes = competitorMask.getBytes();
         for (int i = 0; i < competitorMaskBytes.length ; i++) {
@@ -118,7 +150,14 @@ public class RoundViewHolder extends RecyclerView.ViewHolder{
     }
 
     private void drawMyResults() {
-        String creatorMask = String.format("%3s", Integer.toBinaryString(round.getCreatorMask()))
+        int mask;
+        if(round.isMine()) {
+            mask = round.getCreatorMask();
+        }
+        else {
+            mask = round.getCompetitorMask();
+        }
+        String creatorMask = String.format("%3s", Integer.toBinaryString(mask))
                 .replace(' ', '0');
         byte[] creatorMaskAsBytes = creatorMask.getBytes();
         for (int i = 0; i < creatorMaskAsBytes.length ; i++) {
