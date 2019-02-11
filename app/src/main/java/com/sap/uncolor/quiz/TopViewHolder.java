@@ -10,6 +10,7 @@ import com.sap.uncolor.quiz.models.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class TopViewHolder extends RecyclerView.ViewHolder {
 
@@ -18,6 +19,9 @@ public class TopViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.textViewPoints)
     TextView textViewPoints;
+
+    @BindView(R.id.imageViewAvatar)
+    CircleImageView imageViewAvatar;
 
     public TopViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -29,5 +33,6 @@ public class TopViewHolder extends RecyclerView.ViewHolder {
     public void bind(User user){
         textViewName.setText(user.getLogin());
         textViewPoints.setText(Integer.toString(user.getPoints()));
+        //load avatar
     }
 }

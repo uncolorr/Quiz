@@ -15,7 +15,6 @@ import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.ResultsViewRenderer;
 import com.sap.uncolor.quiz.RoundViewRenderer;
-import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Results;
@@ -40,6 +39,8 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     private static final int GAME_TYPE_SINGLE = 1;
     private static final int GAME_TYPE_ONLINE = 2;
+
+    private static final int UPDATE_RESULTS_INTERVAL = 5000;
 
     @BindView(R.id.recyclerViewResults)
     RecyclerView recyclerViewResults;
@@ -113,41 +114,9 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         }
 
         if (gameType == GAME_TYPE_ONLINE) {
-            App.Log("game type: online" );
             room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
-            if (room.getRounds() != null) {
-                for (int i = 0; i < room.getRounds().size(); i++) {
-                    if (room.getRounds().get(i).getCreatorLastQuestion() != 3) {
-                        room.getRounds().get(i).setState(Round.STATE_NEXT_GAME);
-                        adapter.add(room.getRounds().get(i));
-                    } else {
-                        room.getRounds().get(i).setState(Round.STATE_COMPLETED);
-                        adapter.add(room.getRounds().get(i));
-                    }
-
-                    if(room.isMine()){
-                        room.getRounds().get(i).setMine(true);
-                    }else {
-                        room.getRounds().get(i).setMine(false);
-                    }
-                }
-            }
-
-            if (room.getCompetitor() == null) {
-                textViewMyUsername.setText(room.getCreator().getLogin());
-                textViewEnemyUsername.setText("N/A");
-                return;
-            }
-
-            if(room.isMine()) {
-                App.Log("mine");
-                textViewMyUsername.setText(room.getCompetitor().getLogin());
-                textViewEnemyUsername.setText(room.getCreator().getLogin());
-            } else  {
-                App.Log("not mine");
-                textViewMyUsername.setText(room.getCreator().getLogin());
-                textViewEnemyUsername.setText(room.getCompetitor().getLogin());
-            }
+            presenter.onUpdateInfoAboutOnlineGame(room);
+           // updateInfoAboutOnlineGame(room);
         }
     }
 
@@ -161,10 +130,10 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
                 @Override
                 public void run() {
                     presenter.onUpdateInfoAboutOnlineGame(room);
-                    handler.postDelayed(updateOnlineGameInfoRunnable, 5000);
+                    handler.postDelayed(updateOnlineGameInfoRunnable, UPDATE_RESULTS_INTERVAL);
                 }
             };
-            handler.post(updateOnlineGameInfoRunnable);
+            handler.postDelayed(updateOnlineGameInfoRunnable, UPDATE_RESULTS_INTERVAL);
         }
     }
 
@@ -234,30 +203,31 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     @Override
     public void updateInfoAboutOnlineGame(Room room) {
-
-        App.Log("update room info");
-        textViewMyUsername.setText(room.getCreator().getLogin());
+        this.room = room;
         if (room.getCompetitor() == null) {
+            textViewMyUsername.setText(room.getCreator().getLogin());
             textViewEnemyUsername.setText("N/A");
-        } else {
-            textViewEnemyUsername.setText(room.getCompetitor().getLogin());
+            return;
         }
+
+        if(room.isMine()) {
+            textViewMyUsername.setText(room.getCreator().getLogin());
+            textViewEnemyUsername.setText(room.getCompetitor().getLogin());
+        } else  {
+            textViewMyUsername.setText(room.getCompetitor().getLogin());
+            textViewEnemyUsername.setText(room.getCreator().getLogin());
+        }
+
         if (room.getRounds() == null) {
             return;
         }
 
         adapter.clear();
         for (int i = 0; i < room.getRounds().size(); i++) {
-            if (room.getRounds().get(i).getCreatorLastQuestion() != 3) {
-                room.getRounds().get(i).setState(Round.STATE_NEXT_GAME);
-                adapter.add(room.getRounds().get(i));
-            } else {
-                room.getRounds().get(i).setState(Round.STATE_COMPLETED);
-                adapter.add(room.getRounds().get(i));
-            }
-            if(room.isMine()){
+            adapter.add(room.getRounds().get(i));
+            if (room.isMine()) {
                 room.getRounds().get(i).setMine(true);
-            }else {
+            } else {
                 room.getRounds().get(i).setMine(false);
             }
         }

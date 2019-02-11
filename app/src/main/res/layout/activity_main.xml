@@ -71,7 +71,7 @@
 
             <LinearLayout
                 android:id="@+id/linearLayoutUserInfo"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="24dp"
@@ -88,7 +88,7 @@
 
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:orientation="vertical">
@@ -99,10 +99,14 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginBottom="4dp"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/colorMain"
+                        android:textSize="16sp"
+                        android:ellipsize="end"
                         android:fontFamily="@font/noteworthy_bold"
                         android:gravity="center"
-                        android:text="Uncolor"
-                        android:textAlignment="center" />
+                        android:text="Unco kfgkfgk kfgk lor"
+                        />
 
 
                     <LinearLayout
@@ -118,13 +122,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
                             android:layout_marginStart="8dp"
+                            android:textColor="@color/colorPoints"
                             android:fontFamily="@font/noteworthy_bold"
-                            android:text="4345" />
+                            android:text="4" />
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:background="@color/colorMain"/>
+                            android:src="@drawable/ic_coin"/>
 
                     </LinearLayout>
 

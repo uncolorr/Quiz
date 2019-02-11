@@ -41,6 +41,9 @@ public class RoomViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         if(room.getRounds() == null){
             textViewCurrentRound.setText("");
         }
+        else {
+            textViewCurrentRound.setText(Integer.toString(room.getRounds().size()) + "-й раунд");
+        }
 
         if(room.getCompetitor() == null){
             textViewEnemyName.setText("N/A");

@@ -6,4 +6,5 @@
     <color name="colorMain">#4A90E2</color>
     <color name="colorRight">#7ED321</color>
     <color name="colorWrong">#D0021B</color>
+    <color name="colorPoints">#7ED321</color>
 </resources>

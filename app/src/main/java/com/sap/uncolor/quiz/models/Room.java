@@ -59,9 +59,9 @@ public class Room implements ItemModel, Serializable {
             return null;
         }
         Round round = rounds.get(rounds.size() - 1);
-        if(round.getCreatorLastQuestion() != 0){
+        /*if(round.getCreatorLastQuestion() != 0){
             return null;
-        }
+        }*/
         return round.getQuestions();
     }
 
