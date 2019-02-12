@@ -34,4 +34,19 @@ public class MessageReporter {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    public static void showConfirmForLogout(Context context, DialogInterface.OnClickListener exitListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Подверждение выхода");
+        builder.setMessage("Вы действительно хотите выйти из своего аккаунта?");
+        builder.setNegativeButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("ОК", exitListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }

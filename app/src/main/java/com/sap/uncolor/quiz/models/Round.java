@@ -64,6 +64,46 @@ public class Round implements ItemModel, Serializable {
         return competitorLastQuestion;
     }
 
+    public int getMyRightsAnswersCount(){
+        int counter = 0;
+        int mask;
+        if(isMine){
+            mask = creatorMask;
+        }
+        else {
+            mask = competitorMask;
+        }
+        String creatorMask = String.format("%3s", Integer.toBinaryString(mask))
+                .replace(' ', '0');
+        byte[] creatorMaskBytes = creatorMask.getBytes();
+        for (int i = 0; i < creatorMaskBytes.length; i++) {
+            if(creatorMaskBytes[i] == '1'){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public int getEnemyRightsAnswersCount(){
+        int counter = 0;
+        int mask;
+        if(isMine){
+            mask = competitorMask;
+        }
+        else {
+            mask = creatorMask;
+        }
+        String creatorMask = String.format("%3s", Integer.toBinaryString(mask))
+                .replace(' ', '0');
+        byte[] competitorMaskBytes = creatorMask.getBytes();
+        for (int i = 0; i < competitorMaskBytes.length; i++) {
+            if(competitorMaskBytes[i] == '1'){
+                counter++;
+            }
+        }
+        return counter;
+    }
+
     @Override
     public int getType() {
         return TYPE;

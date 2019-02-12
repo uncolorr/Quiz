@@ -63,9 +63,6 @@ public class RoundViewHolder extends RecyclerView.ViewHolder {
            drawEnemyResults(round.getCreatorMask());
 
        }
-
-        //drawMyResults();
-       // drawEnemyResults();
         textViewRoundNumber.setText((getAdapterPosition() + 1) + " Раунд");
     }
 

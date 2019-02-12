@@ -21,10 +21,11 @@ import com.sap.uncolor.quiz.models.Results;
 import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.Round;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
-import com.sap.uncolor.quiz.universal_adapter.ResultsAdapter;
+import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +55,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     @BindView(R.id.textViewEnemyUsername)
     TextView textViewEnemyUsername;
 
-    private ResultsAdapter adapter;
+    private UniversalAdapter adapter;
 
     private DBManager dbManager;
 
@@ -110,7 +111,9 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             if (dbManager.getCompletedRoundsCount() < 5) {
                 adapter.add(new Results(Results.STATE_NEXT_GAME));
             }
-            textViewResultScores.setText(adapter.getMyResultsCounter() + " - " + adapter.getEnemyResultsCounter());
+            countResultsForSingleGame();
+            textViewMyUsername.setText("Вы");
+            textViewEnemyUsername.setText("Компьютер");
         }
 
         if (gameType == GAME_TYPE_ONLINE) {
@@ -118,6 +121,72 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             presenter.onUpdateInfoAboutOnlineGame(room);
            // updateInfoAboutOnlineGame(room);
         }
+    }
+
+    private int getMyResultsCounter(){
+        int resultsCounter = 0;
+        List<Results> results = new ArrayList<>();
+        for (int i = 0; i < adapter.getItems().size(); i++) {
+            results.add((Results) adapter.getItems().get(i));
+        }
+        for (int i = 0; i < results.size(); i++) {
+            if(results.get(i) != null) {
+                resultsCounter += results.get(i).getMyRightAnswersCount();
+            }
+        }
+        return resultsCounter;
+    }
+
+
+    private int getEnemyResultsCounter(){
+        int enemyResultsCounter = 0;
+        List<Results> results = new ArrayList<>();
+        for (int i = 0; i < adapter.getItems().size(); i++) {
+            results.add((Results) adapter.getItems().get(i));
+        }
+        for (int i = 0; i < results.size(); i++) {
+            if(results.get(i) != null) {
+                enemyResultsCounter += results.get(i).getEnemyRightAnswersCount();
+            }
+        }
+        return enemyResultsCounter;
+    }
+
+    private int getMyRoundPointsCounter(){
+        int pointsCounter = 0;
+        List<Round> rounds = new ArrayList<>();
+        for (int i = 0; i < adapter.getItems().size(); i++) {
+            rounds.add((Round) adapter.getItems().get(i));
+        }
+        for (int i = 0; i < rounds.size(); i++) {
+            if(rounds.get(i) != null) {
+                pointsCounter += rounds.get(i).getMyRightsAnswersCount();
+            }
+        }
+        return pointsCounter;
+    }
+
+
+    private int getEnemyRoundPointsCounter(){
+        int enemyPointsCounter = 0;
+        List<Round> rounds = new ArrayList<>();
+        for (int i = 0; i < adapter.getItems().size(); i++) {
+            rounds.add((Round) adapter.getItems().get(i));
+        }
+        for (int i = 0; i < rounds.size(); i++) {
+            if(rounds.get(i) != null) {
+                enemyPointsCounter += rounds.get(i).getEnemyRightsAnswersCount();
+            }
+        }
+        return enemyPointsCounter;
+    }
+
+    private void countResultsForSingleGame(){
+        textViewResultScores.setText(getMyResultsCounter() + " - " + getEnemyResultsCounter());
+    }
+
+    private void countPointsForOnlineGame(){
+        textViewResultScores.setText(getMyRoundPointsCounter() + " - " + getEnemyRoundPointsCounter());
     }
 
     @Override
@@ -161,7 +230,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     }
 
     private void initResultsTable() {
-        adapter = new ResultsAdapter();
+        adapter = new UniversalAdapter();
         adapter.registerRenderer(new ResultsViewRenderer(Results.TYPE, this, presenter));
         adapter.registerRenderer(new RoundViewRenderer(Round.TYPE, this, presenter));
         recyclerViewResults.setAdapter(adapter);
@@ -231,5 +300,6 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
                 room.getRounds().get(i).setMine(false);
             }
         }
+        countPointsForOnlineGame();
     }
 }

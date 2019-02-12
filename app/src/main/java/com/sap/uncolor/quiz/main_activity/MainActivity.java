@@ -2,6 +2,7 @@ package com.sap.uncolor.quiz.main_activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -154,9 +155,18 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @OnClick(R.id.imageButtonExit)
     void onExitButtonClick(){
-        App.logout();
-        finish();
-        startActivity(AuthActivity.getInstance(this));
+        MessageReporter.showConfirmForLogout(this, getLogoutClickListener());
+    }
+
+    private DialogInterface.OnClickListener getLogoutClickListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                App.logout();
+                finish();
+                startActivity(AuthActivity.getInstance(MainActivity.this));
+            }
+        };
     }
 
     @OnClick(R.id.buttonPrivateGame)

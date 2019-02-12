@@ -15,6 +15,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Команда А"
+            android:textColor="@color/colorMain"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:layout_marginEnd="8dp"
+            android:textSize="18sp"
             android:fontFamily="@font/noteworthy_bold"
             android:layout_weight="1"/>
 
@@ -22,6 +27,9 @@
             android:id="@+id/textViewTeamPoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp"
+            android:fontFamily="@font/noteworthy_bold"
             android:text="7"/>
 
     </LinearLayout>
