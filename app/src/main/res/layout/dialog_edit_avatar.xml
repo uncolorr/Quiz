@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".CreatePrivateTableActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutBar"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/colorMain"
+        android:layout_height="48dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_edit_avatar"
+            android:fontFamily="@font/noteworthy_bold"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="16dp"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageViewAvatar"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center"
+        app:civ_border_width="2dp"
+        android:layout_margin="16dp"
+        app:civ_border_color="@color/colorMain"
+        android:src="@android:color/white"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonUploadNewAvatar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:background="@color/colorRight"
+            android:fontFamily="@font/noteworthy_bold"
+            android:textColor="@android:color/white"
+            android:text="Загрузить"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/buttonRemoveAvatar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/colorWrong"
+            android:fontFamily="@font/noteworthy_bold"
+            android:textColor="@android:color/white"
+            android:text="Удалить"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

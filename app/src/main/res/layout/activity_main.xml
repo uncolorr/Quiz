@@ -213,16 +213,73 @@
                 android:background="@color/colorMain">
 
             </View>
-
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerViewCurrentGames"
+            
+            
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp">
+                android:layout_height="wrap_content">
 
-            </android.support.v7.widget.RecyclerView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerViewCurrentGames"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <ProgressBar
+                    android:id="@+id/progressBarCurrentRoomsLoading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_gravity="center"/>
+
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutFailure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_margin="32dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageViewWarning"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_danger"
+                        android:tint="@color/colorWrong"/>
+
+                    <TextView
+                        android:id="@+id/textViewCurrentRoomMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        tools:text="Ошибка при загрузке комнат"
+                        android:fontFamily="@font/noteworthy_bold"
+                        android:textSize="14sp"
+                        android:layout_margin="16dp"
+                        android:textColor="@color/colorWrong"/>
+
+                    <Button
+                        android:id="@+id/buttonReloadCurrentRooms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:textAllCaps="false"
+                        android:fontFamily="@font/noteworthy_bold"
+                        android:background="@color/colorWrong"
+                        android:text="Обновить"/>
+
+                </LinearLayout>
+
+
+            </FrameLayout>
 
 
             <Button

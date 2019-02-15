@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Quiz implements Serializable{
 
+    public static final int VARIANT_NONE = 0;
     public static final int VARIANT_ONE = 1;
     public static final int VARIANT_TWO = 2;
     public static final int VARIANT_THREE = 3;

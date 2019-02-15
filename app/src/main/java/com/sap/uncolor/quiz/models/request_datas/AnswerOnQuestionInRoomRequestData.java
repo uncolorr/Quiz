@@ -9,8 +9,9 @@ public class AnswerOnQuestionInRoomRequestData {
     private String answer;
     private int round_index;
     private String room_uuid;
+    private int points;
 
-    public AnswerOnQuestionInRoomRequestData(int question_index, String answer, int round_index, String room_uuid) {
+    public AnswerOnQuestionInRoomRequestData(int question_index, String answer, int round_index, String room_uuid, int points) {
         this.token = App.getToken();
         this.question_index = question_index;
         this.answer = answer;

@@ -4,16 +4,23 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.AuthActivity;
 import com.sap.uncolor.quiz.CreatePrivateTableActivity;
+import com.sap.uncolor.quiz.EditAvatarDialog;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.RoomViewRenderer;
@@ -35,14 +42,22 @@ import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.utils.PathConverter;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener {
+
+    private static final int REQUEST_FOR_AVATAR_UPLOAD_FROM_GALLERY = 1;
 
     @BindView(R.id.buttonSingleGame)
     Button buttonSingleGame;
@@ -56,9 +71,28 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @BindView(R.id.recyclerViewCurrentGames)
     RecyclerView recyclerViewCurrentGames;
 
+    @BindView(R.id.imageViewAvatar)
+    CircleImageView imageViewAvatar;
+
+    @BindView(R.id.imageViewWarning)
+    ImageView imageViewWarning;
+
+    @BindView(R.id.textViewCurrentRoomMessage)
+    TextView textViewCurrentRoomMessage;
+
+    @BindView(R.id.buttonReloadCurrentRooms)
+    Button buttonReloadCurrentRooms;
+
+    @BindView(R.id.progressBarCurrentRoomsLoading)
+    ProgressBar progressBarCurrentRoomsLoading;
+
+
+
     private AlertDialog loadingDialog;
 
     private UniversalAdapter adapter;
+
+    private EditAvatarDialog editAvatarDialog;
 
 
     public static Intent getInstance(Context context){
@@ -71,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        editAvatarDialog = new EditAvatarDialog(this);
+        editAvatarDialog.setOnUploadAvatarClickListener(getOnUploadAvatarClickListener());
+        editAvatarDialog.setOnRemoveClickListener(getOnRemoveAvatarClickListener());
         loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         textViewName.setText(App.getUserName());
         textViewPoints.setText(Integer.toString(App.getUserPoints()));
@@ -96,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @Override
     protected void onResume() {
         super.onResume();
+        showCurrentRoomsProgressBar();
         Api.getSource().getRooms(new GetRoomsRequestData())
                 .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), this));
         Api.getSource().getUserById(new GetUserByIdRequestData())
@@ -104,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     private ApiResponse.ApiResponseListener<ResponseModel<User>> getUserByIdResponseListener() {
         return new ApiResponse.ApiResponseListener<ResponseModel<User>>() {
-            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(ResponseModel<User> result) {
                 if(result == null || result.getResult() == null){
@@ -114,9 +151,47 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                 }
                 else {
                     User user = result.getResult();
-                    textViewName.setText(user.getLogin());
-                    textViewPoints.setText(Integer.toString(user.getPoints()));
+                    showUserInfo(user);
+                    App.updateUserData(user);
                 }
+            }
+        };
+    }
+
+
+
+    @SuppressLint("SetTextI18n")
+    private void showUserInfo(User user){
+        textViewName.setText(user.getLogin());
+        textViewPoints.setText(Integer.toString(user.getPoints()));
+        if(user.getAvatar().isEmpty()){
+            imageViewAvatar.setImageResource(R.drawable.add);
+        }
+        else {
+            Glide
+                    .with(MainActivity.this)
+                    .load(user.getAvatar())
+                    .into(imageViewAvatar);
+            editAvatarDialog.uploadAvatar(user.getAvatar());
+        }
+    }
+
+    private View.OnClickListener getOnUploadAvatarClickListener(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, REQUEST_FOR_AVATAR_UPLOAD_FROM_GALLERY);
+            }
+        };
+    }
+
+    private View.OnClickListener getOnRemoveAvatarClickListener(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadAvatar(null);
             }
         };
     }
@@ -126,15 +201,20 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new ApiResponse.ApiResponseListener<ResponseModel<List<Room>>>() {
             @Override
             public void onResponse(ResponseModel<List<Room>> result) {
-                cancelLoadingDialog();
+                //cancelLoadingDialog();
+                hideCurrentRoomsProgressBar();
                 if(result == null || result.getResult() == null){
-                    MessageReporter.showMessage(MainActivity.this,
-                            "Ошибка",
-                            "Ошибка получения списка текущих поединков");
+               //   MessageReporter.showMessage(MainActivity.this, "Ошибка", "Ошибка получения списка текущих поединков");
+                    showInfoAboutCurrentRoomsLoadingFailure();
+
                 }
                 else {
                     adapter.clear();
                     List<Room> rooms = result.getResult();
+                    if(rooms.isEmpty()){
+                        showInfoAboutEmptyCurrentRooms();
+                        return;
+                    }
                     for (int i = 0; i < rooms.size(); i++) {
                         adapter.add(rooms.get(i));
                     }
@@ -147,6 +227,12 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     void onSettingsButtonClick(){
 
     }
+
+    @OnClick(R.id.imageViewAvatar)
+    void onImageAvatarClick(){
+        editAvatarDialog.show();
+    }
+
 
     @OnClick(R.id.imageButtonTop)
     void onTopButtonClick(){
@@ -169,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         };
     }
 
+
     @OnClick(R.id.buttonPrivateGame)
     void onButtonPrivateGameClick(){
         startActivity(CreatePrivateTableActivity.getInstance(this));
@@ -181,15 +268,57 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                 .enqueue(ApiResponse.getCallback(getFindRoomResponseListener(), this));
     }
 
+    @OnClick(R.id.buttonReloadCurrentRooms)
+    void onReloadCurrentRoomsButtonClick(){
+        showCurrentRoomsProgressBar();
+        hideInfoAboutCurrentRoomsLoadingFailure();
+        hideInfoAboutEmptyCurrentRooms();
+        Api.getSource().getRooms(new GetRoomsRequestData())
+                .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), this));
+    }
+
+
+    private void showInfoAboutEmptyCurrentRooms(){
+        imageViewWarning.setVisibility(View.INVISIBLE);
+        buttonReloadCurrentRooms.setVisibility(View.INVISIBLE);
+        textViewCurrentRoomMessage.setVisibility(View.VISIBLE);
+        textViewCurrentRoomMessage.setText("Текущих поединков нет");
+    }
+
+    private void showInfoAboutCurrentRoomsLoadingFailure(){
+        imageViewWarning.setVisibility(View.VISIBLE);
+        buttonReloadCurrentRooms.setVisibility(View.VISIBLE);
+        textViewCurrentRoomMessage.setVisibility(View.VISIBLE);
+        textViewCurrentRoomMessage.setText("Ошибка при загрузке текущих поединков");
+    }
+
+    private void hideInfoAboutEmptyCurrentRooms(){
+        textViewCurrentRoomMessage.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideInfoAboutCurrentRoomsLoadingFailure(){
+        imageViewWarning.setVisibility(View.INVISIBLE);
+        textViewCurrentRoomMessage.setVisibility(View.INVISIBLE);
+        buttonReloadCurrentRooms.setVisibility(View.INVISIBLE);
+    }
+
+    private void showCurrentRoomsProgressBar(){
+        progressBarCurrentRoomsLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideCurrentRoomsProgressBar(){
+        progressBarCurrentRoomsLoading.setVisibility(View.INVISIBLE);
+    }
+
     private ApiResponse.ApiResponseListener<ResponseModel<Room>> getFindRoomResponseListener() {
         return new ApiResponse.ApiResponseListener<ResponseModel<Room>>() {
             @Override
             public void onResponse(ResponseModel<Room> result) {
                 cancelLoadingDialog();
-                if(result == null){
+                if(result == null || result.getResult() == null){
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
-                            "Ошибка создания игры");
+                            "Ошибка при поиске игры");
                 }
                 else {
                     Room room = result.getResult();
@@ -238,6 +367,71 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         cancelLoadingDialog();
         MessageReporter.showMessage(MainActivity.this,
                 "Ошибка",
-                "Ошибка создания игры");
+                "Неизвестная ошибка");
     }
+
+    private void uploadAvatar(File file) {
+        User user = App.getUser();
+
+        String tokenString = user.getToken();
+        RequestBody token = RequestBody.create(MultipartBody.FORM, tokenString);
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+        MultipartBody.Part body = null;
+        if(file != null){
+            body = MultipartBody.Part.createFormData("photo", file.getName(), requestFile);
+        }
+        Api.getSource().changeAvatar(token, body)
+                .enqueue(ApiResponse.getCallback(getUploadAvatarResponseListener(), this));
+
+    }
+
+    private ApiResponse.ApiResponseListener<ResponseModel<String>> getUploadAvatarResponseListener() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<String>>() {
+            @Override
+            public void onResponse(ResponseModel<String> result) {
+                if(result == null || result.getResult() == null){
+                    MessageReporter.showMessage(MainActivity.this,
+                            "Ошибка",
+                            "Ошибка обновления аватара");
+                }
+                else {
+                    String avatarUrl = result.getResult();
+                    if(avatarUrl.isEmpty()){
+                        imageViewAvatar.setImageResource(R.drawable.add);
+                        return;
+                    }
+                    Glide
+                            .with(MainActivity.this)
+                            .load(avatarUrl)
+                            .into(imageViewAvatar);
+                    editAvatarDialog.uploadAvatar(avatarUrl);
+                    User user = App.getUser();
+                    user.setAvatar(avatarUrl);
+                    App.updateUserData(user);
+                    Toast.makeText(MainActivity.this,
+                            "Аватар успешно обновлен", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_FOR_AVATAR_UPLOAD_FROM_GALLERY:
+                if (data != null) {
+                    Uri avatarUri = data.getData();
+                    String path = PathConverter.getRealPathFromURI(this, avatarUri);
+                    App.Log(path);
+                    java.io.File file = new java.io.File(path);
+                    uploadAvatar(file);
+                }
+                break;
+        }
+    }
+
+
 }

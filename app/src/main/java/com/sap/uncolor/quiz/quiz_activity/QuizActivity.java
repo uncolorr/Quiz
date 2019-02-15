@@ -12,10 +12,13 @@ import com.sap.uncolor.quiz.AnswerListener;
 import com.sap.uncolor.quiz.PrivateGameResultsActivity;
 import com.sap.uncolor.quiz.QuizFragmentPagerAdapter;
 import com.sap.uncolor.quiz.R;
-import com.sap.uncolor.quiz.application.App;
+import com.sap.uncolor.quiz.apis.Api;
+import com.sap.uncolor.quiz.apis.ApiResponse;
+import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.models.PrivateGame;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
+import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 import com.sap.uncolor.quiz.widgets.AnimatingProgressBar;
@@ -27,7 +30,7 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener{
 
     private static final String ARG_QUIZ = "quiz";
     private static final String ARG_PRIVATE_GAME = "private_game";
@@ -39,7 +42,7 @@ public class QuizActivity extends AppCompatActivity {
     public static final int MODE_ONLINE_GAME = 3;
 
     private static final int TIME_INTERVAL = 1000;
-    private static final int TIME_FOR_ANSWER = 10000;
+    private static final int TIME_FOR_ANSWER = 15000;
 
     @BindView(R.id.viewPagerQuiz)
     NonSwipeViewPager viewPager;
@@ -62,11 +65,11 @@ public class QuizActivity extends AppCompatActivity {
 
     private ArrayList<Integer> answers = new ArrayList<>();
 
-    private int points = 0;
-
-    private int timeLeft = 0;
+    private static int timeLeft = 0;
 
     private int mode;
+
+
 
     public static Intent getInstanceForSingleGame(Context context, Quiz quiz){
         Intent intent = new Intent(context, QuizActivity.class);
@@ -90,6 +93,27 @@ public class QuizActivity extends AppCompatActivity {
         return intent;
     }
 
+    public static int getPoints(){
+        int points = 0;
+        if(timeLeft <= 10){
+            points = 8;
+        }
+
+        if(timeLeft < 8){
+            points = 6;
+        }
+
+        if(timeLeft < 6){
+            points = 4;
+        }
+
+        if(timeLeft < 4) {
+            points = 2;
+        }
+
+        return points;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,32 +135,55 @@ public class QuizActivity extends AppCompatActivity {
             fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz);
         }
         fragmentPagerAdapter.setAnswerListener(getAnswerListener());
+
         viewPager.setPagingEnabled(false);
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(fragmentPagerAdapter);
-        textViewRoundNumber.setText("Раунд 1");
+        textViewRoundNumber.setText("Вопрос 1");
         startTimer();
     }
 
     private void startTimer() {
-        progressBarTimer.setProgress(10);
+        progressBarTimer.setProgress(1500);
         countDownTimer = new CountDownTimer(TIME_FOR_ANSWER, TIME_INTERVAL) {
 
             public void onTick(long millisUntilFinished) {
                 int value = (int) millisUntilFinished / TIME_INTERVAL;
+                value--;
                 timeLeft = value;
-                App.Log("value: " + value);
-                progressBarTimer.setProgress(value);
+                progressBarTimer.setProgress(value * 100);
+
             }
 
             public void onFinish() {
                 timeLeft = 0;
                 progressBarTimer.setProgress(0);
                 answers.add(0);
-                swipeQuestion();
+                if(mode == MODE_ONLINE_GAME) {
+                    Api.getSource().
+                            answerOnQuestionInRoom(
+                                    new AnswerOnQuestionInRoomRequestData
+                                            (viewPager.getCurrentItem(), "0",
+                                                    room.getRounds().size() - 1, room.getUuid(), 0))
+                            .enqueue(ApiResponse.getCallback(getAskNoneResponseListener(0),
+                                    QuizActivity.this));
+                    fragmentPagerAdapter.disableInterface(viewPager.getCurrentItem());
+                }
+                else {
+                    swipeQuestion();
+                }
             }
 
         }.start();
+    }
+
+    private ApiResponse.ApiResponseListener<ResponseModel<Boolean>> getAskNoneResponseListener(int round) {
+        return new ApiResponse.ApiResponseListener<ResponseModel<Boolean>>() {
+            @Override
+            public void onResponse(ResponseModel<Boolean> result) {
+                swipeQuestion();
+            }
+        };
     }
 
     @Override
@@ -152,27 +199,6 @@ public class QuizActivity extends AppCompatActivity {
                 finish();
             }
         };
-    }
-
-    private void addPoints(){
-        int point = 0;
-        if(timeLeft <= 10){
-            point = 8;
-        }
-
-        if(timeLeft < 8){
-            point = 6;
-        }
-
-        if(timeLeft < 6){
-            point = 4;
-        }
-
-        if(timeLeft < 4) {
-            point = 2;
-        }
-
-        points += point;
     }
 
     private ArrayList<Integer> generateComputerAnswers(){
@@ -192,7 +218,6 @@ public class QuizActivity extends AppCompatActivity {
             public void onQuestionAnswered(boolean isAnswerRight, int round) {
                 if(isAnswerRight) {
                     answers.add(1);
-                    addPoints();
                 }
                 else {
                     answers.add(0);
@@ -219,12 +244,12 @@ public class QuizActivity extends AppCompatActivity {
         int currentPosition = viewPager.getCurrentItem();
         if(currentPosition == 0){
             viewPager.setCurrentItem(1, true);
-            textViewRoundNumber.setText("Раунд 2");
+            textViewRoundNumber.setText("Вопрос 2");
             startTimer();
         }
         if(currentPosition == 1){
             viewPager.setCurrentItem(2, true);
-            textViewRoundNumber.setText("Раунд 3");
+            textViewRoundNumber.setText("Вопрос 3");
             startTimer();
         }
         if(currentPosition == 2) {
@@ -250,5 +275,10 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         }
+    }
+
+    @Override
+    public void onFailure(int code, String message) {
+
     }
 }

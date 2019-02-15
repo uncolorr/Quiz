@@ -58,6 +58,7 @@ public class RoomViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         else {
             textViewEnemyName.setText(room.getCreator().getLogin());
             textViewEnemyPoints.setText(Integer.toString(room.getCreator().getPoints()));
+
         }
 
         //add Glide loader for avatar

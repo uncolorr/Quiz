@@ -3,4 +3,5 @@
     <string name="label_create_private_table">Создание закрытого стола</string>
     <string name="label_create_table">Создать стол</string>
     <string name="label_add_players">Добавьте участников</string>
+    <string name="label_edit_avatar">Редактирование аватара</string>
 </resources>

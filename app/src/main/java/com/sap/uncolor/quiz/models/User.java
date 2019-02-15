@@ -27,6 +27,9 @@ public class User implements ItemModel, Serializable {
     @SerializedName("points")
     private int points;
 
+    @SerializedName("avatar")
+    private String avatar;
+
 
     public int getId() {
         return id;
@@ -51,5 +54,21 @@ public class User implements ItemModel, Serializable {
     @Override
     public int getType() {
         return TYPE;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

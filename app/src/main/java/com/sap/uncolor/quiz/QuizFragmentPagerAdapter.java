@@ -46,6 +46,20 @@ public class QuizFragmentPagerAdapter extends FragmentPagerAdapter {
         return null;
     }
 
+    public void disableInterface(int question_index){
+        switch (question_index){
+            case 0:
+                quizFragmentOne.disableInterface();
+                break;
+            case 1:
+                quizFragmentTwo.disableInterface();
+                break;
+            case 2:
+                quizFragmentThree.disableInterface();
+                break;
+        }
+    }
+
     public void setAnswerListener(AnswerListener answerListener){
         this.answerListener = answerListener;
         quizFragmentOne.setAnswerListener(this.answerListener);

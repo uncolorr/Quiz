@@ -3,13 +3,13 @@ package com.sap.uncolor.quiz.widgets;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 
 public class AnimatingProgressBar extends ProgressBar {
 
-    private static final Interpolator DEFAULT_INTERPOLATOR = new AccelerateDecelerateInterpolator();
+    private static final Interpolator DEFAULT_INTERPOLATOR = new LinearInterpolator();
 
     private ValueAnimator animator;
     private ValueAnimator animatorSecondary;
@@ -46,8 +46,8 @@ public class AnimatingProgressBar extends ProgressBar {
         if (animator == null) {
             animator = ValueAnimator.ofInt(getProgress(), progress);
             animator.setInterpolator(DEFAULT_INTERPOLATOR);
+            animator.setDuration(1000);
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     AnimatingProgressBar.super.setProgress((Integer) animation.getAnimatedValue());

@@ -60,16 +60,20 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+
 
             <com.sap.uncolor.quiz.widgets.AnimatingProgressBar
                 android:id="@+id/progressBarTimer"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:max="9"
+                android:max="1300"
                 android:paddingEnd="16dp"
-                android:paddingStart="16dp" />
+                android:paddingStart="16dp"
+                android:progressDrawable="@drawable/timer_progress" />
 
         </FrameLayout>
 

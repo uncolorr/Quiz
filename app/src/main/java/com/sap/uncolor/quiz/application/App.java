@@ -36,6 +36,14 @@ public class App extends Application {
         return user.getPoints();
     }
 
+    public static void updateUserData(User update){
+        User user = getUser();
+        user.setAvatar(update.getAvatar());
+        user.setPoints(update.getPoints());
+        user.setSex(update.getSex());
+        Hawk.put(KEY_USER, user);
+    }
+
     public static User getUser(){
         return Hawk.get(KEY_USER);
     }
@@ -44,8 +52,6 @@ public class App extends Application {
         User user = Hawk.get(KEY_USER);
         return user.getToken();
     }
-
-
 
     public static void logout(){
         Hawk.delete(KEY_USER);

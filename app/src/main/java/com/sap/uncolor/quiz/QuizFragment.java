@@ -20,6 +20,7 @@ import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.CheckAnswerForOfflineRequestData;
+import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 
 import butterknife.BindView;
@@ -137,12 +138,13 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
     private void checkAnswerForOnlineGames(int variant, int question_index, int round) {
         if(getContext() != null) {
             App.Log("Answer in online game");
+            int points = QuizActivity.getPoints();
             switch (variant) {
                 case Quiz.VARIANT_ONE:
                     Api.getSource().
                             answerOnQuestionInRoom(
                                     new AnswerOnQuestionInRoomRequestData
-                                            (question_index, "1", round, room.getUuid()))
+                                            (question_index, "1", round, room.getUuid(), points))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant1.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -153,7 +155,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
                     Api.getSource().
                             answerOnQuestionInRoom(
                                     new AnswerOnQuestionInRoomRequestData
-                                            (question_index, "2", round, room.getUuid()))
+                                            (question_index, "2", round, room.getUuid(), points))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant2.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -164,7 +166,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
                 case Quiz.VARIANT_THREE:
                     Api.getSource().answerOnQuestionInRoom(
                                     new AnswerOnQuestionInRoomRequestData
-                                            (question_index, "3", round, room.getUuid()))
+                                            (question_index, "3", round, room.getUuid(), points))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant3.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -174,7 +176,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
                 case Quiz.VARIANT_FOUR:
                     Api.getSource().answerOnQuestionInRoom(
                                     new AnswerOnQuestionInRoomRequestData
-                                            (question_index, "4", round, room.getUuid()))
+                                            (question_index, "4", round, room.getUuid(), points))
                             .enqueue(ApiResponse.getCallback(getApiResponseListener(variant), this));
                     textViewVariant4.setBackground(ContextCompat.getDrawable(getContext(),
                             R.drawable.button_answer_current));
@@ -184,7 +186,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
         }
     }
 
-    private void disableInterface(){
+    public void disableInterface(){
         textViewVariant1.setEnabled(false);
         textViewVariant2.setEnabled(false);
         textViewVariant3.setEnabled(false);

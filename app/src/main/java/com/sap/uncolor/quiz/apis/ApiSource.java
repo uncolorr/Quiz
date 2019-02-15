@@ -17,10 +17,14 @@ import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface ApiSource {
 
@@ -63,6 +67,10 @@ public interface ApiSource {
     @Headers("Content-Type: application/json")
     @POST("answerOnQuestionInRoom")
     Call<ResponseModel<Boolean>> answerOnQuestionInRoom(@Body AnswerOnQuestionInRoomRequestData answerOnQuestionInRoomRequestData);
+
+    @Multipart
+    @POST("changeAvatar")
+    Call<ResponseModel<String>> changeAvatar(@Part("token") RequestBody token, @Part("photo") MultipartBody.Part file);
 
 
 }
