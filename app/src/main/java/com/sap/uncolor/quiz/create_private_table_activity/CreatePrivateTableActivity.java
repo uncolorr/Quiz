@@ -1,4 +1,4 @@
-package com.sap.uncolor.quiz;
+package com.sap.uncolor.quiz.create_private_table_activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.sap.uncolor.quiz.PrivateGameResultsActivity;
+import com.sap.uncolor.quiz.R;
+import com.sap.uncolor.quiz.TeamViewRenderer;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.models.Team;
@@ -22,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CreatePrivateTableActivity extends AppCompatActivity implements CreateTeamListener{
+public class CreatePrivateTableActivity extends AppCompatActivity implements CreateTeamListener, CreatePrivateTableActivityContract.View{
 
     @BindView(R.id.editTextTeamName)
     EditText editTextTeamName;
@@ -59,6 +63,11 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
             teams.add(team);
         }
 
+        if(teams.size() < 2){
+            Toast.makeText(this, "Создайте хотя бы 2 команды", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         DBManager dbManager = new DBManager(this);
         dbManager.addPrivateGameTeamsFromDatabase(teams);
         dbManager.close();
@@ -85,5 +94,10 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
         Team team = new Team(editTextTeamName.getText().toString(), privateGamePlayers);
         adapter.add(team);
         editTextTeamName.getText().clear();
+    }
+
+    @Override
+    public void removeItem(int index) {
+
     }
 }

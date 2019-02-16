@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.models.User;
 
 import butterknife.BindView;
@@ -33,6 +34,14 @@ public class TopViewHolder extends RecyclerView.ViewHolder {
     public void bind(User user){
         textViewName.setText(user.getLogin());
         textViewPoints.setText(Integer.toString(user.getPoints()));
-        //load avatar
+        if (user.getAvatar().isEmpty()) {
+            if (user.getSex().equals(User.SEX_TYPE_MALE)) {
+                imageViewAvatar.setImageResource(R.drawable.boy);
+            } else if (user.getSex().equals(User.SEX_TYPE_FEMALE)) {
+                imageViewAvatar.setImageResource(R.drawable.girl);
+            }
+        } else {
+            Glide.with(itemView).load(user.getAvatar()).into(imageViewAvatar);
+        }
     }
 }

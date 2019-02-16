@@ -11,15 +11,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.ResultsViewRenderer;
 import com.sap.uncolor.quiz.RoundViewRenderer;
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Results;
 import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.Round;
+import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 import com.sap.uncolor.quiz.utils.MessageReporter;
@@ -30,6 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ResultsActivity extends AppCompatActivity implements ResultActivityContract.View {
 
@@ -54,6 +58,12 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     @BindView(R.id.textViewEnemyUsername)
     TextView textViewEnemyUsername;
+
+    @BindView(R.id.imageViewMyAvatar)
+    CircleImageView imageViewMyAvatar;
+
+    @BindView(R.id.imageViewEnemyAvatar)
+    CircleImageView imageViewEnemyAvatar;
 
     private UniversalAdapter adapter;
 
@@ -111,15 +121,31 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             if (dbManager.getCompletedRoundsCount() < 5) {
                 adapter.add(new Results(Results.STATE_NEXT_GAME));
             }
+            showUsersInfoForSingleGame(App.getUser());
             countResultsForSingleGame();
-            textViewMyUsername.setText("Вы");
-            textViewEnemyUsername.setText("Компьютер");
         }
 
         if (gameType == GAME_TYPE_ONLINE) {
             room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
             presenter.onUpdateInfoAboutOnlineGame(room);
-           // updateInfoAboutOnlineGame(room);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void showUsersInfoForSingleGame(User user){
+        if(gameType == GAME_TYPE_SINGLE) {
+            textViewMyUsername.setText(user.getLogin());
+            if (user.getAvatar().isEmpty()) {
+                if (user.getSex().equals(User.SEX_TYPE_MALE)) {
+                    imageViewMyAvatar.setImageResource(R.drawable.boy);
+                } else if (user.getSex().equals(User.SEX_TYPE_FEMALE)) {
+                    imageViewMyAvatar.setImageResource(R.drawable.girl);
+                }
+            } else {
+                Glide.with(ResultsActivity.this).load(user.getAvatar()).into(imageViewMyAvatar);
+            }
+            textViewEnemyUsername.setText("Компьютер");
+            imageViewEnemyAvatar.setImageResource(R.drawable.ic_monitor);
         }
     }
 
@@ -281,10 +307,14 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
         if(room.isMine()) {
             textViewMyUsername.setText(room.getCreator().getLogin());
+            Glide.with(this).load(room.getCreator().getAvatar()).into(imageViewMyAvatar);
             textViewEnemyUsername.setText(room.getCompetitor().getLogin());
+            Glide.with(this).load(room.getCompetitor().getAvatar()).into(imageViewEnemyAvatar);
         } else  {
             textViewMyUsername.setText(room.getCompetitor().getLogin());
+            Glide.with(this).load(room.getCompetitor().getAvatar()).into(imageViewEnemyAvatar);
             textViewEnemyUsername.setText(room.getCreator().getLogin());
+            Glide.with(this).load(room.getCreator().getAvatar()).into(imageViewMyAvatar);
         }
 
         if (room.getRounds() == null) {

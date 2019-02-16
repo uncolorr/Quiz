@@ -99,14 +99,6 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
                             "Ошибка при регистрации");
                     return;
                 }
-
-                /*if(result.getResult() != null){
-                    App.Log("error");
-                    MessageReporter.showMessage(RegisterActivity.this,
-                            "Ошибка",
-                            "Ошибка при регистрации");
-                    return;
-                }*/
                 User user = result.getResult();
                 App.putUserData(user);
                 startActivity(MainActivity.getInstance(RegisterActivity.this));

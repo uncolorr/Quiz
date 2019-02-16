@@ -135,6 +135,7 @@
 
             </LinearLayout>
 
+
             <Button
                 android:id="@+id/buttonOnlineGame"
                 android:layout_width="match_parent"
@@ -146,6 +147,7 @@
                 android:fontFamily="@font/noteworthy_bold"
                 android:text="Играть Онлайн"
                 android:textColor="@color/colorMain" />
+
 
             <Button
                 android:id="@+id/buttonSingleGame"
@@ -170,6 +172,9 @@
                 android:fontFamily="@font/noteworthy_bold"
                 android:text="Закрытый стол"
                 android:textColor="@color/colorMain" />
+
+
+
 
 
             <Button
@@ -213,19 +218,19 @@
                 android:background="@color/colorMain">
 
             </View>
-            
-            
+
+
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp">
 
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerViewCurrentGames"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginTop="16dp">
+                    android:layout_height="wrap_content">
 
                 </android.support.v7.widget.RecyclerView>
 
@@ -233,17 +238,17 @@
                     android:id="@+id/progressBarCurrentRoomsLoading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
 
 
                 <LinearLayout
                     android:id="@+id/linearLayoutFailure"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
+                    android:layout_gravity="top|center"
                     android:layout_margin="32dp"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <ImageView
@@ -251,30 +256,30 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:src="@drawable/ic_danger"
-                        android:tint="@color/colorWrong"/>
+                        android:tint="@color/colorWrong" />
 
                     <TextView
                         android:id="@+id/textViewCurrentRoomMessage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        tools:text="Ошибка при загрузке комнат"
-                        android:fontFamily="@font/noteworthy_bold"
-                        android:textSize="14sp"
                         android:layout_margin="16dp"
-                        android:textColor="@color/colorWrong"/>
+                        android:fontFamily="@font/noteworthy_bold"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorWrong"
+                        android:textSize="14sp"
+                        tools:text="Ошибка при загрузке комнат" />
 
                     <Button
                         android:id="@+id/buttonReloadCurrentRooms"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:textAllCaps="false"
-                        android:fontFamily="@font/noteworthy_bold"
                         android:background="@color/colorWrong"
-                        android:text="Обновить"/>
+                        android:fontFamily="@font/noteworthy_bold"
+                        android:paddingEnd="8dp"
+                        android:paddingStart="8dp"
+                        android:text="Обновить"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white" />
 
                 </LinearLayout>
 
@@ -288,7 +293,6 @@
                 android:layout_height="32dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
-                android:layout_marginEnd="8dp"
                 android:background="@drawable/button_info"
                 android:fontFamily="@font/noteworthy_bold"
                 android:text="i"

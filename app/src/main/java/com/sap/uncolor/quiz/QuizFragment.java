@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
-import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
@@ -137,7 +136,6 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
 
     private void checkAnswerForOnlineGames(int variant, int question_index, int round) {
         if(getContext() != null) {
-            App.Log("Answer in online game");
             int points = QuizActivity.getPoints();
             switch (variant) {
                 case Quiz.VARIANT_ONE:

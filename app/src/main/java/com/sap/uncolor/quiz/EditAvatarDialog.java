@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.application.App;
+import com.sap.uncolor.quiz.models.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -65,10 +66,14 @@ public class EditAvatarDialog {
     }
 
     public void uploadAvatar(String avatarUrl) {
-        if(avatarUrl.isEmpty()){
-            circleImageView.setImageResource(R.drawable.add);
-            return;
+        if (avatarUrl.isEmpty()) {
+            if (App.getUser().getSex().equals(User.SEX_TYPE_MALE)) {
+                circleImageView.setImageResource(R.drawable.boy);
+            } else if (App.getUser().getSex().equals(User.SEX_TYPE_FEMALE)) {
+                circleImageView.setImageResource(R.drawable.girl);
+            }
+        } else {
+            Glide.with(context).load(avatarUrl).into(circleImageView);
         }
-        Glide.with(context).load(avatarUrl).into(circleImageView);
     }
 }

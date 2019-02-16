@@ -3,6 +3,7 @@ package com.sap.uncolor.quiz.utils;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 
 public class MessageReporter {
 
@@ -46,6 +47,25 @@ public class MessageReporter {
             }
         });
         builder.setPositiveButton("ОК", exitListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public static void showMessageWithInfo(Context context, String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            builder.setMessage(Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            builder.setMessage(Html.fromHtml(message));
+        }
+        builder.setCancelable(false);
+        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
         AlertDialog dialog = builder.create();
         dialog.show();
     }

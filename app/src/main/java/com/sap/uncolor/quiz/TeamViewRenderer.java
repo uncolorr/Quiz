@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.universal_adapter.ViewRenderer;
 
-class TeamViewRenderer extends ViewRenderer<Team, TeamViewHolder> {
+public class TeamViewRenderer extends ViewRenderer<Team, TeamViewHolder> {
 
     public TeamViewRenderer(int type, Context context) {
         super(type, context);

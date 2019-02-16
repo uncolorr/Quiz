@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.AuthActivity;
-import com.sap.uncolor.quiz.CreatePrivateTableActivity;
+import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivity;
 import com.sap.uncolor.quiz.EditAvatarDialog;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
@@ -43,6 +43,7 @@ import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 import com.sap.uncolor.quiz.utils.PathConverter;
+import com.sap.uncolor.quiz.utils.RawTextReader;
 
 import java.io.File;
 import java.util.List;
@@ -51,9 +52,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener {
 
@@ -87,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     ProgressBar progressBarCurrentRoomsLoading;
 
 
-
     private AlertDialog loadingDialog;
 
     private UniversalAdapter adapter;
@@ -95,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     private EditAvatarDialog editAvatarDialog;
 
 
-    public static Intent getInstance(Context context){
+    public static Intent getInstance(Context context) {
         return new Intent(context, MainActivity.class);
     }
 
@@ -119,15 +116,15 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
     @OnClick(R.id.buttonSingleGame)
-    void onButtonSingleGameClick(){
+    void onButtonSingleGameClick() {
         DBManager dbManager = new DBManager(this);
-        if(dbManager.getCompletedRoundsCount() >= 5){
+        if (dbManager.getCompletedRoundsCount() >= 5) {
             dbManager.clearSingleGameResults();
             dbManager.close();
         }
         showLoadingDialog();
         Api.getSource().getQuestions(new GetQuestionsRequestData())
-                .enqueue(ApiResponse.getCallback(getApiResponseListener(), this));
+                .enqueue(ApiResponse.getCallback(getQuestionsResponseListener(), this));
     }
 
     @Override
@@ -144,12 +141,11 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new ApiResponse.ApiResponseListener<ResponseModel<User>>() {
             @Override
             public void onResponse(ResponseModel<User> result) {
-                if(result == null || result.getResult() == null){
+                if (result == null || result.getResult() == null) {
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка получения информации о пользователе");
-                }
-                else {
+                } else {
                     User user = result.getResult();
                     showUserInfo(user);
                     App.updateUserData(user);
@@ -159,15 +155,17 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
 
-
     @SuppressLint("SetTextI18n")
-    private void showUserInfo(User user){
+    private void showUserInfo(User user) {
         textViewName.setText(user.getLogin());
         textViewPoints.setText(Integer.toString(user.getPoints()));
-        if(user.getAvatar().isEmpty()){
-            imageViewAvatar.setImageResource(R.drawable.add);
-        }
-        else {
+        if (user.getAvatar().isEmpty()) {
+            if (user.getSex().equals(User.SEX_TYPE_MALE)) {
+                imageViewAvatar.setImageResource(R.drawable.boy);
+            } else if (user.getSex().equals(User.SEX_TYPE_FEMALE)) {
+                imageViewAvatar.setImageResource(R.drawable.girl);
+            }
+        } else {
             Glide
                     .with(MainActivity.this)
                     .load(user.getAvatar())
@@ -176,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         }
     }
 
-    private View.OnClickListener getOnUploadAvatarClickListener(){
+    private View.OnClickListener getOnUploadAvatarClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         };
     }
 
-    private View.OnClickListener getOnRemoveAvatarClickListener(){
+    private View.OnClickListener getOnRemoveAvatarClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,20 +199,19 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new ApiResponse.ApiResponseListener<ResponseModel<List<Room>>>() {
             @Override
             public void onResponse(ResponseModel<List<Room>> result) {
-                //cancelLoadingDialog();
                 hideCurrentRoomsProgressBar();
-                if(result == null || result.getResult() == null){
-               //   MessageReporter.showMessage(MainActivity.this, "Ошибка", "Ошибка получения списка текущих поединков");
+                if (result == null || result.getResult() == null) {
                     showInfoAboutCurrentRoomsLoadingFailure();
 
-                }
-                else {
+                } else {
                     adapter.clear();
                     List<Room> rooms = result.getResult();
-                    if(rooms.isEmpty()){
+                    if (rooms.isEmpty()) {
                         showInfoAboutEmptyCurrentRooms();
                         return;
                     }
+                    hideInfoAboutEmptyCurrentRooms();
+                    hideInfoAboutCurrentRoomsLoadingFailure();
                     for (int i = 0; i < rooms.size(); i++) {
                         adapter.add(rooms.get(i));
                     }
@@ -224,23 +221,34 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
     @OnClick(R.id.imageButtonSettings)
-    void onSettingsButtonClick(){
+    void onSettingsButtonClick() {
 
     }
 
     @OnClick(R.id.imageViewAvatar)
-    void onImageAvatarClick(){
+    void onImageAvatarClick() {
         editAvatarDialog.show();
     }
 
+    @OnClick(R.id.buttonMenuInfo)
+    void onButtonMenuInfoClick(){
+        MessageReporter.showMessageWithInfo(this, "Информация о меню игры",
+                RawTextReader.readRawTextFile(this, R.raw.game_menu_info));
+    }
+
+    @OnClick(R.id.buttonCurrentGamesInfo)
+    void onButtonCurrentGamesInfoClick(){
+        MessageReporter.showMessageWithInfo(this, "Информация о текущих играх",
+                RawTextReader.readRawTextFile(this, R.raw.current_games_info));
+    }
 
     @OnClick(R.id.imageButtonTop)
-    void onTopButtonClick(){
+    void onTopButtonClick() {
         startActivity(TopActivity.getInstance(this));
     }
 
     @OnClick(R.id.imageButtonExit)
-    void onExitButtonClick(){
+    void onExitButtonClick() {
         MessageReporter.showConfirmForLogout(this, getLogoutClickListener());
     }
 
@@ -257,19 +265,19 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
 
     @OnClick(R.id.buttonPrivateGame)
-    void onButtonPrivateGameClick(){
+    void onButtonPrivateGameClick() {
         startActivity(CreatePrivateTableActivity.getInstance(this));
     }
 
     @OnClick(R.id.buttonOnlineGame)
-    void onButtonOnlineGameClick(){
+    void onButtonOnlineGameClick() {
         showLoadingDialog();
         Api.getSource().getRoom(new GetRoomRequestData())
                 .enqueue(ApiResponse.getCallback(getFindRoomResponseListener(), this));
     }
 
     @OnClick(R.id.buttonReloadCurrentRooms)
-    void onReloadCurrentRoomsButtonClick(){
+    void onReloadCurrentRoomsButtonClick() {
         showCurrentRoomsProgressBar();
         hideInfoAboutCurrentRoomsLoadingFailure();
         hideInfoAboutEmptyCurrentRooms();
@@ -278,36 +286,36 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
 
-    private void showInfoAboutEmptyCurrentRooms(){
-        imageViewWarning.setVisibility(View.INVISIBLE);
-        buttonReloadCurrentRooms.setVisibility(View.INVISIBLE);
+    private void showInfoAboutEmptyCurrentRooms() {
+        imageViewWarning.setVisibility(View.GONE);
+        buttonReloadCurrentRooms.setVisibility(View.VISIBLE);
         textViewCurrentRoomMessage.setVisibility(View.VISIBLE);
-        textViewCurrentRoomMessage.setText("Текущих поединков нет");
+        textViewCurrentRoomMessage.setText("Текущих игр нет");
     }
 
-    private void showInfoAboutCurrentRoomsLoadingFailure(){
+    private void showInfoAboutCurrentRoomsLoadingFailure() {
         imageViewWarning.setVisibility(View.VISIBLE);
         buttonReloadCurrentRooms.setVisibility(View.VISIBLE);
         textViewCurrentRoomMessage.setVisibility(View.VISIBLE);
         textViewCurrentRoomMessage.setText("Ошибка при загрузке текущих поединков");
     }
 
-    private void hideInfoAboutEmptyCurrentRooms(){
-        textViewCurrentRoomMessage.setVisibility(View.INVISIBLE);
+    private void hideInfoAboutEmptyCurrentRooms() {
+        textViewCurrentRoomMessage.setVisibility(View.GONE);
     }
 
-    private void hideInfoAboutCurrentRoomsLoadingFailure(){
-        imageViewWarning.setVisibility(View.INVISIBLE);
-        textViewCurrentRoomMessage.setVisibility(View.INVISIBLE);
-        buttonReloadCurrentRooms.setVisibility(View.INVISIBLE);
+    private void hideInfoAboutCurrentRoomsLoadingFailure() {
+        imageViewWarning.setVisibility(View.GONE);
+        textViewCurrentRoomMessage.setVisibility(View.GONE);
+        buttonReloadCurrentRooms.setVisibility(View.GONE);
     }
 
-    private void showCurrentRoomsProgressBar(){
+    private void showCurrentRoomsProgressBar() {
         progressBarCurrentRoomsLoading.setVisibility(View.VISIBLE);
     }
 
-    private void hideCurrentRoomsProgressBar(){
-        progressBarCurrentRoomsLoading.setVisibility(View.INVISIBLE);
+    private void hideCurrentRoomsProgressBar() {
+        progressBarCurrentRoomsLoading.setVisibility(View.GONE);
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<Room>> getFindRoomResponseListener() {
@@ -315,12 +323,11 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             @Override
             public void onResponse(ResponseModel<Room> result) {
                 cancelLoadingDialog();
-                if(result == null || result.getResult() == null){
+                if (result == null || result.getResult() == null) {
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка при поиске игры");
-                }
-                else {
+                } else {
                     Room room = result.getResult();
                     startActivity(ResultsActivity
                             .getInstanceForOnlineGame(MainActivity.this, room));
@@ -330,17 +337,16 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
 
-    private ApiResponse.ApiResponseListener<ResponseModel<List<Question>>> getApiResponseListener() {
+    private ApiResponse.ApiResponseListener<ResponseModel<List<Question>>> getQuestionsResponseListener() {
         return new ApiResponse.ApiResponseListener<ResponseModel<List<Question>>>() {
             @Override
             public void onResponse(ResponseModel<List<Question>> result) {
                 cancelLoadingDialog();
-                if(result == null){
+                if (result == null) {
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка создания игры");
-                }
-                else {
+                } else {
                     Quiz quiz = new Quiz();
                     quiz.setQuestions(result.getResult());
                     startActivity(QuizActivity.getInstanceForSingleGame(MainActivity.this, quiz));
@@ -349,21 +355,20 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         };
     }
 
-    public void showLoadingDialog(){
-        if(loadingDialog != null){
+    public void showLoadingDialog() {
+        if (loadingDialog != null) {
             loadingDialog.show();
         }
     }
 
-    public void cancelLoadingDialog(){
-        if(loadingDialog != null){
+    public void cancelLoadingDialog() {
+        if (loadingDialog != null) {
             loadingDialog.cancel();
         }
     }
 
     @Override
     public void onFailure(int code, String message) {
-        App.Log("onFailure");
         cancelLoadingDialog();
         MessageReporter.showMessage(MainActivity.this,
                 "Ошибка",
@@ -372,18 +377,11 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     private void uploadAvatar(File file) {
         User user = App.getUser();
-
-        String tokenString = user.getToken();
-        RequestBody token = RequestBody.create(MultipartBody.FORM, tokenString);
-
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
-        MultipartBody.Part body = null;
-        if(file != null){
-            body = MultipartBody.Part.createFormData("photo", file.getName(), requestFile);
+        if(file == null){
+            file = new File("");
         }
-        Api.getSource().changeAvatar(token, body)
-                .enqueue(ApiResponse.getCallback(getUploadAvatarResponseListener(), this));
+        Api.getSource().changeAvatar(user.getToken(), file).
+                enqueue(ApiResponse.getCallback(getUploadAvatarResponseListener(), this));
 
     }
 
@@ -391,15 +389,20 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new ApiResponse.ApiResponseListener<ResponseModel<String>>() {
             @Override
             public void onResponse(ResponseModel<String> result) {
-                if(result == null || result.getResult() == null){
+                if (result == null || result.getResult() == null) {
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка обновления аватара");
-                }
-                else {
+                } else {
                     String avatarUrl = result.getResult();
-                    if(avatarUrl.isEmpty()){
-                        imageViewAvatar.setImageResource(R.drawable.add);
+                    if (avatarUrl.isEmpty()) {
+                        if (App.getUser().getSex().equals(User.SEX_TYPE_MALE)) {
+                            imageViewAvatar.setImageResource(R.drawable.boy);
+                        } else if (App.getUser().getSex().equals(User.SEX_TYPE_FEMALE)) {
+                            imageViewAvatar.setImageResource(R.drawable.girl);
+                        }
+                        Toast.makeText(MainActivity.this,
+                                "Аватар успешно обновлен", Toast.LENGTH_LONG).show();
                         return;
                     }
                     Glide
@@ -432,6 +435,4 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                 break;
         }
     }
-
-
 }

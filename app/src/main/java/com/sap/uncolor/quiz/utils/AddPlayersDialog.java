@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.sap.uncolor.quiz.ItemModel;
 import com.sap.uncolor.quiz.PlayerViewRenderer;
@@ -32,7 +33,7 @@ public class AddPlayersDialog {
 
     private Context context;
 
-    public AlertDialog create(Context context) {
+    public AlertDialog create(final Context context) {
         this.context = context;
         builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_add_players, null);
@@ -47,11 +48,15 @@ public class AddPlayersDialog {
             public void onClick(DialogInterface dialog, int which) {
                 if(createTeamListener != null){
                     ArrayList<ItemModel> items = adapter.getItems();
-                    ArrayList<PrivateGamePlayer> result = new ArrayList<>();
+                    ArrayList<PrivateGamePlayer> players = new ArrayList<>();
                     for (int i = 0; i < items.size(); i++) {
-                        result.add((PrivateGamePlayer) items.get(i));
+                        players.add((PrivateGamePlayer) items.get(i));
                     }
-                    createTeamListener.onCreateTeam(result);
+                    if(players.size() == 0){
+                        Toast.makeText(context, "Добавьте хотя бы 1 игрока в команду", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    createTeamListener.onCreateTeam(players);
                 }
             }
         });

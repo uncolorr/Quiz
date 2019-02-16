@@ -44,6 +44,7 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
     @BindView(R.id.textViewNextPlayer)
     TextView textViewNextPlayer;
 
+
     private UniversalAdapter adapter;
 
     private AlertDialog loadingDialog;

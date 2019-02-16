@@ -30,6 +30,10 @@ public class User implements ItemModel, Serializable {
     @SerializedName("avatar")
     private String avatar;
 
+    private int victories;
+
+    private int defeats;
+
 
     public int getId() {
         return id;

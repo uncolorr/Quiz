@@ -67,7 +67,7 @@ public class RoundViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void drawEnemyResults(int mask) {
-        if (mask == 0) {
+        if (mask  < 3) {
             viewEnemyRound1.setBackground(ContextCompat
                     .getDrawable(itemView.getContext(), R.drawable.result_none));
             viewEnemyRound2.setBackground(ContextCompat
