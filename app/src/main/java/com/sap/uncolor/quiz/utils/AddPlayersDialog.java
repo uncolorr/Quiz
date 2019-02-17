@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.sap.uncolor.quiz.ItemModel;
 import com.sap.uncolor.quiz.PlayerViewRenderer;
 import com.sap.uncolor.quiz.R;
+import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivityPresenter;
 import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
 
@@ -33,8 +34,11 @@ public class AddPlayersDialog {
 
     private Context context;
 
-    public AlertDialog create(final Context context) {
+    private CreatePrivateTableActivityPresenter presenter;
+
+    public AlertDialog create(final Context context, CreatePrivateTableActivityPresenter presenter) {
         this.context = context;
+        this.presenter = presenter;
         builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_add_players, null);
         editTextPlayerName = view.findViewById(R.id.editTextPlayerName);
@@ -85,7 +89,7 @@ public class AddPlayersDialog {
 
     private void initRecyclerView(){
         adapter = new UniversalAdapter();
-        adapter.registerRenderer(new PlayerViewRenderer(PrivateGamePlayer.TYPE, context));
+        adapter.registerRenderer(new PlayerViewRenderer(PrivateGamePlayer.TYPE, context, presenter));
         recyclerViewPlayers.setAdapter(adapter);
         recyclerViewPlayers.setLayoutManager(new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false));
@@ -93,6 +97,10 @@ public class AddPlayersDialog {
 
     public void setOnCreateTeamListener(CreateTeamListener createTeamListener){
         this.createTeamListener = createTeamListener;
+    }
+
+    public void removePlayer(int index){
+        adapter.remove(index);
     }
 
 }

@@ -84,4 +84,9 @@ public class UniversalAdapter extends RecyclerView.Adapter {
         items.clear();
         notifyDataSetChanged();
     }
+
+    public void remove(int index){
+        items.remove(index);
+        notifyItemRemoved(index);
+    }
 }

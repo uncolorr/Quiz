@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivityContract;
 import com.sap.uncolor.quiz.models.Team;
 
 import butterknife.BindView;
@@ -20,9 +21,12 @@ class TeamViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.textViewTeamName)
     TextView textViewTeamName;
 
-    public TeamViewHolder(@NonNull View itemView) {
+    private CreatePrivateTableActivityContract.Presenter presenter;
+
+    public TeamViewHolder(@NonNull View itemView, CreatePrivateTableActivityContract.Presenter presenter) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        this.presenter = presenter;
     }
 
     @SuppressLint("SetTextI18n")
@@ -33,6 +37,6 @@ class TeamViewHolder extends RecyclerView.ViewHolder {
 
     @OnClick(R.id.imageButtonRemove)
     void onButtonRemoveClick(){
-
+        presenter.onRemoveTeamItem(getAdapterPosition());
     }
 }

@@ -27,6 +27,19 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/imageButtonBack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:padding="1dp"
+                android:layout_marginStart="16dp"
+                android:tint="@android:color/white"
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/back"/>
+
+
             <TextView
                 style="@style/TextViewBoldStyle"
                 android:layout_width="wrap_content"
@@ -39,13 +52,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/imageButtonUpdate"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_update" />
 
         </LinearLayout>
 
@@ -114,7 +120,7 @@
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:layout_marginEnd="12dp"
-                        android:scaleType="centerCrop"
+                        android:src="@android:color/white"
                         app:civ_border_color="@color/colorMain"
                         app:civ_border_width="2dp" />
 

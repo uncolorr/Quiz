@@ -279,6 +279,16 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @Override
     public void onFailure(int code, String message) {
+        MessageReporter.showMessage(this, "Ошибка", message, getFailureExitListener(), false);
+    }
 
+
+    public DialogInterface.OnClickListener getFailureExitListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
     }
 }

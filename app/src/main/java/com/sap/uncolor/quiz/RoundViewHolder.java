@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.Round;
 import com.sap.uncolor.quiz.results_activity.ResultActivityPresenter;
 
@@ -57,17 +58,19 @@ public class RoundViewHolder extends RecyclerView.ViewHolder {
         bindRoundState();
        if(round.isMine()){
            drawMyResults(round.getCreatorMask());
-           drawEnemyResults(round.getCompetitorMask());
+           drawEnemyResults(round.getCompetitorMask(), round.getCompetitorLastQuestion());
        }else {
            drawMyResults(round.getCompetitorMask());
-           drawEnemyResults(round.getCreatorMask());
-
+           drawEnemyResults(round.getCreatorMask(),round.getCreatorLastQuestion());
        }
-        textViewRoundNumber.setText((getAdapterPosition() + 1) + " Раунд");
+
+       App.Log("  ");
+       App.Log("  ");
+       textViewRoundNumber.setText((getAdapterPosition() + 1) + " Раунд");
     }
 
-    private void drawEnemyResults(int mask) {
-        if (mask  < 3) {
+    private void drawEnemyResults(int mask, int lastQuestion) {
+        if (lastQuestion < 3) {
             viewEnemyRound1.setBackground(ContextCompat
                     .getDrawable(itemView.getContext(), R.drawable.result_none));
             viewEnemyRound2.setBackground(ContextCompat
@@ -79,6 +82,7 @@ public class RoundViewHolder extends RecyclerView.ViewHolder {
 
         String competitorMask = String.format("%3s", Integer.toBinaryString(mask))
                 .replace(' ', '0');
+        App.Log("enemy results in round " + (getAdapterPosition() + 1) + ": " + competitorMask);
         byte[] competitorMaskBytes = competitorMask.getBytes();
         for (int i = 0; i < competitorMaskBytes.length; i++) {
             if (i == 0) {
@@ -118,6 +122,7 @@ public class RoundViewHolder extends RecyclerView.ViewHolder {
         String creatorMask = String.format("%3s", Integer.toBinaryString(mask))
                 .replace(' ', '0');
         byte[] creatorMaskAsBytes = creatorMask.getBytes();
+        App.Log("my results in round " + (getAdapterPosition() + 1) + ": " + creatorMask);
         for (int i = 0; i < creatorMaskAsBytes.length; i++) {
             if (i == 0) {
                 if (creatorMaskAsBytes[i] == '1') {

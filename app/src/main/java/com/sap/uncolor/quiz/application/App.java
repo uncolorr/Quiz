@@ -19,6 +19,12 @@ public class App extends Application {
     }
 
     public static void Log(String message){
+        if(message == null){
+            return;
+        }
+        if(message.isEmpty()){
+            return;
+        }
         Log.i("fg", message);
     }
 

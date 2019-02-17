@@ -26,6 +26,15 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:padding="4dp"
+                android:layout_marginStart="16dp"
+                android:tint="@android:color/white"
+                android:src="@drawable/back"/>
+
             <TextView
                 android:id="@+id/textViewRoundNumber"
                 android:layout_width="100dp"

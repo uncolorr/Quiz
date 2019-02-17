@@ -21,6 +21,17 @@ public class MessageReporter {
             dialog.show();
         }
 
+    public static void showMessage(Context context, String title, String message,
+                                   DialogInterface.OnClickListener okListener, boolean isCancelable) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(isCancelable);
+        builder.setNeutralButton("OK", okListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     public static void showConfirmForExitFromGame(Context context, DialogInterface.OnClickListener exitListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Подверждение выхода из игры");

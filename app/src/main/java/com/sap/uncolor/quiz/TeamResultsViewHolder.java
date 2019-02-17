@@ -31,8 +31,7 @@ public class TeamResultsViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         ButterKnife.bind(this, itemView);
         adapter = new UniversalAdapter();
-        adapter.registerRenderer(new PrivateGamePlayerViewRenderer(PrivateGamePlayer.TYPE,
-                itemView.getContext()));
+        adapter.registerRenderer(new PrivateGamePlayerViewRenderer(PrivateGamePlayer.TYPE, itemView.getContext()));
         recyclerViewPlayers.setAdapter(adapter);
         recyclerViewPlayers.setLayoutManager(new LinearLayoutManager(itemView.getContext(),
                 LinearLayoutManager.VERTICAL, false));

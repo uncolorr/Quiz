@@ -38,6 +38,8 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
 
     private UniversalAdapter adapter;
 
+    private CreatePrivateTableActivityPresenter presenter;
+
     public static Intent getInstance(Context context){
         return new Intent(context, CreatePrivateTableActivity.class);
     }
@@ -47,8 +49,10 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_private_tabel);
         ButterKnife.bind(this);
+        presenter = new CreatePrivateTableActivityPresenter(this, this);
+        addPlayersDialog = new AddPlayersDialog();
         adapter = new UniversalAdapter();
-        adapter.registerRenderer(new TeamViewRenderer(Team.TYPE, this));
+        adapter.registerRenderer(new TeamViewRenderer(Team.TYPE, this, presenter));
         recyclerViewTeams.setAdapter(adapter);
         recyclerViewTeams.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
@@ -85,7 +89,7 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
         }
         addPlayersDialog = new AddPlayersDialog();
         addPlayersDialog.setOnCreateTeamListener(this);
-        AlertDialog dialog = addPlayersDialog.create(this);
+        AlertDialog dialog = addPlayersDialog.create(this, presenter);
         dialog.show();
     }
 
@@ -97,7 +101,12 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
     }
 
     @Override
-    public void removeItem(int index) {
+    public void removeTeamItem(int index) {
+        adapter.remove(index);
+    }
 
+    @Override
+    public void removePlayerItem(int index) {
+        addPlayersDialog.removePlayer(index);
     }
 }

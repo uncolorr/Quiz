@@ -389,6 +389,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new ApiResponse.ApiResponseListener<ResponseModel<String>>() {
             @Override
             public void onResponse(ResponseModel<String> result) {
+                App.Log("response on upload avatar");
                 if (result == null || result.getResult() == null) {
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
@@ -425,7 +426,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_FOR_AVATAR_UPLOAD_FROM_GALLERY:
+                App.Log("Request upload");
                 if (data != null) {
+                    App.Log("request upload from gallery not null");
                     Uri avatarUri = data.getData();
                     String path = PathConverter.getRealPathFromURI(this, avatarUri);
                     App.Log(path);

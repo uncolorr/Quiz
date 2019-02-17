@@ -22,6 +22,7 @@ public class PrivateGamePlayerViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.textViewPointsWrong)
     TextView textViewPointsWrong;
 
+
     public PrivateGamePlayerViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);

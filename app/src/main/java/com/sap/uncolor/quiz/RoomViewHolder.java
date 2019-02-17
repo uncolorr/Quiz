@@ -6,7 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.models.Room;
+import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 
 import butterknife.BindView;
@@ -54,14 +56,27 @@ public class RoomViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         if(room.isMine()){
             textViewEnemyName.setText(room.getCompetitor().getLogin());
             textViewEnemyPoints.setText(Integer.toString(room.getCompetitor().getPoints()));
+            uploadAvatar(room.getCompetitor(), imageViewEnemyAvatar);
         }
         else {
             textViewEnemyName.setText(room.getCreator().getLogin());
             textViewEnemyPoints.setText(Integer.toString(room.getCreator().getPoints()));
-
+            uploadAvatar(room.getCreator(), imageViewEnemyAvatar);
         }
 
         //add Glide loader for avatar
+    }
+
+    private void uploadAvatar(User user, CircleImageView imageViewAvatar){
+        if (user.getAvatar().isEmpty()) {
+            if (user.getSex().equals(User.SEX_TYPE_MALE)) {
+                imageViewAvatar.setImageResource(R.drawable.boy);
+            } else if (user.getSex().equals(User.SEX_TYPE_FEMALE)) {
+                imageViewAvatar.setImageResource(R.drawable.girl);
+            }
+        } else {
+            Glide.with(itemView).load(user.getAvatar()).into(imageViewAvatar);
+        }
     }
 
     @Override

@@ -13,7 +13,14 @@ public class CreatePrivateTableActivityPresenter implements CreatePrivateTableAc
     }
 
     @Override
-    public void onRemoveItem(int index) {
-
+    public void onRemoveTeamItem(int index) {
+        view.removeTeamItem(index);
     }
+
+    @Override
+    public void onRemovePrivatePlayerItem(int index) {
+        view.removePlayerItem(index);
+    }
+
+
 }

@@ -135,7 +135,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     private void showUsersInfoForSingleGame(User user){
         if(gameType == GAME_TYPE_SINGLE) {
             textViewMyUsername.setText(user.getLogin());
-            if (user.getAvatar().isEmpty()) {
+            /*if (user.getAvatar().isEmpty()) {
                 if (user.getSex().equals(User.SEX_TYPE_MALE)) {
                     imageViewMyAvatar.setImageResource(R.drawable.boy);
                 } else if (user.getSex().equals(User.SEX_TYPE_FEMALE)) {
@@ -143,9 +143,23 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
                 }
             } else {
                 Glide.with(ResultsActivity.this).load(user.getAvatar()).into(imageViewMyAvatar);
-            }
+            }*/
+
+            uploadAvatar(user, imageViewMyAvatar);
             textViewEnemyUsername.setText("Компьютер");
             imageViewEnemyAvatar.setImageResource(R.drawable.ic_monitor);
+        }
+    }
+
+    private void uploadAvatar(User user, CircleImageView imageViewAvatar){
+        if (user.getAvatar().isEmpty()) {
+            if (user.getSex().equals(User.SEX_TYPE_MALE)) {
+                imageViewAvatar.setImageResource(R.drawable.boy);
+            } else if (user.getSex().equals(User.SEX_TYPE_FEMALE)) {
+                imageViewAvatar.setImageResource(R.drawable.girl);
+            }
+        } else {
+            Glide.with(ResultsActivity.this).load(user.getAvatar()).into(imageViewMyAvatar);
         }
     }
 
@@ -307,14 +321,14 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
         if(room.isMine()) {
             textViewMyUsername.setText(room.getCreator().getLogin());
-            Glide.with(this).load(room.getCreator().getAvatar()).into(imageViewMyAvatar);
+            uploadAvatar(room.getCreator(), imageViewMyAvatar);
             textViewEnemyUsername.setText(room.getCompetitor().getLogin());
-            Glide.with(this).load(room.getCompetitor().getAvatar()).into(imageViewEnemyAvatar);
+            uploadAvatar(room.getCompetitor(), imageViewEnemyAvatar);
         } else  {
             textViewMyUsername.setText(room.getCompetitor().getLogin());
-            Glide.with(this).load(room.getCompetitor().getAvatar()).into(imageViewEnemyAvatar);
+            uploadAvatar(room.getCompetitor(), imageViewEnemyAvatar);
             textViewEnemyUsername.setText(room.getCreator().getLogin());
-            Glide.with(this).load(room.getCreator().getAvatar()).into(imageViewMyAvatar);
+            uploadAvatar(room.getCreator(), imageViewMyAvatar);
         }
 
         if (room.getRounds() == null) {
