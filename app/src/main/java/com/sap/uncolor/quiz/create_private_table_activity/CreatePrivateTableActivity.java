@@ -26,7 +26,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CreatePrivateTableActivity extends AppCompatActivity implements CreateTeamListener, CreatePrivateTableActivityContract.View{
+public class CreatePrivateTableActivity extends AppCompatActivity implements CreateTeamListener,
+        CreatePrivateTableActivityContract.View{
 
     @BindView(R.id.editTextTeamName)
     EditText editTextTeamName;
@@ -80,6 +81,12 @@ public class CreatePrivateTableActivity extends AppCompatActivity implements Cre
                 .getInstanceForInitGame(this));
         finish();
     }
+
+    @OnClick(R.id.imageButtonBack)
+    void onBackButtonClick(){
+        finish();
+    }
+
 
 
     @OnClick(R.id.imageButtonAddTeam)

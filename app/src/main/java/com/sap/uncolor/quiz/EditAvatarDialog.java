@@ -49,10 +49,6 @@ public class EditAvatarDialog {
         buttonRemoveAvatar.setOnClickListener(listener);
     }
 
-    public AlertDialog getDialog() {
-        return dialog;
-    }
-
     public void show(){
         if(dialog != null){
             dialog.show();

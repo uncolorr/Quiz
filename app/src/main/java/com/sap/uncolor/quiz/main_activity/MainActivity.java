@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.AuthActivity;
-import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivity;
 import com.sap.uncolor.quiz.EditAvatarDialog;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
@@ -29,6 +28,7 @@ import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.application.App;
+import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivity;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
@@ -52,6 +52,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener {
 
@@ -342,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             @Override
             public void onResponse(ResponseModel<List<Question>> result) {
                 cancelLoadingDialog();
-                if (result == null) {
+                if (result == null || result.getResult() == null) {
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка создания игры");
@@ -377,10 +380,17 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     private void uploadAvatar(File file) {
         User user = App.getUser();
+        String tokenString = user.getToken();
+        RequestBody token = RequestBody.create(MultipartBody.FORM, tokenString);
         if(file == null){
-            file = new File("");
+            Api.getSource().removeAvatar(token).
+                    enqueue(ApiResponse.getCallback(getUploadAvatarResponseListener(), this));
+            return;
         }
-        Api.getSource().changeAvatar(user.getToken(), file).
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("photo", file.getName(), requestFile);
+        Api.getSource().changeAvatar1(token, body).
                 enqueue(ApiResponse.getCallback(getUploadAvatarResponseListener(), this));
 
     }
@@ -403,7 +413,8 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                             imageViewAvatar.setImageResource(R.drawable.girl);
                         }
                         Toast.makeText(MainActivity.this,
-                                "Аватар успешно обновлен", Toast.LENGTH_LONG).show();
+                                "Аватар успешно удален", Toast.LENGTH_LONG).show();
+                        editAvatarDialog.uploadAvatar("");
                         return;
                     }
                     Glide
@@ -432,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                     Uri avatarUri = data.getData();
                     String path = PathConverter.getRealPathFromURI(this, avatarUri);
                     App.Log(path);
-                    java.io.File file = new java.io.File(path);
+                    File file = new File(path);
                     uploadAvatar(file);
                 }
                 break;

@@ -32,7 +32,7 @@ public class MessageReporter {
         dialog.show();
     }
 
-    public static void showConfirmForExitFromGame(Context context, DialogInterface.OnClickListener exitListener) {
+    public static void showConfirmForExitFromSingleGame(Context context, DialogInterface.OnClickListener exitListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Подверждение выхода из игры");
         builder.setMessage("Вы действительно хотите выйти из игры?");
@@ -43,6 +43,32 @@ public class MessageReporter {
             }
         });
         builder.setPositiveButton("ОК", exitListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public static void showConfirmForExitFromOnlineGame(Context context, DialogInterface.OnClickListener exitListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Подверждение выхода из игры");
+        builder.setMessage("Вы действительно хотите выйти из игры? Текущая игра будет автоматически проиграна!");
+        builder.setNegativeButton("ОТМЕНА", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("ОК", exitListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public static void showMessageAboutWinInPrivateGame(Context context, String winnerName,
+                                                        DialogInterface.OnClickListener exitListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Конец игры");
+        builder.setMessage("Победила команда " + winnerName);
+        builder.setCancelable(false);
+        builder.setPositiveButton("ВЫЙТИ", exitListener);
         AlertDialog dialog = builder.create();
         dialog.show();
     }

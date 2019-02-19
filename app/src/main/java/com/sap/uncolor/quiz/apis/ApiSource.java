@@ -12,16 +12,21 @@ import com.sap.uncolor.quiz.models.request_datas.GetRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetRoomsRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetTopRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GetUserByIdRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GiveUpRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 
 import java.io.File;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiSource {
@@ -66,13 +71,21 @@ public interface ApiSource {
     @POST("answerOnQuestionInRoom")
     Call<ResponseModel<Boolean>> answerOnQuestionInRoom(@Body AnswerOnQuestionInRoomRequestData answerOnQuestionInRoomRequestData);
 
-    //@Multipart
-    //@POST("changeAvatar")
-    // Call<ResponseModel<String>> changeAvatar(@Part("token") RequestBody token, @Part MultipartBody.Part file);
+    @Multipart
+    @POST("changeAvatar")
+    Call<ResponseModel<String>> changeAvatar1(@Part("token") RequestBody token, @Part MultipartBody.Part file);
+
+    @Multipart
+    @POST("changeAvatar")
+    Call<ResponseModel<String>> removeAvatar(@Part("token") RequestBody token);
 
    // @FormUrlEncoded
     @POST("changeAvatar")
     Call<ResponseModel<String>> changeAvatar(@Query("token") String token, @Query("photo") File file);
+
+    @Headers("Content-Type: application/json")
+    @POST("giveUp")
+    Call<ResponseModel<String>> giveUp(@Body GiveUpRequestData giveUpRequestData);
 
 }
 

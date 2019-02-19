@@ -27,16 +27,14 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/imageButtonBack"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center"
-                android:padding="1dp"
+                android:padding="4dp"
                 android:layout_marginStart="16dp"
                 android:tint="@android:color/white"
-                android:background="@android:color/transparent"
-                android:scaleType="centerCrop"
                 android:src="@drawable/back"/>
 
 
@@ -163,17 +161,7 @@
                     android:textColor="@color/colorMain"
                     android:textSize="48sp" />
 
-                <Button
-                    android:id="@+id/buttonBack"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="24dp"
-                    android:layout_marginEnd="32dp"
-                    android:layout_marginStart="32dp"
-                    android:background="@drawable/button_menu"
-                    android:fontFamily="@font/noteworthy_bold"
-                    android:text="Назад"
-                    android:textColor="@color/colorMain" />
+
 
             </LinearLayout>
 

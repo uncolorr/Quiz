@@ -1,24 +1,29 @@
 package com.sap.uncolor.quiz.quiz_activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.sap.uncolor.quiz.AnswerListener;
+import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.PrivateGameResultsActivity;
 import com.sap.uncolor.quiz.QuizFragmentPagerAdapter;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
+import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.PrivateGame;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
+import com.sap.uncolor.quiz.models.request_datas.GiveUpRequestData;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.utils.MessageReporter;
 import com.sap.uncolor.quiz.widgets.AnimatingProgressBar;
@@ -29,6 +34,7 @@ import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener{
 
@@ -68,6 +74,8 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     private static int timeLeft = 0;
 
     private int mode;
+
+    private AlertDialog exitFromGameLoading;
 
 
 
@@ -123,6 +131,7 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         quiz = (Quiz) getIntent().getSerializableExtra(ARG_QUIZ);
         privateGame = (PrivateGame) getIntent().getSerializableExtra(ARG_PRIVATE_GAME);
         room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
+        exitFromGameLoading = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_EXIT_FROM_GAME);
         if(mode == MODE_ONLINE_GAME){
             quiz = new Quiz();
             if(room.getLastNotAnsweredQuestions() != null) {
@@ -139,8 +148,36 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         viewPager.setPagingEnabled(false);
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(fragmentPagerAdapter);
-        textViewRoundNumber.setText("Вопрос 1");
+        printCurrentRound(1);
         startTimer();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void printCurrentRound(int currentQuestion){
+        if(mode == MODE_SINGLE_GAME || mode == MODE_ONLINE_GAME){
+            textViewRoundNumber.setText("Вопрос " + currentQuestion + ", Раунд " + getCurrentRound());
+        }
+        else {
+            textViewRoundNumber.setText("Вопрос " + currentQuestion);
+        }
+    }
+
+    private int getCurrentRound(){
+        int currentRound = 0;
+        if(mode == MODE_SINGLE_GAME) {
+            DBManager dbManager = new DBManager(this);
+            currentRound = dbManager.getCompletedRoundsCount() + 1;
+            dbManager.close();
+            return currentRound;
+        }
+
+        if(mode == MODE_ONLINE_GAME) {
+            if(room.getRounds() != null){
+                currentRound = room.getRounds().size();
+            }
+            return currentRound;
+        }
+        return currentRound;
     }
 
     private void startTimer() {
@@ -187,9 +224,60 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
     @Override
-    public void onBackPressed() {
-        MessageReporter.showConfirmForExitFromGame(this, getExitClickListener());
+    protected void onDestroy() {
+        super.onDestroy();
     }
+
+    @Override
+    public void onBackPressed() {
+        if(mode == MODE_ONLINE_GAME){
+            MessageReporter.showConfirmForExitFromOnlineGame(this, getExitFromOnlineClickListener());
+        }
+        else if(mode == MODE_PRIVATE_GAME || mode == MODE_SINGLE_GAME){
+            MessageReporter.showConfirmForExitFromSingleGame(this, getExitClickListener());
+        }
+
+    }
+
+    private DialogInterface.OnClickListener getExitFromOnlineClickListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                exitFromGameLoading.show();
+                countDownTimer.cancel();
+                Api.getSource().giveUp(new GiveUpRequestData(room.getUuid()))
+                        .enqueue(ApiResponse.getCallback(getGiveUpResponseListener(), getGiveUpFailureListener()));
+            }
+        };
+    }
+
+    private ApiResponse.ApiFailureListener getGiveUpFailureListener() {
+        return new ApiResponse.ApiFailureListener() {
+            @Override
+            public void onFailure(int code, String message) {
+                exitFromGameLoading.cancel();
+                MessageReporter.showMessage(QuizActivity.this,
+                        "Ошибка", "Неизвестная ошибка при выходе из игры");
+            }
+        };
+    }
+
+    private ApiResponse.ApiResponseListener<ResponseModel<String>> getGiveUpResponseListener() {
+        return new ApiResponse.ApiResponseListener<ResponseModel<String>>() {
+            @Override
+            public void onResponse(ResponseModel<String> result) {
+                exitFromGameLoading.cancel();
+                if (result == null || result.getResult() == null) {
+                    MessageReporter.showMessage(QuizActivity.this,
+                            "Ошибка",
+                            "Ошибка при выходе из игры");
+                    return;
+                }
+                finish();
+            }
+        };
+    }
+
 
     private DialogInterface.OnClickListener getExitClickListener() {
         return new DialogInterface.OnClickListener() {
@@ -209,6 +297,11 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
             computerAnswers.add(value);
         }
         return computerAnswers;
+    }
+
+    @OnClick(R.id.imageButtonBack)
+    void onBackButtonClick(){
+        onBackPressed();
     }
 
 
@@ -244,12 +337,12 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         int currentPosition = viewPager.getCurrentItem();
         if(currentPosition == 0){
             viewPager.setCurrentItem(1, true);
-            textViewRoundNumber.setText("Вопрос 2");
+            printCurrentRound(2);
             startTimer();
         }
         if(currentPosition == 1){
             viewPager.setCurrentItem(2, true);
-            textViewRoundNumber.setText("Вопрос 3");
+            printCurrentRound(3);
             startTimer();
         }
         if(currentPosition == 2) {
@@ -279,7 +372,8 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @Override
     public void onFailure(int code, String message) {
-        MessageReporter.showMessage(this, "Ошибка", message, getFailureExitListener(), false);
+        MessageReporter.showMessage(this,
+                "Ошибка", message, getFailureExitListener(), false);
     }
 
 

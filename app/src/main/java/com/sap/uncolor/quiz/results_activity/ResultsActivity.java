@@ -135,16 +135,6 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     private void showUsersInfoForSingleGame(User user){
         if(gameType == GAME_TYPE_SINGLE) {
             textViewMyUsername.setText(user.getLogin());
-            /*if (user.getAvatar().isEmpty()) {
-                if (user.getSex().equals(User.SEX_TYPE_MALE)) {
-                    imageViewMyAvatar.setImageResource(R.drawable.boy);
-                } else if (user.getSex().equals(User.SEX_TYPE_FEMALE)) {
-                    imageViewMyAvatar.setImageResource(R.drawable.girl);
-                }
-            } else {
-                Glide.with(ResultsActivity.this).load(user.getAvatar()).into(imageViewMyAvatar);
-            }*/
-
             uploadAvatar(user, imageViewMyAvatar);
             textViewEnemyUsername.setText("Компьютер");
             imageViewEnemyAvatar.setImageResource(R.drawable.ic_monitor);
@@ -247,7 +237,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     }
 
 
-    @OnClick(R.id.buttonBack)
+    @OnClick(R.id.imageButtonBack)
     void onBackButtonClick() {
         finish();
     }

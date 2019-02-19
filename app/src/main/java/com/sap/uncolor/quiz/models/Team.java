@@ -45,6 +45,14 @@ public class Team implements ItemModel, Serializable {
         return counter;
     }
 
+    public boolean isWinner(){
+        int points = getTeamPoints();
+        if(points >= PrivateGame.WIN_POINTS_LIMIT){
+            return true;
+        }
+        return false;
+    }
+
     public PrivateGamePlayer getPlayer(int index){
         return privateGamePlayers.get(index);
     }

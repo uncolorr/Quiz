@@ -11,6 +11,8 @@ public class LoadingDialog {
     public static final String LABEL_LOADING = "Загрузка...";
     public static final String LABEL_PROCESSING = "Обработка...";
     public static final String LABEL_UPDATING = "Обновление...";
+    public static final String LABEL_EXIT_FROM_GAME = "Выход из игры...";
+
 
     public static AlertDialog newInstanceWithoutCancelable(Context context, String label) {
         AlertDialog dialog;

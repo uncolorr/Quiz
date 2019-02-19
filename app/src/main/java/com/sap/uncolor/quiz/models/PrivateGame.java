@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class PrivateGame implements Serializable{
 
+    public static final int WIN_POINTS_LIMIT = 20;
+
     private ArrayList<Team> teams;
     private int currentTeam;
 

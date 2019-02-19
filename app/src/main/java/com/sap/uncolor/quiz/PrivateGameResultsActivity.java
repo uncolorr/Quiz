@@ -2,6 +2,7 @@ package com.sap.uncolor.quiz;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -87,6 +88,8 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
             }
             dbManager.close();
             privateGame = new PrivateGame(teams);
+            checkWinners(teams);
+
         }
 
         if(mode == MODE_SHOW_RESULTS){
@@ -95,6 +98,7 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
             for (int i = 0; i < teams.size(); i++) {
                 adapter.add(teams.get(i));
             }
+            checkWinners(teams);
         }
 
         textViewNextPlayer.setText("Отвечает " + privateGame.getCurrentPlayer().getName() +
@@ -105,6 +109,25 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
         if(loadingDialog != null){
             loadingDialog.cancel();
         }
+    }
+
+    private void checkWinners(ArrayList<Team> teams){
+        for (int i = 0; i < teams.size(); i++) {
+            if(teams.get(i).isWinner()){
+                MessageReporter.showMessageAboutWinInPrivateGame(this,
+                        teams.get(i).getName(), getExitAfterWinListener());
+                return;
+            }
+        }
+    }
+
+    private DialogInterface.OnClickListener getExitAfterWinListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
     }
 
     @OnClick(R.id.linearLayoutStartGame)

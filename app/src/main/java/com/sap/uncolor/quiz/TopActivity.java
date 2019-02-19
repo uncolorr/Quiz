@@ -23,6 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TopActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener{
 
@@ -58,6 +59,11 @@ public class TopActivity extends AppCompatActivity implements ApiResponse.ApiFai
         showProgress();
         Api.getSource().getTop(new GetTopRequestData())
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(), this));
+    }
+
+    @OnClick(R.id.imageButtonBack)
+    void onBackButtonClick(){
+        finish();
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<TopsModel>> getApiResponseListener() {

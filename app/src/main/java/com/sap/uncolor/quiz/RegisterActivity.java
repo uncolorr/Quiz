@@ -88,6 +88,11 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
 
     }
 
+    @OnClick(R.id.imageButtonBack)
+    void onBackButtonClick(){
+        finish();
+    }
+
     private ApiResponse.ApiResponseListener<ResponseModel<User>> getApiResponseListener() {
         return new ApiResponse.ApiResponseListener<ResponseModel<User>>() {
             @Override
