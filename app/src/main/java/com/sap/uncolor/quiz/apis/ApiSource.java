@@ -16,7 +16,6 @@ import com.sap.uncolor.quiz.models.request_datas.GiveUpRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignInRequestData;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
 
-import java.io.File;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -27,7 +26,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
-import retrofit2.http.Query;
 
 public interface ApiSource {
 
@@ -73,15 +71,11 @@ public interface ApiSource {
 
     @Multipart
     @POST("changeAvatar")
-    Call<ResponseModel<String>> changeAvatar1(@Part("token") RequestBody token, @Part MultipartBody.Part file);
+    Call<ResponseModel<String>> changeAvatar(@Part("token") RequestBody token, @Part MultipartBody.Part file);
 
     @Multipart
     @POST("changeAvatar")
     Call<ResponseModel<String>> removeAvatar(@Part("token") RequestBody token);
-
-   // @FormUrlEncoded
-    @POST("changeAvatar")
-    Call<ResponseModel<String>> changeAvatar(@Query("token") String token, @Query("photo") File file);
 
     @Headers("Content-Type: application/json")
     @POST("giveUp")

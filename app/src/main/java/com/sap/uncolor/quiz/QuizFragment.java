@@ -14,13 +14,14 @@ import android.widget.TextView;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.CheckAnswerForOfflineRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
-import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -137,6 +138,7 @@ public class QuizFragment extends Fragment implements ApiResponse.ApiFailureList
     private void checkAnswerForOnlineGames(int variant, int question_index, int round) {
         if(getContext() != null) {
             int points = QuizActivity.getPoints();
+            App.Log("Points: " + points);
             switch (variant) {
                 case Quiz.VARIANT_ONE:
                     Api.getSource().

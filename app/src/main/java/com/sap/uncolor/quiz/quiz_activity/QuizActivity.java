@@ -18,6 +18,7 @@ import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
+import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.PrivateGame;
 import com.sap.uncolor.quiz.models.Quiz;
@@ -25,7 +26,8 @@ import com.sap.uncolor.quiz.models.Room;
 import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestData;
 import com.sap.uncolor.quiz.models.request_datas.GiveUpRequestData;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
-import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.services.GiveUpService;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 import com.sap.uncolor.quiz.widgets.AnimatingProgressBar;
 import com.sap.uncolor.quiz.widgets.NonSwipeViewPager;
 
@@ -36,7 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener{
+public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFailureListener {
 
     private static final String ARG_QUIZ = "quiz";
     private static final String ARG_PRIVATE_GAME = "private_game";
@@ -59,6 +61,8 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @BindView(R.id.progressBarTimer)
     AnimatingProgressBar progressBarTimer;
 
+    private boolean isOnlineQuizFinished = false;
+
     private QuizFragmentPagerAdapter fragmentPagerAdapter;
 
     private Quiz quiz;
@@ -78,15 +82,14 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     private AlertDialog exitFromGameLoading;
 
 
-
-    public static Intent getInstanceForSingleGame(Context context, Quiz quiz){
+    public static Intent getInstanceForSingleGame(Context context, Quiz quiz) {
         Intent intent = new Intent(context, QuizActivity.class);
         intent.putExtra(ARG_QUIZ, quiz);
         intent.putExtra(ARG_MODE, MODE_SINGLE_GAME);
         return intent;
     }
 
-    public static Intent getInstanceForPrivateGame(Context context, Quiz quiz, PrivateGame privateGame){
+    public static Intent getInstanceForPrivateGame(Context context, Quiz quiz, PrivateGame privateGame) {
         Intent intent = new Intent(context, QuizActivity.class);
         intent.putExtra(ARG_PRIVATE_GAME, privateGame);
         intent.putExtra(ARG_QUIZ, quiz);
@@ -94,28 +97,28 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return intent;
     }
 
-    public static Intent getInstanceForOnlineGame(Context context, Room room){
+    public static Intent getInstanceForOnlineGame(Context context, Room room) {
         Intent intent = new Intent(context, QuizActivity.class);
         intent.putExtra(ARG_MODE, MODE_ONLINE_GAME);
         intent.putExtra(ARG_ROOM, room);
         return intent;
     }
 
-    public static int getPoints(){
+    public static int getPoints() {
         int points = 0;
-        if(timeLeft <= 10){
+        if (timeLeft >= 10) {
             points = 8;
         }
 
-        if(timeLeft < 8){
+        if (timeLeft >= 8) {
             points = 6;
         }
 
-        if(timeLeft < 6){
+        if (timeLeft >= 6) {
             points = 4;
         }
 
-        if(timeLeft < 4) {
+        if (timeLeft >= 4) {
             points = 2;
         }
 
@@ -124,6 +127,7 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        App.Log("onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         ButterKnife.bind(this);
@@ -132,15 +136,15 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         privateGame = (PrivateGame) getIntent().getSerializableExtra(ARG_PRIVATE_GAME);
         room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
         exitFromGameLoading = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_EXIT_FROM_GAME);
-        if(mode == MODE_ONLINE_GAME){
+        if (mode == MODE_ONLINE_GAME) {
             quiz = new Quiz();
-            if(room.getLastNotAnsweredQuestions() != null) {
+            if (room.getLastNotAnsweredQuestions() != null) {
                 quiz.setQuestions(room.getLastNotAnsweredQuestions());
             }
             fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(),
                     quiz, room, room.getRounds().size() - 1);
         }
-        if(mode == MODE_SINGLE_GAME || mode == MODE_PRIVATE_GAME){
+        if (mode == MODE_SINGLE_GAME || mode == MODE_PRIVATE_GAME) {
             fragmentPagerAdapter = new QuizFragmentPagerAdapter(getSupportFragmentManager(), quiz);
         }
         fragmentPagerAdapter.setAnswerListener(getAnswerListener());
@@ -153,26 +157,43 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
     @SuppressLint("SetTextI18n")
-    private void printCurrentRound(int currentQuestion){
-        if(mode == MODE_SINGLE_GAME || mode == MODE_ONLINE_GAME){
+    private void printCurrentRound(int currentQuestion) {
+        if (mode == MODE_SINGLE_GAME || mode == MODE_ONLINE_GAME) {
             textViewRoundNumber.setText("Вопрос " + currentQuestion + ", Раунд " + getCurrentRound());
-        }
-        else {
+        } else {
             textViewRoundNumber.setText("Вопрос " + currentQuestion);
         }
     }
 
-    private int getCurrentRound(){
+    @Override
+    protected void onStop() {
+        super.onStop();
+        App.Log("onStop");
+        if (mode == MODE_ONLINE_GAME) {
+            App.Log("online");
+            if (!isOnlineQuizFinished) {
+                App.Log("starting service...");
+                Bundle extras = new Bundle();
+                extras.putString(GiveUpService.ARG_ROOM_UUID, room.getUuid());
+                Intent intent = new Intent(this, GiveUpService.class);
+                intent.setAction(GiveUpService.ACTION_GIVE_UP);
+                intent.putExtras(extras);
+                startService(intent);
+            }
+        }
+    }
+
+    private int getCurrentRound() {
         int currentRound = 0;
-        if(mode == MODE_SINGLE_GAME) {
+        if (mode == MODE_SINGLE_GAME) {
             DBManager dbManager = new DBManager(this);
             currentRound = dbManager.getCompletedRoundsCount() + 1;
             dbManager.close();
             return currentRound;
         }
 
-        if(mode == MODE_ONLINE_GAME) {
-            if(room.getRounds() != null){
+        if (mode == MODE_ONLINE_GAME) {
+            if (room.getRounds() != null) {
                 currentRound = room.getRounds().size();
             }
             return currentRound;
@@ -196,7 +217,7 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
                 timeLeft = 0;
                 progressBarTimer.setProgress(0);
                 answers.add(0);
-                if(mode == MODE_ONLINE_GAME) {
+                if (mode == MODE_ONLINE_GAME) {
                     Api.getSource().
                             answerOnQuestionInRoom(
                                     new AnswerOnQuestionInRoomRequestData
@@ -205,8 +226,7 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
                             .enqueue(ApiResponse.getCallback(getAskNoneResponseListener(0),
                                     QuizActivity.this));
                     fragmentPagerAdapter.disableInterface(viewPager.getCurrentItem());
-                }
-                else {
+                } else {
                     swipeQuestion();
                 }
             }
@@ -225,15 +245,16 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @Override
     protected void onDestroy() {
+        App.Log("onDestroy");
         super.onDestroy();
+
     }
 
     @Override
     public void onBackPressed() {
-        if(mode == MODE_ONLINE_GAME){
+        if (mode == MODE_ONLINE_GAME) {
             MessageReporter.showConfirmForExitFromOnlineGame(this, getExitFromOnlineClickListener());
-        }
-        else if(mode == MODE_PRIVATE_GAME || mode == MODE_SINGLE_GAME){
+        } else if (mode == MODE_PRIVATE_GAME || mode == MODE_SINGLE_GAME) {
             MessageReporter.showConfirmForExitFromSingleGame(this, getExitClickListener());
         }
 
@@ -256,8 +277,7 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
             @Override
             public void onFailure(int code, String message) {
                 exitFromGameLoading.cancel();
-                MessageReporter.showMessage(QuizActivity.this,
-                        "Ошибка", "Неизвестная ошибка при выходе из игры");
+                finish();
             }
         };
     }
@@ -268,11 +288,9 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
             public void onResponse(ResponseModel<String> result) {
                 exitFromGameLoading.cancel();
                 if (result == null || result.getResult() == null) {
-                    MessageReporter.showMessage(QuizActivity.this,
-                            "Ошибка",
-                            "Ошибка при выходе из игры");
-                    return;
+                    finish();
                 }
+                isOnlineQuizFinished = true;
                 finish();
             }
         };
@@ -289,7 +307,7 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         };
     }
 
-    private ArrayList<Integer> generateComputerAnswers(){
+    private ArrayList<Integer> generateComputerAnswers() {
         ArrayList<Integer> computerAnswers = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             Random random = new Random();
@@ -300,7 +318,7 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
     @OnClick(R.id.imageButtonBack)
-    void onBackButtonClick(){
+    void onBackButtonClick() {
         onBackPressed();
     }
 
@@ -309,13 +327,12 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new AnswerListener() {
             @Override
             public void onQuestionAnswered(boolean isAnswerRight, int round) {
-                if(isAnswerRight) {
+                if (isAnswerRight) {
                     answers.add(1);
-                }
-                else {
+                } else {
                     answers.add(0);
                 }
-                if(countDownTimer != null){
+                if (countDownTimer != null) {
                     countDownTimer.cancel();
                 }
                 new CountDownTimer(1000, 1000) {
@@ -333,19 +350,19 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
         };
     }
 
-    private void swipeQuestion(){
+    private void swipeQuestion() {
         int currentPosition = viewPager.getCurrentItem();
-        if(currentPosition == 0){
+        if (currentPosition == 0) {
             viewPager.setCurrentItem(1, true);
             printCurrentRound(2);
             startTimer();
         }
-        if(currentPosition == 1){
+        if (currentPosition == 1) {
             viewPager.setCurrentItem(2, true);
             printCurrentRound(3);
             startTimer();
         }
-        if(currentPosition == 2) {
+        if (currentPosition == 2) {
             switch (mode) {
                 case MODE_SINGLE_GAME:
                     finish();
@@ -363,9 +380,10 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
                 case MODE_ONLINE_GAME:
                     finish();
+                    isOnlineQuizFinished = true;
                     startActivity(ResultsActivity.getInstanceForOnlineGame(QuizActivity.this, room));
                     break;
-        }
+            }
 
         }
     }

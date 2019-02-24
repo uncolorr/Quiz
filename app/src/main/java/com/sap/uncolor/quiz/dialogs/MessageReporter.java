@@ -1,4 +1,4 @@
-package com.sap.uncolor.quiz.utils;
+package com.sap.uncolor.quiz.dialogs;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -103,6 +103,16 @@ public class MessageReporter {
                 dialog.cancel();
             }
         });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public static void showGameInfoLoadingFailureMessage(Context context, DialogInterface.OnClickListener okListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Ошибка");
+        builder.setMessage("Не удалось загрузить данные о поединке");
+        builder.setCancelable(false);
+        builder.setNeutralButton("OK", okListener);
         AlertDialog dialog = builder.create();
         dialog.show();
     }

@@ -47,6 +47,8 @@ public class App extends Application {
         user.setAvatar(update.getAvatar());
         user.setPoints(update.getPoints());
         user.setSex(update.getSex());
+        user.setWinsCount(update.getWinsCount());
+        user.setLosesCount(update.getLosesCount());
         Hawk.put(KEY_USER, user);
     }
 

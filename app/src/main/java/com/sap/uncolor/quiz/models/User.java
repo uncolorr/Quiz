@@ -30,9 +30,11 @@ public class User implements ItemModel, Serializable {
     @SerializedName("avatar")
     private String avatar;
 
-    private int victories;
+    @SerializedName("wins_count")
+    private int winsCount;
 
-    private int defeats;
+    @SerializedName("loses_count")
+    private int losesCount;
 
 
     public int getId() {
@@ -74,5 +76,21 @@ public class User implements ItemModel, Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public int getWinsCount() {
+        return winsCount;
+    }
+
+    public void setWinsCount(int winsCount) {
+        this.winsCount = winsCount;
+    }
+
+    public int getLosesCount() {
+        return losesCount;
+    }
+
+    public void setLosesCount(int losesCount) {
+        this.losesCount = losesCount;
     }
 }

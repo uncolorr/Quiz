@@ -82,8 +82,9 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/imageViewAvatar"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
                     android:src="@android:color/white"
                     app:civ_border_color="@color/colorMain"
                     app:civ_border_width="2dp" />
@@ -99,7 +100,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginBottom="4dp"
                         android:layout_marginStart="4dp"
                         android:ellipsize="end"
                         android:fontFamily="@font/noteworthy_bold"
@@ -108,10 +108,24 @@
                         android:textSize="16sp"
                         tools:text="Uncolor" />
 
+                    <TextView
+                        android:id="@+id/textViewWinsAndLoses"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/noteworthy_bold"
+                        android:singleLine="true"
+                        android:textColor="@color/colorMain"
+                        android:textSize="16sp"
+                        tools:text="побед: 45, поражений: 4" />
+
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:orientation="horizontal"
                         android:gravity="start">
 
                         <TextView
@@ -129,7 +143,6 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_weight="1"
                             android:src="@drawable/ic_coin" />
 
                     </LinearLayout>
@@ -238,7 +251,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    style="@style/ProgressBarStyle"/>
 
 
                 <LinearLayout
@@ -255,6 +269,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:src="@drawable/ic_danger"
+                        android:visibility="invisible"
                         android:tint="@color/colorWrong" />
 
                     <TextView
@@ -264,6 +279,7 @@
                         android:layout_margin="16dp"
                         android:fontFamily="@font/noteworthy_bold"
                         android:textAlignment="center"
+                        android:visibility="invisible"
                         android:textColor="@color/colorWrong"
                         android:textSize="14sp"
                         tools:text="Ошибка при загрузке комнат" />
@@ -272,11 +288,12 @@
                         android:id="@+id/buttonReloadCurrentRooms"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/colorWrong"
+                        android:background="@drawable/button_dialog_red"
                         android:fontFamily="@font/noteworthy_bold"
                         android:paddingEnd="8dp"
                         android:paddingStart="8dp"
                         android:text="Обновить"
+                        android:visibility="invisible"
                         android:textAllCaps="false"
                         android:textColor="@android:color/white" />
 

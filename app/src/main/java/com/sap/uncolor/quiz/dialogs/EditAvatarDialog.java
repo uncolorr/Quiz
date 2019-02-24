@@ -1,4 +1,4 @@
-package com.sap.uncolor.quiz;
+package com.sap.uncolor.quiz.dialogs;
 
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.bumptech.glide.Glide;
+import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.models.User;
 

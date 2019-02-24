@@ -15,7 +15,7 @@ import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.main_activity.MainActivity;
 import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.models.request_datas.SignUpRequestData;
-import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 
 import java.util.Objects;
 

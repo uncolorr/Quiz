@@ -9,12 +9,12 @@
     android:layout_marginEnd="24dp"
     android:layout_marginTop="24dp"
     android:gravity="center"
-    android:layout_height="80dp">
+    android:layout_height="96dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewEnemyAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:src="@android:color/white"
@@ -38,8 +38,18 @@
             android:ellipsize="end"
             android:textColor="@color/colorMain"
             android:fontFamily="@font/noteworthy_bold"
-            android:layout_marginBottom="4dp"
             tools:text="Uncolor"/>
+
+        <TextView
+            android:id="@+id/textViewWinsAndLoses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:fontFamily="@font/noteworthy_bold"
+            android:singleLine="true"
+            android:textColor="@color/colorMain"
+            tools:text="(45/17)" />
 
         <LinearLayout
             android:layout_width="wrap_content"

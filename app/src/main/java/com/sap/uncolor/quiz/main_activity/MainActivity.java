@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sap.uncolor.quiz.AuthActivity;
-import com.sap.uncolor.quiz.EditAvatarDialog;
+import com.sap.uncolor.quiz.dialogs.EditAvatarDialog;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.RoomViewRenderer;
@@ -41,9 +41,10 @@ import com.sap.uncolor.quiz.models.request_datas.GetUserByIdRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
-import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 import com.sap.uncolor.quiz.utils.PathConverter;
 import com.sap.uncolor.quiz.utils.RawTextReader;
+import com.sap.uncolor.quiz.utils.TextFormatter;
 
 import java.io.File;
 import java.util.List;
@@ -81,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @BindView(R.id.textViewCurrentRoomMessage)
     TextView textViewCurrentRoomMessage;
 
+    @BindView(R.id.textViewWinsAndLoses)
+    TextView textViewWinsAndLoses;
+
     @BindView(R.id.buttonReloadCurrentRooms)
     Button buttonReloadCurrentRooms;
 
@@ -111,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         textViewName.setText(App.getUserName());
         textViewPoints.setText(Integer.toString(App.getUserPoints()));
+        textViewWinsAndLoses.setText(TextFormatter.toNormalWinsLosesFormat(
+                App.getUser().getWinsCount(),
+                App.getUser().getLosesCount()));
         adapter = new UniversalAdapter();
         adapter.registerRenderer(new RoomViewRenderer(Room.TYPE, this));
         recyclerViewCurrentGames.setLayoutManager(new LinearLayoutManager(this,
@@ -134,10 +141,32 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     protected void onResume() {
         super.onResume();
         showCurrentRoomsProgressBar();
+        adapter.clear();
         Api.getSource().getRooms(new GetRoomsRequestData())
-                .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), this));
+                .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), getRoomsFailureListener()));
         Api.getSource().getUserById(new GetUserByIdRequestData())
-                .enqueue(ApiResponse.getCallback(getUserByIdResponseListener(), this));
+                .enqueue(ApiResponse.getCallback(getUserByIdResponseListener(), getUserByIdFailureListener()));
+    }
+
+    private ApiResponse.ApiFailureListener getUserByIdFailureListener() {
+        return new ApiResponse.ApiFailureListener() {
+            @Override
+            public void onFailure(int code, String message) {
+                Toast.makeText(MainActivity.this,
+                        "Не удалось обновить информацию о пользователе",
+                        Toast.LENGTH_LONG).show();
+            }
+        };
+    }
+
+    private ApiResponse.ApiFailureListener getRoomsFailureListener() {
+        return new ApiResponse.ApiFailureListener() {
+            @Override
+            public void onFailure(int code, String message) {
+                hideCurrentRoomsProgressBar();
+                showInfoAboutCurrentRoomsLoadingFailure();
+            }
+        };
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<User>> getUserByIdResponseListener() {
@@ -145,9 +174,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             @Override
             public void onResponse(ResponseModel<User> result) {
                 if (result == null || result.getResult() == null) {
-                    MessageReporter.showMessage(MainActivity.this,
-                            "Ошибка",
-                            "Ошибка получения информации о пользователе");
+                    Toast.makeText(MainActivity.this,
+                            "Не удалось обновить информацию о пользователе",
+                            Toast.LENGTH_LONG).show();
                 } else {
                     User user = result.getResult();
                     showUserInfo(user);
@@ -162,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     private void showUserInfo(User user) {
         textViewName.setText(user.getLogin());
         textViewPoints.setText(Integer.toString(user.getPoints()));
+        textViewWinsAndLoses.setText(TextFormatter.toNormalWinsLosesFormat(
+                App.getUser().getWinsCount(),
+                App.getUser().getLosesCount()));
         if (user.getAvatar().isEmpty()) {
             if (user.getSex().equals(User.SEX_TYPE_MALE)) {
                 imageViewAvatar.setImageResource(R.drawable.boy);
@@ -285,12 +317,12 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         hideInfoAboutCurrentRoomsLoadingFailure();
         hideInfoAboutEmptyCurrentRooms();
         Api.getSource().getRooms(new GetRoomsRequestData())
-                .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), this));
+                .enqueue(ApiResponse.getCallback(getRoomsResponseListener(), getRoomsFailureListener()));
     }
 
 
     private void showInfoAboutEmptyCurrentRooms() {
-        imageViewWarning.setVisibility(View.GONE);
+        imageViewWarning.setVisibility(View.INVISIBLE);
         buttonReloadCurrentRooms.setVisibility(View.VISIBLE);
         textViewCurrentRoomMessage.setVisibility(View.VISIBLE);
         textViewCurrentRoomMessage.setText("Текущих игр нет");
@@ -304,13 +336,13 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
     private void hideInfoAboutEmptyCurrentRooms() {
-        textViewCurrentRoomMessage.setVisibility(View.GONE);
+        textViewCurrentRoomMessage.setVisibility(View.INVISIBLE);
     }
 
     private void hideInfoAboutCurrentRoomsLoadingFailure() {
-        imageViewWarning.setVisibility(View.GONE);
-        textViewCurrentRoomMessage.setVisibility(View.GONE);
-        buttonReloadCurrentRooms.setVisibility(View.GONE);
+        imageViewWarning.setVisibility(View.INVISIBLE);
+        textViewCurrentRoomMessage.setVisibility(View.INVISIBLE);
+        buttonReloadCurrentRooms.setVisibility(View.INVISIBLE);
     }
 
     private void showCurrentRoomsProgressBar() {
@@ -318,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     }
 
     private void hideCurrentRoomsProgressBar() {
-        progressBarCurrentRoomsLoading.setVisibility(View.GONE);
+        progressBarCurrentRoomsLoading.setVisibility(View.INVISIBLE);
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<Room>> getFindRoomResponseListener() {
@@ -390,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("photo", file.getName(), requestFile);
-        Api.getSource().changeAvatar1(token, body).
+        Api.getSource().changeAvatar(token, body).
                 enqueue(ApiResponse.getCallback(getUploadAvatarResponseListener(), this));
 
     }
@@ -437,9 +469,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_FOR_AVATAR_UPLOAD_FROM_GALLERY:
-                App.Log("Request upload");
                 if (data != null) {
-                    App.Log("request upload from gallery not null");
                     Uri avatarUri = data.getData();
                     String path = PathConverter.getRealPathFromURI(this, avatarUri);
                     App.Log(path);

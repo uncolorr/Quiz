@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 public class DBManager {
 
+
+
     private Context context;
     private DBHelper dbHelper;
     private SQLiteDatabase db;
@@ -170,6 +172,13 @@ public class DBManager {
         if(dbHelper != null) {
             dbHelper.close();
         }
+    }
+
+    public boolean isOpen(){
+        if(dbHelper != null) {
+            return db.isOpen();
+        }
+        return false;
     }
 
 }

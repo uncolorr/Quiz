@@ -1,4 +1,4 @@
-package com.sap.uncolor.quiz.utils;
+package com.sap.uncolor.quiz.dialogs;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +17,7 @@ import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivityPresenter;
 import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
+import com.sap.uncolor.quiz.utils.CreateTeamListener;
 
 import java.util.ArrayList;
 

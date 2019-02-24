@@ -68,6 +68,7 @@
                 android:layout_width="116dp"
                 android:layout_height="36dp"
                 android:textColor="@android:color/white"
+                android:fontFamily="@font/noteworthy_bold"
                 android:text="Играть"
                 android:visibility="invisible"
                 android:background="@drawable/result_right"/>

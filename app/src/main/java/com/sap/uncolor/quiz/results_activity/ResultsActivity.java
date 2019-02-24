@@ -2,6 +2,7 @@ package com.sap.uncolor.quiz.results_activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import com.sap.uncolor.quiz.ResultsViewRenderer;
 import com.sap.uncolor.quiz.RoundViewRenderer;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
+import com.sap.uncolor.quiz.dialogs.WinnerDialog;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Results;
 import com.sap.uncolor.quiz.models.Room;
@@ -25,7 +27,7 @@ import com.sap.uncolor.quiz.models.Round;
 import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
-import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +44,8 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     private static final String ARG_ENEMY_ANSWERS = "enemy_answers";
     private static final String ARG_ROOM = "room";
 
-    private static final int GAME_TYPE_SINGLE = 1;
-    private static final int GAME_TYPE_ONLINE = 2;
+    public static final int GAME_TYPE_SINGLE = 1;
+    public static final int GAME_TYPE_ONLINE = 2;
 
     private static final int UPDATE_RESULTS_INTERVAL = 5000;
 
@@ -71,7 +73,9 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     private ResultActivityPresenter presenter;
 
-    private AlertDialog loadingDialog;
+    private AlertDialog startGameLoadingDialog;
+
+    private AlertDialog gameInfoLoadingDialog;
 
     private Room room;
 
@@ -80,7 +84,6 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     private Runnable updateOnlineGameInfoRunnable;
 
     private int gameType;
-
 
     public static Intent getInstanceForSingleGame(Context context,
                                                   ArrayList<Integer> answers,
@@ -105,7 +108,8 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
         ButterKnife.bind(this);
-        loadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
+        startGameLoadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
+        gameInfoLoadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         presenter = new ResultActivityPresenter(this, this);
         dbManager = new DBManager(this);
         initResultsTable();
@@ -113,22 +117,57 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         if (gameType == GAME_TYPE_SINGLE) {
             ArrayList<Integer> answers = getIntent().getIntegerArrayListExtra(ARG_ANSWERS);
             ArrayList<Integer> enemyAnswers = getIntent().getIntegerArrayListExtra(ARG_ENEMY_ANSWERS);
-            dbManager.addSingleGameResultsToDatabase(answers, enemyAnswers);
-            ArrayList<Results> results = dbManager.getSingleGameResultsFromDatabase();
-            for (int i = 0; i < results.size(); i++) {
-                adapter.add(results.get(i));
-            }
-            if (dbManager.getCompletedRoundsCount() < 5) {
-                adapter.add(new Results(Results.STATE_NEXT_GAME));
-            }
-            showUsersInfoForSingleGame(App.getUser());
-            countResultsForSingleGame();
+            configInfoAboutSingleGame(answers, enemyAnswers);
         }
 
         if (gameType == GAME_TYPE_ONLINE) {
+            showGameInfoLoadingDialog();
             room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
             presenter.onUpdateInfoAboutOnlineGame(room);
         }
+    }
+
+    private void configInfoAboutSingleGame(ArrayList<Integer> answers, ArrayList<Integer> enemyAnswers){
+        dbManager.addSingleGameResultsToDatabase(answers, enemyAnswers);
+        ArrayList<Results> results = dbManager.getSingleGameResultsFromDatabase();
+        for (int i = 0; i < results.size(); i++) {
+            adapter.add(results.get(i));
+        }
+        if (dbManager.getCompletedRoundsCount() < 5) {
+            adapter.add(new Results(Results.STATE_NEXT_GAME));
+        } else {
+            showWinnerInSingleGame();
+        }
+        showUsersInfoForSingleGame(App.getUser());
+        countResultsForSingleGame();
+    }
+
+    private void showWinnerInSingleGame() {
+        WinnerDialog winnerDialog = new WinnerDialog(this, presenter, gameType);
+        if(getMyResultsCounter() > getEnemyResultsCounter()){
+            winnerDialog.setUserAsWinner(App.getUser(), getMyResultsCounter(), getEnemyResultsCounter());
+        }
+        else if(getMyResultsCounter() < getEnemyResultsCounter()){
+           winnerDialog.setComputerAsWinner(getMyResultsCounter(), getEnemyResultsCounter());
+        }
+        else {
+           winnerDialog.setDraw(getMyResultsCounter(), getEnemyResultsCounter());
+        }
+        winnerDialog.show();
+    }
+
+    private void showWinnerInOnlineGame() {
+        WinnerDialog winnerDialog = new WinnerDialog(this, presenter, gameType);
+        if(getMyRoundPointsCounter() > getEnemyRoundPointsCounter()){
+            winnerDialog.setUserAsWinner(App.getUser(), getMyResultsCounter(), getEnemyResultsCounter());
+        }
+        else if(getMyRoundPointsCounter() < getEnemyRoundPointsCounter()){
+            winnerDialog.setUserAsWinner(room.getCompetitor(), getMyRoundPointsCounter(), getEnemyRoundPointsCounter());
+        }
+        else {
+            winnerDialog.setDraw(getMyRoundPointsCounter(), getEnemyRoundPointsCounter());
+        }
+        winnerDialog.show();
     }
 
     @SuppressLint("SetTextI18n")
@@ -149,7 +188,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
                 imageViewAvatar.setImageResource(R.drawable.girl);
             }
         } else {
-            Glide.with(ResultsActivity.this).load(user.getAvatar()).into(imageViewMyAvatar);
+            Glide.with(getApplicationContext()).load(user.getAvatar()).into(imageViewAvatar);
         }
     }
 
@@ -247,10 +286,12 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         super.onDestroy();
         switch (gameType) {
             case GAME_TYPE_SINGLE:
-                if (dbManager.getCompletedRoundsCount() >= 5) {
-                    dbManager.clearSingleGameResults();
+                if(dbManager.isOpen()) {
+                    if (dbManager.getCompletedRoundsCount() >= 5) {
+                        dbManager.clearSingleGameResults();
+                    }
+                    dbManager.close();
                 }
-                dbManager.close();
                 break;
             case GAME_TYPE_ONLINE:
                 handler.removeCallbacks(updateOnlineGameInfoRunnable);
@@ -269,13 +310,23 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     }
 
     @Override
-    public void showProcessingDialog() {
-        loadingDialog.show();
+    public void showGameInfoLoadingDialog() {
+        gameInfoLoadingDialog.show();
     }
 
     @Override
-    public void hideProcessingDialog() {
-        loadingDialog.cancel();
+    public void hideGameInfoLoadingDialog() {
+        gameInfoLoadingDialog.cancel();
+    }
+
+    @Override
+    public void showStartGameLoadingDialog() {
+        startGameLoadingDialog.show();
+    }
+
+    @Override
+    public void hideStartGameLoadingDialog() {
+        startGameLoadingDialog.cancel();
     }
 
     @Override
@@ -289,6 +340,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         if (room == null) {
             return;
         }
+        startGameLoadingDialog.show();
         startActivity(QuizActivity.getInstanceForOnlineGame(this, room));
         finish();
     }
@@ -316,9 +368,9 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             uploadAvatar(room.getCompetitor(), imageViewEnemyAvatar);
         } else  {
             textViewMyUsername.setText(room.getCompetitor().getLogin());
-            uploadAvatar(room.getCompetitor(), imageViewEnemyAvatar);
+            uploadAvatar(room.getCompetitor(), imageViewMyAvatar);
             textViewEnemyUsername.setText(room.getCreator().getLogin());
-            uploadAvatar(room.getCreator(), imageViewMyAvatar);
+            uploadAvatar(room.getCreator(), imageViewEnemyAvatar);
         }
 
         if (room.getRounds() == null) {
@@ -335,5 +387,38 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             }
         }
         countPointsForOnlineGame();
+        /*if(false){
+            showWinnerInOnlineGame();
+        }*/
+    }
+
+    @Override
+    public void showGameInfoLoadingFailureMessage() {
+        MessageReporter.showGameInfoLoadingFailureMessage(this, getExitAfterFailureListener());
+    }
+
+    @Override
+    public void gameOver(int mode) {
+        switch (mode) {
+            case GAME_TYPE_SINGLE:
+                if (dbManager.getCompletedRoundsCount() >= 5) {
+                    dbManager.clearSingleGameResults();
+                }
+                dbManager.close();
+                break;
+            case GAME_TYPE_ONLINE:
+                handler.removeCallbacks(updateOnlineGameInfoRunnable);
+                break;
+        }
+        finish();
+    }
+
+    private DialogInterface.OnClickListener getExitAfterFailureListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
     }
 }

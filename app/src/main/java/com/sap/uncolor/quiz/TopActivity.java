@@ -17,7 +17,7 @@ import com.sap.uncolor.quiz.models.TopsModel;
 import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.models.request_datas.GetTopRequestData;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
-import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 
 import java.util.List;
 

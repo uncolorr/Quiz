@@ -17,7 +17,7 @@ import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.models.PrivateGamePlayer;
 import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
-import com.sap.uncolor.quiz.utils.AddPlayersDialog;
+import com.sap.uncolor.quiz.dialogs.AddPlayersDialog;
 import com.sap.uncolor.quiz.utils.CreateTeamListener;
 
 import java.util.ArrayList;

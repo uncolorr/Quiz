@@ -17,5 +17,6 @@ public class AnswerOnQuestionInRoomRequestData {
         this.answer = answer;
         this.room_uuid = room_uuid;
         this.round_index = round_index;
+        this.points = points;
     }
 }

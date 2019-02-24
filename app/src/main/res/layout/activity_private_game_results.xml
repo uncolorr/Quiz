@@ -31,6 +31,16 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:id="@+id/imageButtonBack"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:padding="4dp"
+                    android:layout_marginStart="16dp"
+                    android:tint="@android:color/white"
+                    android:src="@drawable/back"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -26,7 +26,7 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
 
     @Override
     public void onStartSingleGame() {
-        view.showProcessingDialog();
+        view.showStartGameLoadingDialog();
         Api.getSource().getQuestions(new GetQuestionsRequestData())
                 .enqueue(ApiResponse.getCallback(getApiResponseListener(), this));
     }
@@ -39,15 +39,32 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
     @Override
     public void onUpdateInfoAboutOnlineGame(Room room) {
         Api.getSource().getRoomByUUID(new GetRoomByIdRequestData(room.getUuid()))
-                .enqueue(ApiResponse.getCallback(getInfoAboutOnlineGame(), this));
+                .enqueue(ApiResponse.getCallback(getInfoAboutOnlineGame(), getInfoFailureListener()));
+    }
+
+    @Override
+    public void onCompleteGame(int mode) {
+
+        view.gameOver(mode);
+    }
+
+    private ApiResponse.ApiFailureListener getInfoFailureListener() {
+        return new ApiResponse.ApiFailureListener() {
+            @Override
+            public void onFailure(int code, String message) {
+                view.hideGameInfoLoadingDialog();
+                view.showGameInfoLoadingFailureMessage();
+            }
+        };
     }
 
     private ApiResponse.ApiResponseListener<ResponseModel<Room>> getInfoAboutOnlineGame() {
         return new ApiResponse.ApiResponseListener<ResponseModel<Room>>() {
             @Override
             public void onResponse(ResponseModel<Room> result) {
+                view.hideGameInfoLoadingDialog();
                 if(result == null || result.getResult() == null){
-                    view.showErrorMessage();
+                    view.showGameInfoLoadingFailureMessage();
                 }
                 else {
                     Room room = result.getResult();
@@ -61,7 +78,7 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
         return new ApiResponse.ApiResponseListener<ResponseModel<List<Question>>>() {
             @Override
             public void onResponse(ResponseModel<List<Question>> result) {
-                view.hideProcessingDialog();
+                view.hideStartGameLoadingDialog();
                 if(result == null){
                     view.showErrorMessage();
                 }
@@ -77,5 +94,6 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
     @Override
     public void onFailure(int code, String message) {
         view.showErrorMessage();
+        view.hideStartGameLoadingDialog();
     }
 }

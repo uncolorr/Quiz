@@ -22,7 +22,7 @@ import com.sap.uncolor.quiz.models.Team;
 import com.sap.uncolor.quiz.models.request_datas.GetQuestionsRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
-import com.sap.uncolor.quiz.utils.MessageReporter;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,6 +119,27 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
                 return;
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        MessageReporter.showConfirmForExitFromSingleGame(this, getExitClickListener());
+    }
+
+    @OnClick(R.id.imageButtonBack)
+    void onBackButtonClick(){
+        onBackPressed();
+    }
+
+
+    private DialogInterface.OnClickListener getExitClickListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
     }
 
     private DialogInterface.OnClickListener getExitAfterWinListener() {
