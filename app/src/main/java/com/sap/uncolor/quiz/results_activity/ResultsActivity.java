@@ -13,12 +13,18 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.ResultsViewRenderer;
 import com.sap.uncolor.quiz.RoundViewRenderer;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 import com.sap.uncolor.quiz.dialogs.WinnerDialog;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Results;
@@ -27,7 +33,7 @@ import com.sap.uncolor.quiz.models.Round;
 import com.sap.uncolor.quiz.models.User;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
-import com.sap.uncolor.quiz.dialogs.MessageReporter;
+import com.sap.uncolor.quiz.utils.LoadingVideoAdsStateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ResultsActivity extends AppCompatActivity implements ResultActivityContract.View {
+public class ResultsActivity extends AppCompatActivity implements ResultActivityContract.View, RewardedVideoAdListener {
 
     private static final String ARG_GAME_TYPE = "game_type";
     private static final String ARG_ANSWERS = "answers";
@@ -67,6 +73,8 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     @BindView(R.id.imageViewEnemyAvatar)
     CircleImageView imageViewEnemyAvatar;
 
+    private RewardedVideoAd rewardedVideoAd;
+
     private UniversalAdapter adapter;
 
     private DBManager dbManager;
@@ -77,6 +85,8 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     private AlertDialog gameInfoLoadingDialog;
 
+    private AlertDialog startLoadingVideoAdsLoadingDialog;
+
     private Room room;
 
     private Handler handler;
@@ -84,6 +94,8 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     private Runnable updateOnlineGameInfoRunnable;
 
     private int gameType;
+
+    private LoadingVideoAdsStateManager loadingVideoAdsStateManager;
 
     public static Intent getInstanceForSingleGame(Context context,
                                                   ArrayList<Integer> answers,
@@ -108,8 +120,12 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
         ButterKnife.bind(this);
+        loadingVideoAdsStateManager = new LoadingVideoAdsStateManager();
+        rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+        rewardedVideoAd.setRewardedVideoAdListener(this);
         startGameLoadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         gameInfoLoadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
+        startLoadingVideoAdsLoadingDialog = LoadingDialog.newInstanceWithoutCancelable(this, LoadingDialog.LABEL_LOADING);
         presenter = new ResultActivityPresenter(this, this);
         dbManager = new DBManager(this);
         initResultsTable();
@@ -118,13 +134,16 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             ArrayList<Integer> answers = getIntent().getIntegerArrayListExtra(ARG_ANSWERS);
             ArrayList<Integer> enemyAnswers = getIntent().getIntegerArrayListExtra(ARG_ENEMY_ANSWERS);
             configInfoAboutSingleGame(answers, enemyAnswers);
+            showWinnerInSingleGame();
         }
 
         if (gameType == GAME_TYPE_ONLINE) {
             showGameInfoLoadingDialog();
             room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
             presenter.onUpdateInfoAboutOnlineGame(room);
+            showWinnerInOnlineGame();
         }
+        loadRewardedVideoAd();
     }
 
     private void configInfoAboutSingleGame(ArrayList<Integer> answers, ArrayList<Integer> enemyAnswers){
@@ -158,16 +177,21 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     private void showWinnerInOnlineGame() {
         WinnerDialog winnerDialog = new WinnerDialog(this, presenter, gameType);
-        if(getMyRoundPointsCounter() > getEnemyRoundPointsCounter()){
-            winnerDialog.setUserAsWinner(App.getUser(), getMyResultsCounter(), getEnemyResultsCounter());
-        }
-        else if(getMyRoundPointsCounter() < getEnemyRoundPointsCounter()){
-            winnerDialog.setUserAsWinner(room.getCompetitor(), getMyRoundPointsCounter(), getEnemyRoundPointsCounter());
-        }
-        else {
+        if(room.getWinnerId() == Room.WINNER_DRAW_ID){
             winnerDialog.setDraw(getMyRoundPointsCounter(), getEnemyRoundPointsCounter());
+            winnerDialog.show();
         }
-        winnerDialog.show();
+        if(room.getWinnerId() != Room.WINNER_NONE){
+            if(room.getWinnerId() == room.getCreator().getId()){
+                winnerDialog.setUserAsWinner(room.getCreator(), getMyRoundPointsCounter(), getEnemyRoundPointsCounter());
+            }
+            if(room.getCompetitor() != null) {
+                if (room.getWinnerId() == room.getCompetitor().getId()) {
+                    winnerDialog.setUserAsWinner(room.getCreator(), getMyRoundPointsCounter(), getEnemyRoundPointsCounter());
+                }
+            }
+            winnerDialog.show();
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -260,6 +284,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     @Override
     protected void onResume() {
+        rewardedVideoAd.resume(this);
         super.onResume();
         if (gameType == GAME_TYPE_ONLINE) {
             handler = new Handler();
@@ -283,6 +308,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
 
     @Override
     protected void onDestroy() {
+        rewardedVideoAd.destroy(this);
         super.onDestroy();
         switch (gameType) {
             case GAME_TYPE_SINGLE:
@@ -387,9 +413,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             }
         }
         countPointsForOnlineGame();
-        /*if(false){
-            showWinnerInOnlineGame();
-        }*/
+        showWinnerInOnlineGame();
     }
 
     @Override
@@ -401,16 +425,31 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     public void gameOver(int mode) {
         switch (mode) {
             case GAME_TYPE_SINGLE:
-                if (dbManager.getCompletedRoundsCount() >= 5) {
-                    dbManager.clearSingleGameResults();
+                if(dbManager.isOpen()) {
+                    if (dbManager.getCompletedRoundsCount() >= 5) {
+                        dbManager.clearSingleGameResults();
+                    }
                 }
                 dbManager.close();
+
                 break;
             case GAME_TYPE_ONLINE:
                 handler.removeCallbacks(updateOnlineGameInfoRunnable);
                 break;
         }
-        finish();
+
+
+        if(loadingVideoAdsStateManager.isLoadingFailed()){
+            finish();
+        }
+        else if(loadingVideoAdsStateManager.isLoading()){
+            startLoadingVideoAdsLoadingDialog.show();
+        }
+        else if(loadingVideoAdsStateManager.isLoaded()){
+            rewardedVideoAd.show();
+        }
+
+
     }
 
     private DialogInterface.OnClickListener getExitAfterFailureListener() {
@@ -421,4 +460,69 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             }
         };
     }
+
+    @Override
+    public void onRewarded(RewardItem reward) {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+        finish();
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int errorCode) {
+    //    Toast.makeText(this, "onRewardedVideoAdFailedToLoad", Toast.LENGTH_SHORT).show();
+        if(startLoadingVideoAdsLoadingDialog.isShowing()){
+            if(loadingVideoAdsStateManager.isLoadingFailed()){
+                finish();
+            }
+        }
+        loadingVideoAdsStateManager.setState(LoadingVideoAdsStateManager.STATE_LOADING_FAILURE);
+    }
+
+    @Override
+    public void onRewardedVideoAdLoaded() {
+     //   Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show();
+        if(startLoadingVideoAdsLoadingDialog.isShowing()){
+            startLoadingVideoAdsLoadingDialog.cancel();
+            rewardedVideoAd.show();
+        }
+        loadingVideoAdsStateManager.setState(LoadingVideoAdsStateManager.STATE_LOADED);
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+
+    }
+
+    @Override
+    public void onRewardedVideoStarted() {
+
+    }
+
+    @Override
+    public void onRewardedVideoCompleted() {
+
+    }
+
+    private void loadRewardedVideoAd() {
+        rewardedVideoAd.loadAd("ca-app-pub-1541225587417986/6736666452",
+                new AdRequest.Builder().build());
+    }
+
+    @Override
+    public void onPause() {
+        rewardedVideoAd.pause(this);
+        super.onPause();
+    }
+
+
+
 }

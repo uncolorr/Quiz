@@ -20,6 +20,7 @@ import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.database.DBManager;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 import com.sap.uncolor.quiz.models.PrivateGame;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
@@ -27,7 +28,6 @@ import com.sap.uncolor.quiz.models.request_datas.AnswerOnQuestionInRoomRequestDa
 import com.sap.uncolor.quiz.models.request_datas.GiveUpRequestData;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.services.GiveUpService;
-import com.sap.uncolor.quiz.dialogs.MessageReporter;
 import com.sap.uncolor.quiz.widgets.AnimatingProgressBar;
 import com.sap.uncolor.quiz.widgets.NonSwipeViewPager;
 
@@ -168,19 +168,6 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @Override
     protected void onStop() {
         super.onStop();
-        App.Log("onStop");
-        if (mode == MODE_ONLINE_GAME) {
-            App.Log("online");
-            if (!isOnlineQuizFinished) {
-                App.Log("starting service...");
-                Bundle extras = new Bundle();
-                extras.putString(GiveUpService.ARG_ROOM_UUID, room.getUuid());
-                Intent intent = new Intent(this, GiveUpService.class);
-                intent.setAction(GiveUpService.ACTION_GIVE_UP);
-                intent.putExtras(extras);
-                startService(intent);
-            }
-        }
     }
 
     private int getCurrentRound() {
@@ -247,6 +234,18 @@ public class QuizActivity extends AppCompatActivity implements ApiResponse.ApiFa
     protected void onDestroy() {
         App.Log("onDestroy");
         super.onDestroy();
+        if (mode == MODE_ONLINE_GAME) {
+            App.Log("online");
+            if (!isOnlineQuizFinished) {
+                App.Log("starting service...");
+                Bundle extras = new Bundle();
+                extras.putString(GiveUpService.ARG_ROOM_UUID, room.getUuid());
+                Intent intent = new Intent(this, GiveUpService.class);
+                intent.setAction(GiveUpService.ACTION_GIVE_UP);
+                intent.putExtras(extras);
+                startService(intent);
+            }
+        }
 
     }
 

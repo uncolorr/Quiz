@@ -3,6 +3,7 @@ package com.sap.uncolor.quiz.application;
 import android.app.Application;
 import android.util.Log;
 
+import com.google.android.gms.ads.MobileAds;
 import com.orhanobut.hawk.Hawk;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.models.User;
@@ -16,6 +17,7 @@ public class App extends Application {
         super.onCreate();
         Hawk.init(getApplicationContext()).build();
         Api.init();
+        MobileAds.initialize(this, "ca-app-pub-1541225587417986~7226824885");
     }
 
     public static void Log(String message){

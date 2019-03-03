@@ -11,6 +11,9 @@ public class Room implements ItemModel, Serializable {
 
     public static final int TYPE = 5;
 
+    public static final int WINNER_NONE = 0;
+    public static final int WINNER_DRAW_ID = -1;
+
     @Override
     public int getType() {
         return TYPE;
@@ -27,6 +30,9 @@ public class Room implements ItemModel, Serializable {
 
     @SerializedName("rounds")
     private List<Round> rounds;
+
+    @SerializedName("winner_id")
+    private int winnerId;
 
     @SerializedName("is_booked")
     private boolean isBooked;
@@ -59,9 +65,6 @@ public class Room implements ItemModel, Serializable {
             return null;
         }
         Round round = rounds.get(rounds.size() - 1);
-        /*if(round.getCreatorLastQuestion() != 0){
-            return null;
-        }*/
         return round.getQuestions();
     }
 
@@ -76,5 +79,9 @@ public class Room implements ItemModel, Serializable {
             return false;
         }
         return false;
+    }
+
+    public int getWinnerId() {
+        return winnerId;
     }
 }

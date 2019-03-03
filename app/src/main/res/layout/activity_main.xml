@@ -46,14 +46,6 @@
                     android:layout_weight="1" />
 
                 <ImageButton
-                    android:id="@+id/imageButtonSettings"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_settings" />
-
-                <ImageButton
                     android:id="@+id/imageButtonTop"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -252,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:visibility="gone"
-                    style="@style/ProgressBarStyle"/>
+                    android:theme="@style/ProgressBarStyle" />
 
 
                 <LinearLayout
@@ -319,7 +311,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="66dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginStart="32dp"
                 android:background="@color/colorMain">
@@ -329,6 +321,16 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-1541225587417986/4025946475">
+    </com.google.android.gms.ads.AdView>
 
 </FrameLayout>
 

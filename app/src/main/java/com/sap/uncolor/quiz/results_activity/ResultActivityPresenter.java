@@ -44,7 +44,6 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
 
     @Override
     public void onCompleteGame(int mode) {
-
         view.gameOver(mode);
     }
 

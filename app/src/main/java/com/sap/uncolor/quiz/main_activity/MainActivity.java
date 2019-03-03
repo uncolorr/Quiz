@@ -18,8 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.sap.uncolor.quiz.AuthActivity;
-import com.sap.uncolor.quiz.dialogs.EditAvatarDialog;
 import com.sap.uncolor.quiz.LoadingDialog;
 import com.sap.uncolor.quiz.R;
 import com.sap.uncolor.quiz.RoomViewRenderer;
@@ -30,6 +31,8 @@ import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.application.App;
 import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivity;
 import com.sap.uncolor.quiz.database.DBManager;
+import com.sap.uncolor.quiz.dialogs.EditAvatarDialog;
+import com.sap.uncolor.quiz.dialogs.MessageReporter;
 import com.sap.uncolor.quiz.models.Question;
 import com.sap.uncolor.quiz.models.Quiz;
 import com.sap.uncolor.quiz.models.Room;
@@ -41,7 +44,6 @@ import com.sap.uncolor.quiz.models.request_datas.GetUserByIdRequestData;
 import com.sap.uncolor.quiz.quiz_activity.QuizActivity;
 import com.sap.uncolor.quiz.results_activity.ResultsActivity;
 import com.sap.uncolor.quiz.universal_adapter.UniversalAdapter;
-import com.sap.uncolor.quiz.dialogs.MessageReporter;
 import com.sap.uncolor.quiz.utils.PathConverter;
 import com.sap.uncolor.quiz.utils.RawTextReader;
 import com.sap.uncolor.quiz.utils.TextFormatter;
@@ -91,6 +93,9 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @BindView(R.id.progressBarCurrentRoomsLoading)
     ProgressBar progressBarCurrentRoomsLoading;
 
+    @BindView(R.id.adView)
+    AdView adView;
+
 
     private AlertDialog loadingDialog;
 
@@ -109,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         editAvatarDialog = new EditAvatarDialog(this);
         editAvatarDialog.setOnUploadAvatarClickListener(getOnUploadAvatarClickListener());
         editAvatarDialog.setOnRemoveClickListener(getOnRemoveAvatarClickListener());
@@ -202,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             }
         } else {
             Glide
-                    .with(MainActivity.this)
+                    .with(getApplicationContext())
                     .load(user.getAvatar())
                     .into(imageViewAvatar);
             editAvatarDialog.uploadAvatar(user.getAvatar());
@@ -253,11 +260,6 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                 }
             }
         };
-    }
-
-    @OnClick(R.id.imageButtonSettings)
-    void onSettingsButtonClick() {
-
     }
 
     @OnClick(R.id.imageViewAvatar)
@@ -450,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
                         return;
                     }
                     Glide
-                            .with(MainActivity.this)
+                            .with(getApplicationContext())
                             .load(avatarUrl)
                             .into(imageViewAvatar);
                     editAvatarDialog.uploadAvatar(avatarUrl);
