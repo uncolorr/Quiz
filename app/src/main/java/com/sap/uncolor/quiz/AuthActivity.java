@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 
+import com.flurry.android.FlurryAgent;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
@@ -69,6 +70,7 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
             public void onResponse(ResponseModel<User> result) {
                 cancelLoadingDialog();
                 if(result == null || result.getResult() == null){
+                    FlurryAgent.logEvent("Ошибка при авторизации");
                     MessageReporter.showMessage(AuthActivity.this,
                             "Ошибка",
                             "Ошибка авторизации");
@@ -77,6 +79,7 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
                     User user = result.getResult();
                     App.Log("user name: " + user.getLogin());
                     App.putUserData(user);
+                    FlurryAgent.logEvent("Успешная авторизация");
                     startActivity(MainActivity.getInstance(AuthActivity.this));
                     finish();
             }
@@ -92,6 +95,7 @@ public class AuthActivity extends AppCompatActivity implements ApiResponse.ApiFa
     @Override
     public void onFailure(int code, String message) {
         cancelLoadingDialog();
+        FlurryAgent.logEvent("Ошибка при авторизации");
         MessageReporter.showMessage(AuthActivity.this,
                 "Ошибка",
                 "Неизвестная ошибка");

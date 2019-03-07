@@ -2,6 +2,7 @@ package com.sap.uncolor.quiz.results_activity;
 
 import android.content.Context;
 
+import com.flurry.android.FlurryAgent;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
@@ -79,11 +80,13 @@ public class ResultActivityPresenter implements ResultActivityContract.Presenter
             public void onResponse(ResponseModel<List<Question>> result) {
                 view.hideStartGameLoadingDialog();
                 if(result == null){
+                    FlurryAgent.logEvent("Ошибка получения вопросов");
                     view.showErrorMessage();
                 }
                 else {
                     Quiz quiz = new Quiz();
                     quiz.setQuestions(result.getResult());
+                    FlurryAgent.logEvent("");
                     view.startSingleGame(quiz);
                 }
             }

@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
@@ -171,6 +172,7 @@ public class PrivateGameResultsActivity extends AppCompatActivity implements Api
                 else {
                     Quiz quiz = new Quiz();
                     quiz.setQuestions(result.getResult());
+                    FlurryAgent.logEvent("Создание закрытого стола");
                     startActivity(QuizActivity.
                             getInstanceForPrivateGame(PrivateGameResultsActivity.this, quiz, privateGame));
                     finish();

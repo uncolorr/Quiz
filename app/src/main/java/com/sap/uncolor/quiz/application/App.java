@@ -3,6 +3,7 @@ package com.sap.uncolor.quiz.application;
 import android.app.Application;
 import android.util.Log;
 
+import com.flurry.android.FlurryAgent;
 import com.google.android.gms.ads.MobileAds;
 import com.orhanobut.hawk.Hawk;
 import com.sap.uncolor.quiz.apis.Api;
@@ -12,12 +13,17 @@ public class App extends Application {
 
     public static final String KEY_USER = "user";
 
+    private static final String FLURRY_API_KEY = "SC9X3WQQ6T82XNVG275K";
+
     @Override
     public void onCreate() {
         super.onCreate();
         Hawk.init(getApplicationContext()).build();
         Api.init();
         MobileAds.initialize(this, "ca-app-pub-1541225587417986~7226824885");
+        new FlurryAgent.Builder()
+                .withLogEnabled(true)
+                .build(this, FLURRY_API_KEY);
     }
 
     public static void Log(String message){

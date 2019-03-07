@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.flurry.android.FlurryAgent;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.sap.uncolor.quiz.AuthActivity;
@@ -293,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                FlurryAgent.logEvent("Выход из аккаунта");
                 App.logout();
                 finish();
                 startActivity(AuthActivity.getInstance(MainActivity.this));
@@ -303,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
 
     @OnClick(R.id.buttonPrivateGame)
     void onButtonPrivateGameClick() {
+        FlurryAgent.logEvent("Вход в закрытый стол");
         startActivity(CreatePrivateTableActivity.getInstance(this));
     }
 
@@ -361,10 +364,12 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             public void onResponse(ResponseModel<Room> result) {
                 cancelLoadingDialog();
                 if (result == null || result.getResult() == null) {
+                    FlurryAgent.logEvent("Ошибка создания онлайн-комнаты");
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка при поиске игры");
                 } else {
+                   FlurryAgent.logEvent("Создание онлайн-комнаты");
                     Room room = result.getResult();
                     startActivity(ResultsActivity
                             .getInstanceForOnlineGame(MainActivity.this, room));
@@ -380,10 +385,12 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
             public void onResponse(ResponseModel<List<Question>> result) {
                 cancelLoadingDialog();
                 if (result == null || result.getResult() == null) {
+                    FlurryAgent.logEvent("Ошибка получения вопросов");
                     MessageReporter.showMessage(MainActivity.this,
                             "Ошибка",
                             "Ошибка создания игры");
                 } else {
+                    FlurryAgent.logEvent("Игра с компьютером");
                     Quiz quiz = new Quiz();
                     quiz.setQuestions(result.getResult());
                     startActivity(QuizActivity.getInstanceForSingleGame(MainActivity.this, quiz));

@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.flurry.android.FlurryAgent;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
@@ -162,6 +163,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     }
 
     private void showWinnerInSingleGame() {
+        FlurryAgent.logEvent("Завершенных одиночных игр");
         WinnerDialog winnerDialog = new WinnerDialog(this, presenter, gameType);
         if(getMyResultsCounter() > getEnemyResultsCounter()){
             winnerDialog.setUserAsWinner(App.getUser(), getMyResultsCounter(), getEnemyResultsCounter());
@@ -176,6 +178,7 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
     }
 
     private void showWinnerInOnlineGame() {
+        FlurryAgent.logEvent("Завершенных онлайн-игр");
         WinnerDialog winnerDialog = new WinnerDialog(this, presenter, gameType);
         if(room.getWinnerId() == Room.WINNER_DRAW_ID){
             winnerDialog.setDraw(getMyRoundPointsCounter(), getEnemyRoundPointsCounter());

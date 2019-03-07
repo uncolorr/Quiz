@@ -5,4 +5,5 @@
     <string name="label_add_players">Добавьте участников</string>
     <string name="label_edit_avatar">Редактирование аватара</string>
     <string name="label_winner">Победитель</string>
+    <string name="my_app_name">Ясен ум</string>
 </resources>

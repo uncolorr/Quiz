@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import com.flurry.android.FlurryAgent;
 import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
@@ -98,7 +99,9 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
             @Override
             public void onResponse(ResponseModel<User> result) {
                 cancelLoadingDialog();
+
                 if(result == null){
+                    FlurryAgent.logEvent("Ошибка при регистрации");
                     MessageReporter.showMessage(RegisterActivity.this,
                             "Ошибка",
                             "Ошибка при регистрации");
@@ -106,6 +109,7 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
                 }
                 User user = result.getResult();
                 App.putUserData(user);
+                FlurryAgent.logEvent("Успешная регистрация");
                 startActivity(MainActivity.getInstance(RegisterActivity.this));
                 finish();
             }
@@ -121,6 +125,7 @@ public class RegisterActivity extends AppCompatActivity implements ApiResponse.A
     @Override
     public void onFailure(int code, String message) {
         cancelLoadingDialog();
+        FlurryAgent.logEvent("Ошибка при регистрации");
         MessageReporter.showMessage(RegisterActivity.this,
                 "Ошибка",
                 "Неизвестная ошибка");
