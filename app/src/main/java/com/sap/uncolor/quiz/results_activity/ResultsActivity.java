@@ -135,14 +135,12 @@ public class ResultsActivity extends AppCompatActivity implements ResultActivity
             ArrayList<Integer> answers = getIntent().getIntegerArrayListExtra(ARG_ANSWERS);
             ArrayList<Integer> enemyAnswers = getIntent().getIntegerArrayListExtra(ARG_ENEMY_ANSWERS);
             configInfoAboutSingleGame(answers, enemyAnswers);
-            showWinnerInSingleGame();
         }
 
         if (gameType == GAME_TYPE_ONLINE) {
             showGameInfoLoadingDialog();
             room = (Room) getIntent().getSerializableExtra(ARG_ROOM);
             presenter.onUpdateInfoAboutOnlineGame(room);
-            showWinnerInOnlineGame();
         }
         loadRewardedVideoAd();
     }

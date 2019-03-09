@@ -1,5 +1,6 @@
 package com.sap.uncolor.quiz.main_activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,6 +31,7 @@ import com.sap.uncolor.quiz.apis.Api;
 import com.sap.uncolor.quiz.apis.ApiResponse;
 import com.sap.uncolor.quiz.apis.ResponseModel;
 import com.sap.uncolor.quiz.application.App;
+import com.sap.uncolor.quiz.application.AppPermissionManager;
 import com.sap.uncolor.quiz.create_private_table_activity.CreatePrivateTableActivity;
 import com.sap.uncolor.quiz.database.DBManager;
 import com.sap.uncolor.quiz.dialogs.EditAvatarDialog;
@@ -221,9 +223,17 @@ public class MainActivity extends AppCompatActivity implements ApiResponse.ApiFa
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, REQUEST_FOR_AVATAR_UPLOAD_FROM_GALLERY);
+                if (!AppPermissionManager.checkIfAlreadyHavePermission(MainActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    AppPermissionManager.requestAppPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            AppPermissionManager.PERMISSION_REQUEST_CODE);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, REQUEST_FOR_AVATAR_UPLOAD_FROM_GALLERY);
+                }
+
             }
         };
     }
